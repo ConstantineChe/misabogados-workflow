@@ -1,11 +1,16 @@
 (ns misabogados-workflow.model
-  (:require [hiccup.form :as el]))
+  (:require [misabogados-workflow.layout.elements :as elem]))
 
 (defprotocol PLead
-  (traverse [this] "traverse lead"))
+  (traverse [this] "traverse lead and build fields"))
 
-(defn traverse-fn [item] (if (satisfies? PLead (val item))
-                           (.traverse (val item)) (el/text-field (key item) (val item))))
+(defprotocol PField
+  (render [this] "render field"))
+
+(defn traverse-fn [item] (cond (satisfies? PLead (val item))
+                               (.traverse (val item))
+                               (satisfies? PField (val item))
+                               (.render (val item))))
 
 (defrecord Lead [user basic-info]
   PLead
@@ -19,5 +24,12 @@
   PLead
   (traverse [this] (map traverse-fn this)))
 
+(deftype TextField [label name value]
+  PField
+  (render [this] (elem/input-text label name value)))
 
-(def datas (->Lead (->User "Spurdo" "Sprade") (->BasicInfo (str (new java.util.Date)) "new")))
+(def datas (->Lead (->User (->TextField "Name" "name" "Spurdo")
+                           (->TextField "Etc" "etc" "Sprade"))
+                   (->BasicInfo (->TextField "Date created" "date_creared"
+                                             (str (new java.util.Date)))
+                                (->TextField "Status" "status" "new"))))
