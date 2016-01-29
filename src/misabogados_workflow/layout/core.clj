@@ -31,3 +31,7 @@
   [:body
    [:div.main
     content]])
+
+
+(defn render-form [title target fields]
+  (blank-page title (el/form target title fields)))

@@ -12,5 +12,5 @@
 (defroutes home-routes
   (GET "/" [] (home-page))
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
-  (GET "/wf" [] (layout/blank-page "Form" (form/form-to ["GET" "/nowhere"]
+  (GET "/wf" [] (layout/blank-page "Form" (layout/render-form "Form" ["GET" "/nowhere"]
                                                         (.traverse datas)))))
