@@ -1,13 +1,16 @@
 (ns misabogados-workflow.routes.home
-  (:require [misabogados-workflow.layout :as layout]
-            [compojure.core :refer [defroutes GET]]
+  (:require [compojure.core :refer [defroutes GET]]
             [ring.util.http-response :refer [ok]]
-            [clojure.java.io :as io]))
+            [clojure.java.io :as io]
+            [misabogados-workflow.model :refer [datas]]
+            [misabogados-workflow.layout.core :as layout]
+            [hiccup.form :as form]))
 
 (defn home-page []
-  (layout/render "home.html"))
+  (layout/blank-page "home" [:div "hi"]))
 
 (defroutes home-routes
   (GET "/" [] (home-page))
-  (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp))))
-
+  (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
+  (GET "/wf" [] (layout/blank-page "Form" (form/form-to ["GET" "/nowhere"]
+                                                        (.traverse datas)))))

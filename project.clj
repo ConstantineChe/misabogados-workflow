@@ -33,7 +33,8 @@
                  [cljs-ajax "0.5.3"]
                  [org.webjars/webjars-locator-jboss-vfs "0.1.0"]
                  [luminus-immutant "0.1.0"]
-                 [luminus-log4j "0.1.2"]]
+                 [luminus-log4j "0.1.2"]
+                 [hiccup "1.0.5"]]
 
   :min-lein-version "2.0.0"
   :uberjar-name "misabogados-workflow.jar"
@@ -79,7 +80,8 @@
                                  [ring/ring-devel "1.4.0"]
                                  [pjstadig/humane-test-output "0.7.1"]
                                  [lein-figwheel "0.5.0-6"]
-                                 [com.cemerick/piggieback "0.2.2-SNAPSHOT"]]
+                                 [com.cemerick/piggieback "0.2.2-SNAPSHOT"]
+                                 [spyscope "0.1.5"]]
                   :plugins [[lein-figwheel "0.5.0-6"] [org.clojure/clojurescript "1.7.228"]]
                    :cljsbuild
                    {:builds
@@ -103,7 +105,8 @@
                   :resource-paths ["env/dev/resources"]
                   :repl-options {:init-ns user}
                   :injections [(require 'pjstadig.humane-test-output)
-                               (pjstadig.humane-test-output/activate!)]
+                               (pjstadig.humane-test-output/activate!)
+                               (require 'spyscope.core)]
                   ;;when :nrepl-port is set the application starts the nREPL server on load
                   :env {:dev        true
                         :port       3000
