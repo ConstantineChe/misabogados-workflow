@@ -2,7 +2,8 @@
   (:require [hiccup.core :refer [html]]
             [hiccup.def :refer :all]
             [hiccup.page :as hp]
-            [misabogados-workflow.layout.elements :as el]))
+            [misabogados-workflow.layout.elements :as el]
+            [ring.util.anti-forgery :refer [anti-forgery-field]]))
 
 
 (defn include-bootstrap []
@@ -34,4 +35,4 @@
 
 
 (defn render-form [title target fields]
-  (blank-page title (el/form target title fields)))
+  (blank-page title (el/form target title (list (anti-forgery-field) fields))))

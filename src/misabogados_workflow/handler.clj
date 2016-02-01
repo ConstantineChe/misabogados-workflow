@@ -5,6 +5,7 @@
             [misabogados-workflow.middleware :as middleware]
             [clojure.tools.logging :as log]
             [compojure.route :as route]
+            [misabogados-workflow.db.core :as db]
             [config.core :refer [env]]
             [misabogados-workflow.config :refer [defaults]]
             [mount.core :as mount]
@@ -17,6 +18,7 @@
    put any initialization code here"
   []
   (logger/init env)
+  (db/connect!)
   (doseq [component (:started (mount/start))]
     (log/info component "started"))
   ((:init defaults)))

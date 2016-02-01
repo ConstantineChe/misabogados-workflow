@@ -2,7 +2,8 @@
     (:require [monger.core :as mg]
               [monger.collection :as mc]
               [monger.operators :refer :all]
-              [config.core :refer [env]]))
+              [config.core :refer [env]])
+    (:import org.bson.types.ObjectId))
 
 
 (defonce db (atom nil))
@@ -16,6 +17,8 @@
     (mg/disconnect conn)
     (reset! db nil)))
 
+(defn oid [id] (ObjectId. id))
+
 (defn create-user [user]
   (mc/insert @db "users" user))
 
@@ -27,3 +30,13 @@
 
 (defn get-user [id]
   (mc/find-one-as-map @db "users" {:_id id}))
+
+(defn get-lead [id]
+  (mc/find-one-as-map @db "lead" {:_id (oid id)}))
+
+(defn update-lead [id fields]
+  {:_id id}
+  (mc/update @db "lead" fields))
+
+(defn create-lead [fields]
+  (mc/insert  @db "lead" fields))
