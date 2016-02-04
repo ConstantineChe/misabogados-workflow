@@ -34,7 +34,8 @@
                  [org.webjars/webjars-locator-jboss-vfs "0.1.0"]
                  [luminus-immutant "0.1.0"]
                  [luminus-log4j "0.1.2"]
-                 [hiccup "1.0.5"]]
+                 [hiccup "1.0.5"]
+                 [camel-snake-kebab "0.3.2"]]
 
   :min-lein-version "2.0.0"
   :uberjar-name "misabogados-workflow.jar"

@@ -32,11 +32,11 @@
   (mc/find-one-as-map @db "users" {:_id id}))
 
 (defn get-lead [id]
-  (mc/find-one-as-map @db "lead" {:_id (oid id)}))
+  (mc/find-one-as-map @db "leads" {:_id (oid id)}))
 
 (defn update-lead [id fields]
-  {:_id id}
-  (mc/update @db "lead" fields))
+
+  (mc/update-by-id @db "leads" (oid id) fields))
 
 (defn create-lead [fields]
-  (mc/insert  @db "lead" fields))
+  (mc/insert  @db "leads" fields))
