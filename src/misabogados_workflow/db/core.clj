@@ -34,6 +34,9 @@
 (defn get-lead [id]
   (mc/find-one-as-map @db "leads" {:_id (oid id)}))
 
+(defn get-leads []
+  (mc/find-maps @db "leads"))
+
 (defn update-lead [id fields]
 
   (mc/update-by-id @db "leads" (oid id) fields))

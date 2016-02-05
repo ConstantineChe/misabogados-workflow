@@ -6,6 +6,11 @@
             [ring.util.anti-forgery :refer [anti-forgery-field]]))
 
 
+(defmacro defpage [name title args & fbody]
+  `(defn ~name
+     ~args
+     (blank-page ~title ~@fbody)))
+
 (defn include-bootstrap []
   (list (hp/include-js "https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js")
         (hp/include-js "/js/jquery.bootstrap.wizard.min.js")
@@ -17,9 +22,9 @@
                 :crossorigin "anonymous"
                 :href "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"}]
         [:script {:integrity
-                "sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
-                :crossorigin "anonymous"
-                :src "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"}]))
+                  "sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+                  :crossorigin "anonymous"
+                  :src "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"}]))
 
 (defhtml blank-page [title & content]
   [:head
@@ -36,3 +41,8 @@
 
 (defn render-form [title target fields]
   (blank-page title (el/form target title (list (anti-forgery-field) fields))))
+
+(defpage dashboard "Dashboard" [data] (map ))
+
+(defn dashboard [title data]
+  (blank-page title ))

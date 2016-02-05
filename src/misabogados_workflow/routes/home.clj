@@ -58,10 +58,10 @@
         "Form" ["POST" "/leads"]
         (list (.render datas "lead") [:button.btn "Save"])))
   (PUT "/lead/:id" [id :as request] (update-lead id request))
-  (GET "/lead/:id/action/:action" {{id :id action :action} :params} (if (contains? steps (keyword action))
-                                                                      (layout/render-form action ["PUT" (str "/lead/" id)]
-                                                                                          (.create-form (get-step action)
-                                                                                                        {:lead (db/get-lead id)}))))
+  (GET "/lead/:id/action/:action" {{id :id action :action} :params} (if (contains? steps (keyword action)))
+       (layout/render-form action ["PUT" (str "/lead/" id)]
+                           (.create-form (get-step action)
+                                         {:lead (db/get-lead id)})))
   (PUT "/lead/:id/action/:action" [id action :as request] (if (contains? steps (keyword action)) (do-action id action request)))
   (POST "/leads" [] create-lead)
   (GET "/leads" [] "Index"))
