@@ -61,7 +61,7 @@
                val (val field)]
            (if (nil? val)
              (if (record-exist? key) nil
-                 {key (->TextField  (name key) (name key) #spy/d (get-in #spy/d  data #spy/d (vec (map ->snake_case_keyword (conj ancestry key))) ))})
+                 {key (->TextField  (name key) (name key) (get-in  data (vec (map ->snake_case_keyword (conj ancestry key))) ))})
              {key ((get-factory key) (populate-struct val data (conj ancestry key)))}))) struct))
 
 
