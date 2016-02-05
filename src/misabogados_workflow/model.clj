@@ -46,6 +46,8 @@
   (render [this ancestry] (map (partial render-fn ancestry) this)))
 
 
+(.getFields (map->User {}))
+
 
 (def datas (->Lead (->User (->TextField "Name" "name" "")
                            (->TextField "Etc" "etc" ""))
@@ -55,3 +57,10 @@
                    (->Match (->TextField "Date" "date" "")
                             (->Meeting (->TextField "Date" "date" "")))
                    ))
+
+(defprotocol PTest
+  (describe-fields [this]))
+
+(defrecord Test [^String name ^TextField test]
+  PTest
+  (describe-fields [this] (meta name)))

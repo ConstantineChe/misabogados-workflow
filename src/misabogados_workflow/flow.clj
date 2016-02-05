@@ -14,8 +14,7 @@
 (def dataset {:lead {:_id "test"
                      :user {:name "myname" :etc "some"}
                      :basic_info {:date_created "date" :status "new"}
-                     :match {:date nil
-                             :meeting {:date nil}}}})
+                     }})
 
 (declare get-struct)
 
@@ -49,15 +48,28 @@
 (defn get-struct [fieldset dataset ancestry]
   (let [key (get-key fieldset)
         children (get-children fieldset)]
-    ((get-factory  key) (merge (map (partial get-struct-args (conj ancestry key) dataset)  children)
-                               (render-field (conj ancestry key) dataset)))))
+    ((get-factory  key)  (map (partial get-struct-args (conj ancestry key) dataset)  children)
+                               )))
+(defn record-exist? [key]
+  (resolve (symbol (str "misabogados-workflow.model/map->" (->PascalCaseString key)))))
 
+(record-exist? :name)
+
+(defn populate-struct [struct data ancestry]
+  (map (fn [field]
+         (let [key (key field)
+               val (val field)]
+           (if (nil? val)
+             (if (record-exist? key) nil
+                 {key (->TextField  (name key) (name key) #spy/d (get-in #spy/d  data #spy/d (vec (map ->snake_case_keyword (conj ancestry key))) ))})
+             {key ((get-factory key) (populate-struct val data (conj ancestry key)))}))) struct))
 
 
 
 (defrecord Step [fieldset actions]
   PManual
-  (create-form [this dataset] (list (.render  (get-struct fieldset (update-in dataset [:lead] dissoc :_id) []) "lead")
+  (create-form [this dataset] (list (.render (map->Lead (populate-struct (get-struct
+                                                                 fieldset (update-in dataset [:lead] dissoc :_id) []) dataset [:lead])) "lead")
                                     (map (fn [button] [:button {:type :submit
                                                                :formaction (str "/lead/"
                                                                                 (get-in dataset [:lead :_id])

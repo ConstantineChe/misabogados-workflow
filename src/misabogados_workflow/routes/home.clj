@@ -30,7 +30,7 @@
 
 (defn do-action [id action {:keys [params]}]
   (let [lead (assoc  (:lead (select-keys (transform-keys ->snake_case_keyword params) [:lead])) :step action)]
-    (db/update-lead id #spy/p lead))
+    (db/update-lead id lead))
   (redirect (str "/lead/" id "/action/" action))
    )
 
