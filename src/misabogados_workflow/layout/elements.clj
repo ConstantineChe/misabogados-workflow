@@ -1,20 +1,21 @@
 (ns misabogados-workflow.layout.elements
   (:require [hiccup.def :refer [defelem]]
             [hiccup.form :as form]
-            [hiccup.element :as el]))
+            [hiccup.element :as el]
+            [clojure.string :as str]))
 
 (defelem submit-button [text]
   [:div.control-group
      [:div.controls [:button.btn.btn-lg.btn-primary text]]])
 
 (defelem input [label field value comment password?]
-  (list [:label.control-label {:for field} label]
-   [:div.control-group
-    [:div.controls (if-not (false? comment) [:p.help-block comment])
-     (let [type (if password? form/password-field form/text-field)]
-       (type {:class "input-xlarge required"
-              :placeholder " "}
-                                 field value))]]))
+  [:div.form-group
+   [:label {:for field} label]
+   (if-not (false? comment) [:p.help-block comment])
+   (let [type (if password? form/password-field form/text-field)]
+     (type {:class "form-control"
+            :placeholder (str "Enter " (str/lower-case label))}
+           field value))])
 
 (defelem input-text [label field value & comment?]
   (if-let [comment (first comment?)]
