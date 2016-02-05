@@ -10,4 +10,4 @@
             :arrange-meeting (->Step [:lead :user :basic-info [:match :meeting]] {:change-lawyer :find-lawyer
                                                                                   :done :archive})
             :archive (->Step [:lead :user :basic-info [:match :meeting]] {:reopen :check})
-            :archive-and-print (->AutoStep print :archive)})
+            :archive-and-print (->AutoStep (fn [lead] (println (str "[AUTOMATIC ACTION]" lead))) :archive)})
