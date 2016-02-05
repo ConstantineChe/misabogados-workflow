@@ -3,4 +3,4 @@
 
 (defn remove-kebab [str]
   "removes kebab and makes string human-eatable"
-  (str/capitalize (str/replace str "-" " ")))
+  (if str (str/capitalize (str/replace str "-" " "))))

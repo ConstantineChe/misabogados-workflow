@@ -65,24 +65,24 @@
                val (val field)]
            (if (nil? val)
              (if (record-exist? key) nil
-                 {key (->TextField  (name key) (name key) (get-in  data (vec (map ->snake_case_keyword (conj ancestry key))) ))})
+                 {key (->TextField  (util/remove-kebab (name key)) (name key) (get-in  data (vec (map ->snake_case_keyword (conj ancestry key))) ))})
              {key ((get-factory key) (populate-struct val data (conj ancestry key)))}))) struct))
 
 
 
 (defrecord Step [fieldset actions]
   PManual
-  (create-form [this dataset]
-    (list
-     (.render (map->Lead (populate-struct (get-struct
-                                           fieldset (update-in dataset [:lead] dissoc :_id) []) dataset [:lead])) "lead")
-     [:div.btn-group {:role "group"}
-      [:button.btn.btn-secondary "Save"]
-      (map (fn [[button action]] [:button.btn.btn-primary
-                                 {:type :submit
-                                  :formaction (str "/lead/"
-                                                   (get-in dataset [:lead :_id])
-                                                   "/action/" (name action))} (util/remove-kebab (name button))]) actions)])))
+  (create-form [this dataset] (list
+                               (.render (map->Lead (populate-struct (get-struct
+                                                                     fieldset (update-in dataset [:lead] dissoc :_id) []) dataset [:lead])) "lead")
+                               [:div.btn-group {:role "group"}
+                                [:button.btn.btn-secondary "Save"]
+                                (map (fn [[label action]] [:button.btn.btn-primary
+                                                   {:type :submit
+                                                    :title (str "Saves and goes to \"" (util/remove-kebab (name action)) "\"")
+                                                    :formaction (str "/lead/"
+                                                                     (get-in dataset [:lead :_id])
+                                                                     "/action/" (name action))} (util/remove-kebab (name label))]) actions)])))
 (defrecord AutoStep [function action]
   PAutomatic
   (do-action [this dataset]

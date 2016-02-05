@@ -37,3 +37,15 @@ body {
     background-color: #e6e6e6;
     border-color: #adadad;
 }
+
+.glyphicon-play {
+    height: 16;
+}
+
+h1 {
+    margin: 30 0 20 0;
+}
+
+#create-lead-button {
+    margin: 10 0 40 0;
+}

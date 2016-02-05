@@ -2,7 +2,8 @@
   (:require [hiccup.def :refer [defelem]]
             [hiccup.form :as form]
             [hiccup.element :as el]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [misabogados-workflow.util :as util]))
 
 (defelem submit-button [text]
   [:div.control-group
@@ -28,6 +29,6 @@
     (input label field value false true)))
 
 (defelem form [target legend & fields]
-  (list [:h1 legend]
+  (list [:h1 (util/remove-kebab legend)]
         (form/form-to {:class "form-horisontal"} target
                       fields)))
