@@ -52,24 +52,24 @@
 (defpage dashboard "Dashboard" [data]
   [:div.container
    [:h1 "Dashboard"]
-   [:hr]
-   (hel/link-to {:class "btn btn-primary btn-lg"} "/leads/create" "Create new lead")
-   [:hr]
-   [:table.table.table-hover.table-striped
-    [:caption "Leads"]
-    [:thead
-     [:tr
-      [:th "Id"]
-      [:th "User name"]
-      [:th "Pending Action"]
-      [:th ""]]]
-    (for [lead data
-          :let [id (:_id lead)
-                name (get-in lead [:user :name])
-                pending-action (util/remove-kebab (:step lead))
-                actions (hel/link-to {:class "btn btn-success btn-sm"} (str "/lead/" id "/action/"(:step lead)) "Start") ]]
+   (hel/link-to {:class "btn btn-primary btn-lg" :id "create-lead-button"} "/leads/create" "Create new lead")
+   [:div.panel.panel-default
+    [:div.panel-heading "Leads"]
+    [:table.table.table-hover.table-striped.panel-body
+     [:thead
       [:tr
-       [:td id]
-       [:td name]
-       [:td pending-action]
-       [:td.text-right actions]])]])
+       [:th "Id"]
+       [:th "User name"]
+       [:th "Pending Action"]
+       [:th ""]]]
+     (for [lead data
+           :let [id (:_id lead)
+                 name (get-in lead [:user :name])
+                 pending-action (util/remove-kebab (:step lead))
+                 actions (hel/link-to {:class "btn btn-success"} (str "/lead/" id "/action/"(:step lead)) 
+                                      [:span.glyphicon.glyphicon-play]) ]]
+       [:tr
+        [:td id]
+        [:td name]
+        [:td pending-action]
+        [:td.text-right actions]])]]])
