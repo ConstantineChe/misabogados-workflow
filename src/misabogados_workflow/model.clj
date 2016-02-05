@@ -1,5 +1,6 @@
 (ns misabogados-workflow.model
   (:require [misabogados-workflow.layout.elements :as elem]
+            [misabogados-workflow.util :as util]
             [clojure.walk :as w]))
 
 (defprotocol PRenderable
@@ -13,7 +14,7 @@
 
 (defn render-fn [ancestry item] (println ancestry)
   (cond (satisfies? PEntity (val item))
-        [:fieldset [:legend (key item)] (.render (val item) (conj ancestry (name (key item))))]
+        [:fieldset [:legend (util/remove-kebab (name (key item)))] (.render (val item) (conj ancestry (name (key item))))]
         (satisfies? PField (val item))
         (.render (val item) ancestry)))
 
