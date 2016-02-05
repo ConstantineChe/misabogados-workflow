@@ -39,7 +39,7 @@
 
 (defn update-lead [id fields]
 
-  (mc/update-by-id @db "leads" (oid id) fields))
+  (mc/update-by-id @db "leads" (oid id) {$set fields}))
 
 (defn create-lead [fields]
   (mc/insert  @db "leads" fields))

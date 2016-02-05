@@ -80,8 +80,7 @@
                                                                      (get-in dataset [:lead :_id])
                                                                      "/action/" (name action))} (util/remove-kebab (name button))]) actions)])))
 
-(def steps {:create (->Step [:lead :user :basic-info] {})
-            :check (->Step [:lead :user :basic-info] {:finalize :archive 
+(def steps {:check (->Step [:lead :user :basic-info] {:finalize :archive 
                                                       :refer :find-lawyer})
             :find-lawyer (->Step [:lead :user :basic-info :match] {:done :arrange-meeting 
                                                                    :finalize :archive})

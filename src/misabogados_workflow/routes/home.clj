@@ -35,8 +35,7 @@
    )
 
 (defn create-lead [{:keys [params]}]
-
-  (db/create-lead (:lead (transform-keys ->snake_case_keyword params)))
+  (db/create-lead (assoc  (:lead (transform-keys ->snake_case_keyword params)) :step :check))
   (redirect "/leads"))
 
 (defn edit-lead [id]

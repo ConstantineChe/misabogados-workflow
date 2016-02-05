@@ -2,6 +2,7 @@
   (:require [hiccup.core :refer [html]]
             [hiccup.def :refer :all]
             [hiccup.page :as hp]
+            [hiccup.element :as hel]
             [misabogados-workflow.layout.elements :as el]
             [ring.util.anti-forgery :refer [anti-forgery-field]]))
 
@@ -53,12 +54,15 @@
     [:tr
      [:th "id"]
      [:th "Name"]
-     [:th "Pending Action"]]]
+     [:th "Pending Action"]
+     [:th ""]]]
    (for [lead data
          :let [id (:_id lead)
                name (get-in lead [:user :name])
-               action (:step lead)]]
+               pending-action (:step lead)
+               actions (hel/link-to {:class "btn btn-primary"} (str "/lead/" id "/action/"(:step lead)) "Start") ]]
      [:tr
       [:td id]
       [:td name]
-      [:td action]])])
+      [:td pending-action]
+      [:td actions]])])
