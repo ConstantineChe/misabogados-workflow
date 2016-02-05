@@ -42,7 +42,7 @@
 (defn edit-lead [id]
   (let [lead (db/get-lead id)]
     (layout/blank-page "Form"
-                       (layout/render-form "Edit lead" 
+                       (layout/render-form "Edit lead"
                                            ["PUT" (str "/lead/" id)]
                                            (list (.create-form (get-step "create")  {:lead (db/get-lead id)})
                                                             [:button.btn "Save"])))))
@@ -65,4 +65,4 @@
                                                                                                         {:lead (db/get-lead id)}))))
   (PUT "/lead/:id/action/:action" [id action :as request] (if (contains? steps (keyword action)) (do-action id action request)))
   (POST "/leads" [] create-lead)
-  (GET "/leads" [] "Index"))
+  (GET "/leads" [] (layout/dashboard (db/get-leads))))

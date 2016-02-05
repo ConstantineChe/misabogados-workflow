@@ -6,6 +6,11 @@
             [ring.util.anti-forgery :refer [anti-forgery-field]]))
 
 
+(defmacro defpage [name title args & fbody]
+  `(defn ~name
+     ~args
+     (blank-page ~title ~@fbody)))
+
 (defn include-bootstrap []
   (list (hp/include-js "https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js")
         (hp/include-js "/js/jquery.bootstrap.wizard.min.js")
@@ -17,9 +22,9 @@
                 :crossorigin "anonymous"
                 :href "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"}]
         [:script {:integrity
-                "sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
-                :crossorigin "anonymous"
-                :src "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"}]))
+                  "sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
+                  :crossorigin "anonymous"
+                  :src "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"}]))
 
 (defhtml blank-page [title & content]
   [:head
@@ -27,17 +32,33 @@
    [:meta {:http-equiv "X-UA-Compatible" :content "IE=edge"}]
    [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
    (include-bootstrap)
-   [:link {:href "https://fonts.googleapis.com/css?family=Open+Sans:400,700,300" 
-           :rel "stylesheet" 
+   [:link {:href "https://fonts.googleapis.com/css?family=Open+Sans:400,700,300"
+           :rel "stylesheet"
            :type "text/css"}]
    [:title title]
    (hp/include-css "/css/main.css")]
   [:body
-   [:div.main.row
+   [:div.main
     content]])
 
 
 (defn render-form [title target fields]
-  (blank-page title 
+  (blank-page title
               [:div.col-md-8.col-md-offset-2 (el/form target title (list (anti-forgery-field) fields))
                ]))
+
+(defpage dashboard "Dashboard" [data]
+  [:table.table.table-hover
+   [:thead
+    [:tr
+     [:th "id"]
+     [:th "Name"]
+     [:th "Pending Action"]]]
+   (for [lead data
+         :let [id (:_id lead)
+               name (get-in lead [:user :name])
+               action (:step lead)]]
+     [:tr
+      [:td id]
+      [:td name]
+      [:td action]])])
