@@ -4,6 +4,7 @@
             [hiccup.page :as hp]
             [hiccup.element :as hel]
             [misabogados-workflow.layout.elements :as el]
+            [misabogados-workflow.util :as util]
             [ring.util.anti-forgery :refer [anti-forgery-field]]))
 
 
@@ -49,20 +50,26 @@
                ]))
 
 (defpage dashboard "Dashboard" [data]
-  [:table.table.table-hover
-   [:thead
-    [:tr
-     [:th "id"]
-     [:th "Name"]
-     [:th "Pending Action"]
-     [:th ""]]]
-   (for [lead data
-         :let [id (:_id lead)
-               name (get-in lead [:user :name])
-               pending-action (:step lead)
-               actions (hel/link-to {:class "btn btn-primary"} (str "/lead/" id "/action/"(:step lead)) "Start") ]]
+  [:div.container
+   [:h1 "Dashboard"]
+   [:hr]
+   (hel/link-to {:class "btn btn-primary btn-lg"} "/leads/create" "Create new lead")
+   [:hr]
+   [:table.table.table-hover.table-striped
+    [:caption "Leads"]
+    [:thead
      [:tr
-      [:td id]
-      [:td name]
-      [:td pending-action]
-      [:td actions]])])
+      [:th "Id"]
+      [:th "User name"]
+      [:th "Pending Action"]
+      [:th ""]]]
+    (for [lead data
+          :let [id (:_id lead)
+                name (get-in lead [:user :name])
+                pending-action (util/remove-kebab (:step lead))
+                actions (hel/link-to {:class "btn btn-success btn-sm"} (str "/lead/" id "/action/"(:step lead)) "Start") ]]
+      [:tr
+       [:td id]
+       [:td name]
+       [:td pending-action]
+       [:td.text-right actions]])]])
