@@ -28,6 +28,6 @@
     (input label field value false true)))
 
 (defelem form [target legend & fields]
-  (form/form-to {:class "form-horisontal"} target
-                               [:fieldset [:div#legend [:legend legend]]
-                                fields]))
+  (list [:h1 legend]
+        (form/form-to {:class "form-horisontal"} target
+                      fields)))

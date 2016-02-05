@@ -8,10 +8,20 @@ fieldset {
 }
 
 legend {
-    font-size: 1.2em;
-    font-weight: bold;
+    font-size: 1.4em;
     text-align: left;
-    width:inherit;
+    font-weight: light;
+    color: #888;
+    width: inherit;
     padding:0 10px;
     border-bottom:none;
+}
+
+label {
+    font-weight: normal;
+}
+
+body {
+    color: #444;
+    font-family: 'Open Sans';
 }
