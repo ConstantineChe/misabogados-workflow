@@ -38,7 +38,7 @@
    [:title title]
    (hp/include-css "/css/main.css")]
   [:body
-   [:div.main.row
+   [:div.main
     content]])
 
 
@@ -47,4 +47,18 @@
               [:div.col-md-8.col-md-offset-2 (el/form target title (list (anti-forgery-field) fields))
                ]))
 
-(defpage dashboard "Dashboard" [data] (map print data))
+(defpage dashboard "Dashboard" [data]
+  [:table.table.table-hover
+   [:thead
+    [:tr
+     [:th "id"]
+     [:th "Name"]
+     [:th "Pending Action"]]]
+   (for [lead data
+         :let [id (:_id lead)
+               name (get-in lead [:user :name])
+               action (:step lead)]]
+     [:tr
+      [:td id]
+      [:td name]
+      [:td action]])])
