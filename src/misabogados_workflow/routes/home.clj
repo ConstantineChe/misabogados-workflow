@@ -47,17 +47,17 @@
                                            (list (.create-form (get-step "create")  {:lead (db/get-lead id)})
                                                             [:button.btn "Save"])))))
 
-(defn create-lead [params]
+(defn new-lead [params]
   (layout/render-form
-               "New lead" ["POST" "/leads"]
-               (list (.render datas "lead") [:button.btn "Save"])))
+   "New lead" ["POST" "/leads"]
+   (list (.render datas "lead") [:button.btn {:type "submit"} "Save"])))
 
 
 (defroutes home-routes
   (GET "/" [] (home-page))
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
   (GET "/lead/:id/edit" {{id :id} :params} (edit-lead id))
-  (GET "/leads/create" [] create-lead)
+  (GET "/leads/create" [] new-lead)
   (PUT "/lead/:id" [id :as request] (update-lead id request))
   (GET "/lead/:id/action/:action" {{id :id action :action} :params} (if (contains? steps (keyword action))
                                                                       (layout/render-form action ["PUT" (str "/lead/" id)]

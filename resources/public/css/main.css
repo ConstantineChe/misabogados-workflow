@@ -1,5 +1,5 @@
 fieldset {
-    border: 1px solid #bbb;
+    border: 1px solid #adadad;
     border-radius: 4px;
     padding: 0 1.4em 1.4em 1.4em;
     margin: 0 0 1.5em 0;
@@ -11,7 +11,7 @@ legend {
     font-size: 1.4em;
     text-align: left;
     font-weight: light;
-    color: #888;
+    color: #999;
     width: inherit;
     padding:0 10px;
     border-bottom:none;
@@ -24,4 +24,16 @@ label {
 body {
     color: #444;
     font-family: 'Open Sans';
+}
+
+.btn-secondary {
+    color: #373a3c;
+    background-color: #fff;
+    border-color: #ccc;
+}
+
+.btn-secondary:hover {
+    color: #373a3c;
+    background-color: #e6e6e6;
+    border-color: #adadad;
 }

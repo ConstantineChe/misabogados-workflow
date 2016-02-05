@@ -1,5 +1,6 @@
 (ns misabogados-workflow.flow
   (:require [misabogados-workflow.model :refer :all]
+            [misabogados-workflow.util :as util]
             [camel-snake-kebab.core :refer :all]
             [camel-snake-kebab.extras :refer [transform-keys]]
             )
@@ -68,14 +69,22 @@
 
 (defrecord Step [fieldset actions]
   PManual
-  (create-form [this dataset] (list (.render (map->Lead (populate-struct (get-struct
-                                                                 fieldset (update-in dataset [:lead] dissoc :_id) []) dataset [:lead])) "lead")
-                                    (map (fn [button] [:button {:type :submit
-                                                               :formaction (str "/lead/"
-                                                                                (get-in dataset [:lead :_id])
-                                                                                "/action/" (name button))} button]) actions))))
+  (create-form [this dataset] (list 
+                               (.render (map->Lead (populate-struct (get-struct
+                                                                     fieldset (update-in dataset [:lead] dissoc :_id) []) dataset [:lead])) "lead")
+                               [:div.btn-group {:role "group"} 
+                                [:button.btn.btn-secondary "Save"]
+                                (map (fn [[button action]] [:button.btn.btn-primary 
+                                                   {:type :submit
+                                                    :formaction (str "/lead/"
+                                                                     (get-in dataset [:lead :_id])
+                                                                     "/action/" (name action))} (util/remove-kebab (name button))]) actions)])))
 
-(def steps {:create (->Step [:lead :user :basic-info] [])
-            :check (->Step [:lead :user :basic-info] [:finish :find-lawyer])
-            :find-lawyer (->Step [:lead :user :basic-info :match] [:create-meeting :finish])
-            :finish (->Step [:leaad :user :basic-info] [:save])})
+(def steps {:create (->Step [:lead :user :basic-info] {})
+            :check (->Step [:lead :user :basic-info] {:finalize :archive 
+                                                      :refer :find-lawyer})
+            :find-lawyer (->Step [:lead :user :basic-info :match] {:done :arrange-meeting 
+                                                                   :finalize :archive})
+            :arrange-meeting (->Step [:lead :user :basic-info [:match :meeting]] {:change-lawyer :find-lawyer 
+                                                                                  :done :archive})
+            :archive (->Step [:lead :user :basic-info [:match :meeting]] {:reopen :check})})
