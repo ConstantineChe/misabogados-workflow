@@ -9,7 +9,8 @@
             [camel-snake-kebab.core :refer :all]
             [camel-snake-kebab.extras :refer [transform-keys]]
             [misabogados-workflow.db.core :as db]
-            [misabogados-workflow.flow :refer [steps dataset]])
+            [misabogados-workflow.flow :refer [dataset PManual PAutomatic]]
+            [misabogados-workflow.flow-definition :refer [steps]])
   (:import [misabogados-workflow.model.Lead]
            [misabogados-workflow.model.User]
            [misabogados-workflow.model.BasicInfo]
@@ -29,10 +30,17 @@
   )
 
 (defn do-action [id action {:keys [params]}]
-  (let [lead (assoc  (:lead (select-keys (transform-keys ->snake_case_keyword params) [:lead])) :step action)]
-    (db/update-lead id lead))
-  (redirect (str "/lead/" id "/action/" action))
-   )
+  (let [lead (assoc  (:lead (select-keys (transform-keys ->snake_case_keyword params) [:lead])) :step action)
+        step ((keyword action) steps)]
+    (db/update-lead id lead)
+    (cond (satisfies? PManual step)
+          (redirect "/leads")
+          (satisfies? PAutomatic step)
+          (do
+            (.do-action step lead)
+            (db/update-lead id {:step (:action step)})
+            (redirect "/leads"))
+          )))
 
 (defn create-lead [{:keys [params]}]
   (db/create-lead (assoc  (:lead (transform-keys ->snake_case_keyword params)) :step :check))

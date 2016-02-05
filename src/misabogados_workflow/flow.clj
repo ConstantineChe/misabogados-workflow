@@ -12,6 +12,9 @@
 (defprotocol PManual
   (create-form [this dataset]))
 
+(defprotocol PAutomatic
+  (do-action [this dataset]))
+
 (def dataset {:lead {:_id "test"
                      :user {:name "myname" :etc "some"}
                      :basic_info {:date_created "date" :status "new"}
@@ -69,21 +72,18 @@
 
 (defrecord Step [fieldset actions]
   PManual
-  (create-form [this dataset] (list 
-                               (.render (map->Lead (populate-struct (get-struct
-                                                                     fieldset (update-in dataset [:lead] dissoc :_id) []) dataset [:lead])) "lead")
-                               [:div.btn-group {:role "group"} 
-                                [:button.btn.btn-secondary "Save"]
-                                (map (fn [[button action]] [:button.btn.btn-primary 
-                                                   {:type :submit
-                                                    :formaction (str "/lead/"
-                                                                     (get-in dataset [:lead :_id])
-                                                                     "/action/" (name action))} (util/remove-kebab (name button))]) actions)])))
-
-(def steps {:check (->Step [:lead :user :basic-info] {:finalize :archive 
-                                                      :refer :find-lawyer})
-            :find-lawyer (->Step [:lead :user :basic-info :match] {:done :arrange-meeting 
-                                                                   :finalize :archive})
-            :arrange-meeting (->Step [:lead :user :basic-info [:match :meeting]] {:change-lawyer :find-lawyer 
-                                                                                  :done :archive})
-            :archive (->Step [:lead :user :basic-info [:match :meeting]] {:reopen :check})})
+  (create-form [this dataset]
+    (list
+     (.render (map->Lead (populate-struct (get-struct
+                                           fieldset (update-in dataset [:lead] dissoc :_id) []) dataset [:lead])) "lead")
+     [:div.btn-group {:role "group"}
+      [:button.btn.btn-secondary "Save"]
+      (map (fn [[button action]] [:button.btn.btn-primary
+                                 {:type :submit
+                                  :formaction (str "/lead/"
+                                                   (get-in dataset [:lead :_id])
+                                                   "/action/" (name action))} (util/remove-kebab (name button))]) actions)])))
+(defrecord AutoStep [function action]
+  PAutomatic
+  (do-action [this dataset]
+    (function dataset)))
