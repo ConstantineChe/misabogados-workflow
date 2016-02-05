@@ -42,26 +42,27 @@
 (defn edit-lead [id]
   (let [lead (db/get-lead id)]
     (layout/blank-page "Form"
-                       (layout/render-form "Form" ["PUT" (str "/lead/" id)]
+                       (layout/render-form "Edit lead"
+                                           ["PUT" (str "/lead/" id)]
                                            (list (.create-form (get-step "create")  {:lead (db/get-lead id)})
-                                                 [:button.btn "Save"])))))
+                                                            [:button.btn "Save"])))))
 
-
+(defn create-lead [params]
+  (layout/render-form
+               "New lead" ["POST" "/leads"]
+               (list (.render datas "lead") [:button.btn "Save"])))
 
 
 (defroutes home-routes
   (GET "/" [] (home-page))
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
   (GET "/lead/:id/edit" {{id :id} :params} (edit-lead id))
-  (GET "/leads/create" []
-       (layout/render-form
-        "Form" ["POST" "/leads"]
-        (list (.render datas "lead") [:button.btn "Save"])))
+  (GET "/leads/create" [] create-lead)
   (PUT "/lead/:id" [id :as request] (update-lead id request))
-  (GET "/lead/:id/action/:action" {{id :id action :action} :params} (if (contains? steps (keyword action)))
-       (layout/render-form action ["PUT" (str "/lead/" id)]
-                           (.create-form (get-step action)
-                                         {:lead (db/get-lead id)})))
+  (GET "/lead/:id/action/:action" {{id :id action :action} :params} (if (contains? steps (keyword action))
+                                                                      (layout/render-form action ["PUT" (str "/lead/" id)]
+                                                                                          (.create-form (get-step action)
+                                                                                                        {:lead (db/get-lead id)}))))
   (PUT "/lead/:id/action/:action" [id action :as request] (if (contains? steps (keyword action)) (do-action id action request)))
   (POST "/leads" [] create-lead)
-  (GET "/leads" [] "Index"))
+  (GET "/leads" [] (layout/dashboard (db/get-leads))))

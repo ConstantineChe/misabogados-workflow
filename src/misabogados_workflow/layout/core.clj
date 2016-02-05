@@ -32,17 +32,19 @@
    [:meta {:http-equiv "X-UA-Compatible" :content "IE=edge"}]
    [:meta {:name "viewport" :content "width=device-width, initial-scale=1"}]
    (include-bootstrap)
+   [:link {:href "https://fonts.googleapis.com/css?family=Open+Sans:400,700,300"
+           :rel "stylesheet"
+           :type "text/css"}]
    [:title title]
    (hp/include-css "/css/main.css")]
   [:body
-   [:div.main
+   [:div.main.row
     content]])
 
 
 (defn render-form [title target fields]
-  (blank-page title (el/form target title (list (anti-forgery-field) fields))))
+  (blank-page title
+              [:div.col-md-8.col-md-offset-2 (el/form target title (list (anti-forgery-field) fields))
+               ]))
 
-(defpage dashboard "Dashboard" [data] (map ))
-
-(defn dashboard [title data]
-  (blank-page title ))
+(defpage dashboard "Dashboard" [data] (map print data))
