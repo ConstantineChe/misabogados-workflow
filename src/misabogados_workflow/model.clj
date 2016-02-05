@@ -46,9 +46,6 @@
   (render [this ancestry] (map (partial render-fn ancestry) this)))
 
 
-(.getFields (map->User {}))
-
-
 (def datas (->Lead (->User (->TextField "Name" "name" "")
                            (->TextField "Etc" "etc" ""))
                    (->BasicInfo (->TextField "Date created" "date_created"
