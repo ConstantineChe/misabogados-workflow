@@ -2,14 +2,14 @@
   (:require [compojure.core :refer [defroutes GET PUT POST]]
             [ring.util.http-response :refer [ok]]
             [clojure.java.io :as io]
-            [misabogados-workflow.model :refer [datas ->Lead map->User map->BasicInfo]]
+            [misabogados-workflow.model :refer [->Lead map->User map->BasicInfo]]
             [misabogados-workflow.layout.core :as layout]
             [hiccup.form :as form]
             [ring.util.response :refer [redirect]]
             [camel-snake-kebab.core :refer :all]
             [camel-snake-kebab.extras :refer [transform-keys]]
             [misabogados-workflow.db.core :as db]
-            [misabogados-workflow.flow :refer [dataset PManual PAutomatic]]
+            [misabogados-workflow.flow :refer [get-rendered-form dataset PManual PAutomatic]]
             [misabogados-workflow.flow-definition :refer [steps]])
   (:import [misabogados-workflow.model.Lead]
            [misabogados-workflow.model.User]
@@ -51,13 +51,15 @@
     (layout/blank-page "Form"
                        (layout/render-form "Edit lead"
                                            ["PUT" (str "/lead/" id)]
-                                           (list (.create-form (get-step "create")  {:lead (db/get-lead id)})
-                                                            [:button.btn "Save"])))))
+                                           (list (.create-form (get-step "archive")  {:lead lead})
+                                                            [:button.btn.btn-secondary "Save"])))))
 
 (defn new-lead [params]
-  (layout/render-form
-   "New lead" ["POST" "/leads"]
-   (list (.render datas "lead") [:button.btn {:type "submit"} "Save"])))
+  (layout/blank-page "Form"
+                     (layout/render-form "New lead"
+                                         ["POST" "/leads"]
+                                         (list (get-rendered-form [:lead :user :basic-info]  {:lead {}})
+                                               [:button.btn.btn-secondary "Save"]))))
 
 
 (defroutes home-routes
