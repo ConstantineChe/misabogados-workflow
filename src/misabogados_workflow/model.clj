@@ -38,27 +38,10 @@
   PEntity
   (render [this ancestry] (map (partial render-fn ancestry) this)))
 
-(defrecord User [^TextField name ^TextField etc]
+(defrecord User [name email etc]
   PEntity
   (render [this ancestry] (map (partial render-fn ancestry) this)))
 
-(defrecord BasicInfo [^TextField date-created ^TextField status]
+(defrecord BasicInfo [date-created status]
   PEntity
   (render [this ancestry] (map (partial render-fn ancestry) this)))
-
-
-(def datas (->Lead (->User (->TextField "Name" "name" "")
-                           (->TextField "Etc" "etc" ""))
-                   (->BasicInfo (->TextField "Date created" "date_created"
-                                             "")
-                                (->TextField "Status" "status" ""))
-                   (->Match (->TextField "Date" "date" "")
-                            (->Meeting (->TextField "Date" "date" "")))
-                   ))
-
-(defprotocol PTest
-  (describe-fields [this]))
-
-(defrecord Test [^String name ^TextField test]
-  PTest
-  (describe-fields [this] (meta name)))
