@@ -66,10 +66,27 @@
            :let [id (:_id lead)
                  name (get-in lead [:user :name])
                  pending-action (util/remove-kebab (:step lead))
-                 actions (hel/link-to {:class "btn btn-success"} (str "/lead/" id "/action/"(:step lead)) 
+                 actions (hel/link-to {:class "btn btn-success"} (str "/lead/" id "/action/"(:step lead))
                                       [:span.glyphicon.glyphicon-play]) ]]
        [:tr
         [:td id]
         [:td name]
         [:td pending-action]
         [:td.text-right actions]])]]])
+
+
+(defpage signup "Signup" []
+  (el/form ["POST" "/signup"] "Signup"
+           (list (anti-forgery-field)
+                 (el/input-text "Email" "email" "")
+                 (el/input-text "Name" "name" "")
+                 (el/input-password "Password" "password" "")
+                 (el/input-password "Confirm password" "confirm_password" "")
+                 (el/submit-button "Signup"))))
+
+(defpage login "Login" []
+  (el/form ["POST" "/login"] "Login"
+           (list (anti-forgery-field)
+                 (el/input-text "Email" "email" "")
+                 (el/input-password "Password" "password" "")
+                 (el/submit-button "Login"))))

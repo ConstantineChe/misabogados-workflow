@@ -2,6 +2,8 @@
   (:require [compojure.core :refer [defroutes routes wrap-routes]]
             [misabogados-workflow.layout :refer [error-page]]
             [misabogados-workflow.routes.home :refer [home-routes]]
+            [misabogados-workflow.routes.registration :refer [registration-routes]]
+            [misabogados-workflow.routes.session :refer [session-routes]]
             [misabogados-workflow.middleware :as middleware]
             [clojure.tools.logging :as log]
             [compojure.route :as route]
@@ -34,7 +36,9 @@
 
 (def app-routes
   (routes
-    (wrap-routes #'home-routes middleware/wrap-csrf)
+   (wrap-routes #'home-routes middleware/wrap-csrf)
+   (wrap-routes #'registration-routes middleware/wrap-csrf)
+   (wrap-routes #'session-routes middleware/wrap-csrf)
     (route/not-found
       (:body
         (error-page {:status 404

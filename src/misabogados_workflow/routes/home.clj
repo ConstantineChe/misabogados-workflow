@@ -20,8 +20,10 @@
 (defn get-step [action]
   ((keyword action) steps))
 
-(defn home-page []
-  (layout/blank-page "home" [:div "hi"]))
+(defn home-page [request]
+  (layout/blank-page "home" [:div.container [:div "hi"
+                               (map (fn [item] [:div.row [:h4 (key item)]
+                                               [:p (val item)]]) request)]]))
 
 (defn update-lead
   [id {:keys [params]}]
@@ -63,15 +65,17 @@
 
 
 (defroutes home-routes
-  (GET "/" [] (home-page))
+  (GET "/" [] home-page)
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
   (GET "/lead/:id/edit" {{id :id} :params} (edit-lead id))
   (GET "/leads/create" [] new-lead)
   (PUT "/lead/:id" [id :as request] (update-lead id request))
-  (GET "/lead/:id/action/:action" {{id :id action :action} :params} (if (contains? steps (keyword action))
-                                                                      (layout/render-form action ["PUT" (str "/lead/" id)]
-                                                                                          (.create-form (get-step action)
-                                                                                                        {:lead (db/get-lead id)}))))
-  (PUT "/lead/:id/action/:action" [id action :as request] (if (contains? steps (keyword action)) (do-action id action request)))
+  (GET "/lead/:id/action/:action" {{id :id action :action} :params}
+       (if (contains? steps (keyword action))
+         (layout/render-form action ["PUT" (str "/lead/" id)]
+                             (.create-form (get-step action)
+                                           {:lead (db/get-lead id)}))))
+  (PUT "/lead/:id/action/:action" [id action :as request]
+       (if (contains? steps (keyword action)) (do-action id action request)))
   (POST "/leads" [] create-lead)
   (GET "/leads" [] (layout/dashboard (db/get-leads))))

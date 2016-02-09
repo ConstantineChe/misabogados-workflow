@@ -22,14 +22,12 @@
 (defn create-user [user]
   (mc/insert @db "users" user))
 
-(defn update-user [id first-name last-name email]
-  (mc/update @db "users" {:_id id}
-             {$set {:first_name first-name
-                    :last_name last-name
-                    :email email}}))
+(defn update-user [email data]
+  (mc/update @db "users" {:email email}
+             {$set data}))
 
-(defn get-user [id]
-  (mc/find-one-as-map @db "users" {:_id id}))
+(defn get-user [email]
+  (mc/find-one-as-map @db "users" {:email email}))
 
 (defn get-lead [id]
   (mc/find-one-as-map @db "leads" {:_id (oid id)}))
@@ -43,3 +41,6 @@
 
 (defn create-lead [fields]
   (mc/insert  @db "leads" fields))
+
+(defn find-user-by-code [code]
+  (mc/find-one-as-map @db "users" {:verification-code code}))
