@@ -21,7 +21,6 @@
   (let [user (db/get-user (:email (:params request)))
         password (:password (:params request))
         session (:session request)]
-    (println "================LOGIN")
     (if (check password (:password user))
         (let [updated-session (assoc session :identity (keyword (:email user)))]
           (-> (redirect "/")

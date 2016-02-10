@@ -36,7 +36,8 @@
                  [luminus-log4j "0.1.2"]
                  [hiccup "1.0.5"]
                  [camel-snake-kebab "0.3.2"]
-                 [com.draines/postal "1.11.3"]]
+                 [com.draines/postal "1.11.3"]
+                 [midje "1.8.3"]]
 
   :min-lein-version "2.0.0"
   :uberjar-name "misabogados-workflow.jar"
