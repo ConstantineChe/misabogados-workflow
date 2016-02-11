@@ -4,11 +4,13 @@
             [clojure.java.io :as io]
             [misabogados-workflow.model :refer [->Lead map->User map->BasicInfo]]
             [misabogados-workflow.layout.core :as layout]
+            [misabogados-workflow.layout :refer [render]]
             [hiccup.form :as form]
             [ring.util.response :refer [redirect]]
             [camel-snake-kebab.core :refer :all]
             [camel-snake-kebab.extras :refer [transform-keys]]
             [misabogados-workflow.db.core :as db]
+            [clojure.pprint :refer [pprint]]
             [misabogados-workflow.flow :refer [get-rendered-form dataset PManual PAutomatic]]
             [misabogados-workflow.flow-definition :refer [steps]])
   (:import [misabogados-workflow.model.Lead]
@@ -21,9 +23,10 @@
   ((keyword action) steps))
 
 (defn home-page [request]
-  (layout/blank-page "home" [:div.container [:div "hi"
-                               (map (fn [item] [:div.row [:h4 (key item)]
-                                               [:p (val item)]]) request)]]))
+  (render "home.html"))
+  ;; (layout/blank-page "home" [:div.container [:div "hi"
+                               ;; (map (fn [item] [:div.row [:h4 (key item)]
+                                               ;; [:p (val item)]]) request)]]))
 
 (defn update-lead
   [id {:keys [params]}]
@@ -64,6 +67,10 @@
                                                [:button.btn.btn-secondary "Save"]))))
 
 
+(defn save-document [doc]
+  (pprint doc)
+  {:status "ok"})
+
 (defroutes home-routes
   (GET "/" [] home-page)
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
@@ -78,4 +85,9 @@
   (PUT "/lead/:id/action/:action" [id action :as request]
        (if (contains? steps (keyword action)) (do-action id action request)))
   (POST "/leads" [] create-lead)
-  (GET "/leads" [] (layout/dashboard (db/get-leads))))
+  (GET "/leads" [] (layout/dashboard (db/get-leads)))
+  
+
+  (GET "/login1" [] (fn [_] {:status "ok"}))
+
+)
