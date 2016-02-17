@@ -86,8 +86,4 @@
        (if (contains? steps (keyword action)) (do-action id action request)))
   (POST "/leads" [] create-lead)
   (GET "/leads" [] (layout/dashboard (db/get-leads)))
-  
-
-  (GET "/login1" [] (fn [_] {:status "ok"}))
-
 )
