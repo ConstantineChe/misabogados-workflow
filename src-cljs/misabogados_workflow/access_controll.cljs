@@ -4,7 +4,7 @@
 
 
 
-(def no-role-links [["/" "Home" :home]
+(def no-role-links [["#" "Home" :home]
                     ["#about" "About" :about]
                     ["#debug" "Debug" :debug]])
 

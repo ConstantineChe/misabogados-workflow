@@ -9,8 +9,6 @@
             [misabogados-workflow.access-controll :as ac])
   (:import goog.History))
 
-(def user (r/atom {}))
-
 (defn handler [response]
   (.log js/console response))
 
@@ -78,7 +76,8 @@
            (if-not (logged-in?)
              [nav-link "#/login" "Login" :login collapsed?]
              [:ul.nav.navbar-nav>a.navbar-brand
-              {:on-click #(logout!)} "Logout"])]
+              {:on-click #(logout!)
+               :href "#"} "Logout"])]
               (doall (map (fn [item]  (apply nav-link (conj item collapsed?))) (:nav-links @ac/components)))
               )]])))
 
@@ -124,20 +123,44 @@
        [:button {:on-click #(login! @email @password error)} "Login"]]
       )))
 
+
+
 (defn dashboard []
   (let [users (r/atom {})
         error (r/atom nil)
+        selected-cell (r/atom [])
         _ (GET (str js/context "/users")
                {:handler (fn [response]
                            (reset! users response) nil)
                 :error-handler (fn [response] (reset! error (get "error" response)) nil)})]
     (fn []
-      [:div.container [:legend "dashboard"]
-           [:p "Role: " (:role (session/get :user))]
-           (if-not (nil? @error) [:p.error (str @error)])
-           (if-let [users (seq @users)]
-             (for [user users]
-               [:p (str user)]))])))
+      [:div.container
+       (if (:role (session/get :user))
+         [:legend (clojure.string/capitalize (:role (session/get :user)))  " Dashboard"])
+       (if-not (nil? @error) [:p.error (str @error)])
+       (if-let [users (seq @users)]
+         [:div.container
+          [:legend "Users"]
+          [:p (str @selected-cell)]
+          [:table.table.table-hover.table-striped.panel-body
+           [:th "name"]
+           [:th "email"]
+           [:th "role"]
+           [:th "verified"]
+           (doall
+            (for [user users]
+              [:tr {:key (get user "email")}
+               (let [name (r/atom (get user "name"))]
+                 [:td {:on-click #(reset! selected-cell [(get user "email") "name"])
+                       :on-blur #(do (reset! selected-cell []))}
+                  (if (= @selected-cell [(get user "email") "name"])
+                    [:input {:autoFocus "true" :type :text :value @name}]
+                    @name)])
+               [:td (get user "email")]
+               [:td (get user "role")]
+               [:td (str (get user "verified"))]]))]])])))
+
+
 
 (defn home-page []
   [:div.container
@@ -204,9 +227,9 @@
        {:handler (fn [response]
                    (if-not (nil? (get response "identity"))
                      (session/put! :user {:identity (get response "identity" )
-                                                              :role (get response "role")}))
-                   nil)})
-  (ac/reset-access!))
+                                          :role (get response "role")}))
+                   (ac/reset-access!)
+                   nil)}))
 
 (defn mount-components []
   (r/render [#'navbar] (.getElementById js/document "navbar"))
