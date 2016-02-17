@@ -36,10 +36,14 @@
                                                 (if (= (get response "status") "ok")
                                                   (do (session/put! :user {:identity (get response "identity")
                                                                            :role (get response "role")})
-                                                      (ac/reset-access!))
+                                                      (ac/reset-access!)
+                                                      (aset js/window "location" "#/dashboard"))
                                                   (reset! error (get response "error")))
                                                 nil)
-                                     :error-handler (fn [response] (.log js/console response) nil)} ))))
+                                     :error-handler (fn [response]
+                                                      (.log js/console response)
+                                                      (reset! error "Invalid anti-forgery token")
+                                                      nil)} ))))
 
 (defn logout! []
   (GET (str js/context "/logout") {:handler (fn [response] (session/put! :user {}) (ac/reset-access!) nil)}))
@@ -53,11 +57,13 @@
 
 
 (defn nav-link [uri title page collapsed?]
-  [:ul.nav.navbar-nav>a.navbar-brand
-   {:class (when (= page (session/get :page)) "active")
-    :href uri
-    :on-click #(reset! collapsed? true)}
-   title])
+  [:ul.nav.navbar-nav {:key title}
+   [:a.navbar-brand
+    {:class (when (= page (session/get :page)) "active")
+
+     :href uri
+     :on-click #(reset! collapsed? true)}
+    title]])
 
 (defn navbar []
   (let [collapsed? (r/atom true)]
@@ -73,7 +79,7 @@
              [nav-link "#/login" "Login" :login collapsed?]
              [:ul.nav.navbar-nav>a.navbar-brand
               {:on-click #(logout!)} "Logout"])]
-              (map #(apply nav-link (conj % collapsed?)) (:nav-links @ac/components))
+              (doall (map (fn [item]  (apply nav-link (conj item collapsed?))) (:nav-links @ac/components)))
               )]])))
 
 (defn debug []
@@ -124,13 +130,14 @@
         _ (GET (str js/context "/users")
                {:handler (fn [response]
                            (reset! users response) nil)
-                :error-handler (fn [response] (reset! error (get "error" response)))})]
-    [:div.container [:legend "dashboard"]
-     [:p "Role: " (:role (session/get :user))]
-     (if (@error) [:p.error @error])
-     (if-let [users (seq @users)]
-       (for [user users]
-         [:p (str user)]))]))
+                :error-handler (fn [response] (reset! error (get "error" response)) nil)})]
+    (fn []
+      [:div.container [:legend "dashboard"]
+           [:p "Role: " (:role (session/get :user))]
+           (if-not (nil? @error) [:p.error (str @error)])
+           (if-let [users (seq @users)]
+             (for [user users]
+               [:p (str user)]))])))
 
 (defn home-page []
   [:div.container
@@ -192,11 +199,21 @@
 (defn fetch-docs! []
   (GET (str js/context "/docs") {:handler #(session/put! :docs %)}))
 
+(defn get-session! []
+  (GET (str js/context "/session")
+       {:handler (fn [response]
+                   (if-not (nil? (get response "identity"))
+                     (session/put! :user {:identity (get response "identity" )
+                                                              :role (get response "role")}))
+                   nil)})
+  (ac/reset-access!))
+
 (defn mount-components []
   (r/render [#'navbar] (.getElementById js/document "navbar"))
   (r/render [#'page] (.getElementById js/document "app")))
 
 (defn init! []
+  (get-session!)
   (fetch-docs!)
   (hook-browser-navigation!)
   (mount-components))

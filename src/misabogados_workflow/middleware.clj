@@ -14,7 +14,8 @@
             [buddy.auth :refer [authenticated?]]
             [misabogados-workflow.layout :refer [*identity*]]
             [misabogados-workflow.config :refer [defaults]]
-            [ring.middleware.json :as json])
+            [ring.middleware.json :as json]
+            [cheshire.generate :refer [add-encoder]])
   (:import [javax.servlet ServletContext]))
 
 (defn wrap-context [handler]
@@ -31,6 +32,8 @@
                 ;; instead
                 (:app-context env))]
       (handler request))))
+
+(add-encoder org.bson.types.ObjectId (fn [s g] (.writeString g (str s))))
 
 (defn wrap-json [handler]
   (-> handler json/wrap-json-response json/wrap-json-params))

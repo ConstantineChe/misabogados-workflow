@@ -5,8 +5,8 @@
 
 
 (def no-role-links [["/" "Home" :home]
-                    ["#/about" "About" :about]
-                    ["#/debug" "Debug" :debug]])
+                    ["#about" "About" :about]
+                    ["#debug" "Debug" :debug]])
 
 (def components (r/atom {:nav-links no-role-links}))
 

@@ -52,4 +52,4 @@
   (GET "/logout" [] logout)
   (GET "/csrf-token" [] (content-type (ok {:token *anti-forgery-token*}) "application/json"))
   (GET "/request" request (str request))
-  (GET "/session" request (content-type (ok {:identity (:identity request) :role (-> request :session :role)}))))
+  (GET "/session" request (content-type (ok {:identity (:identity request) :role (-> request :session :role)}) "application/json")))

@@ -14,7 +14,8 @@
 
 (def admin-access
   {:handler (fn [request] (if (= :admin (-> request :session :role))
-                           success))
+                           true
+                           (error "no")))
    :on-error (fn [request value] {:status 403
                                  :header {}
                                  :body {:error "not autherized"
@@ -22,5 +23,5 @@
 
 
 (defroutes users-routes
-  (GET "/users" [] (restrict (response {:status 200 :body (str (db/get-users))}) admin-access))
+  (GET "/users" [] (restrict (fn [request] (response (doall (db/get-users)))) admin-access))
   (GET "/user/:id" [] (fn [request] (response {:status 200 :body (str (-> request :params :id) (-> request :session :role))}))))
