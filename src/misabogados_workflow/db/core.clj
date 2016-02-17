@@ -29,6 +29,9 @@
 (defn get-user [email]
   (mc/find-one-as-map @db "users" {:email email}))
 
+(defn get-users []
+  (mc/find-maps @db "users"))
+
 (defn get-lead [id]
   (mc/find-one-as-map @db "leads" {:_id (oid id)}))
 

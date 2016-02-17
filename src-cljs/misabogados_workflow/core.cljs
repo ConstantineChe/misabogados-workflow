@@ -5,16 +5,22 @@
             [goog.events :as events]
             [goog.history.EventType :as HistoryEventType]
             [markdown.core :refer [md->html]]
-            [ajax.core :refer [GET POST ajax-request]])
+            [ajax.core :refer [GET POST ajax-request]]
+            [misabogados-workflow.access-controll :as ac])
   (:import goog.History))
 
 (def user (r/atom {}))
 
 (defn handler [response]
-  (.log js/console (str response)))
+  (.log js/console response))
+
+(defn https? []
+  (= "https:" (.-protocol js/location)))
 
 
-(defn login! [email password error] 
+(def csrf-token (r/atom nil))
+
+(defn login! [email password error]
   (cond
    (empty? email)
    (reset! error "Please enter email")
@@ -23,11 +29,27 @@
    :else
    (do
     (reset! error nil)
-    (GET (str js/context "/login1") {:handler handler} ))))
+    (POST (str js/context "/login") {:params {:email email
+                                              :password password}
+                                     :headers {:X-CSRF-Token  @csrf-token}
+                                     :handler (fn [response] (.log js/console (str response))
+                                                (if (= (get response "status") "ok")
+                                                  (do (session/put! :user {:identity (get response "identity")
+                                                                           :role (get response "role")})
+                                                      (ac/reset-access!))
+                                                  (reset! error (get response "error")))
+                                                nil)
+                                     :error-handler (fn [response] (.log js/console response) nil)} ))))
 
-(defn logged-in? [] (not (empty? @user)))
+(defn logout! []
+  (GET (str js/context "/logout") {:handler (fn [response] (session/put! :user {}) (ac/reset-access!) nil)}))
+
+(defn logged-in? [] (not (empty? (session/get :user))))
 
 
+
+(defn update-csrf-token []
+  (GET (str js/context "/csrf-token") {:handler #(reset! csrf-token (get % "token"))}))
 
 
 (defn nav-link [uri title page collapsed?]
@@ -36,10 +58,6 @@
     :href uri
     :on-click #(reset! collapsed? true)}
    title])
-
-(defn not-logged-in-menu []
-  [nav-link "#/login" "Login" :login])
-
 
 (defn navbar []
   (let [collapsed? (r/atom true)]
@@ -50,11 +68,27 @@
        [:div.collapse.navbar-toggleable-xs
         (when-not @collapsed? {:class "in"})
         [:a.navbar-brand {:href "#/"} "misabogados-workflow"]
-        [:ul.nav.navbar-nav
-         [nav-link "#/" "Home" :home collapsed?]
-         [nav-link "#/about" "About" :about collapsed?]
-         (if-not (logged-in?)
-           (not-logged-in-menu))]]])))
+        (conj [:ul.nav.navbar-nav
+           (if-not (logged-in?)
+             [nav-link "#/login" "Login" :login collapsed?]
+             [:ul.nav.navbar-nav>a.navbar-brand
+              {:on-click #(logout!)} "Logout"])]
+              (map #(apply nav-link (conj % collapsed?)) (:nav-links @ac/components))
+              )]])))
+
+(defn debug []
+  (let [request (r/atom nil)
+        _ (GET (str js/context "/request") {:handler (fn [resp]
+                                                       (do (.log js/console resp)
+                                                           (reset! request (str resp)))
+                                                       nil)})
+        _ (ac/reset-access!)]
+    (fn []
+      [:div.container
+       [:legend "Debug"]
+       [:h3 "request"] [:p @request]
+       [:h3 "ac"] [:p (str (ac/get-access))]
+       [:h3 "session"] [:p (str (dissoc @session/state :docs))]])))
 
 (defn about-page []
   [:div.container
@@ -65,10 +99,14 @@
 (defn login-page []
   (let [email (r/atom "")
         password (r/atom "")
-        error (r/atom nil)]
+        error (r/atom nil)
+        warnings (r/atom nil)
+        _ (update-csrf-token)]
     (fn []
+      (if (not https?) (reset! warnings "Not using ssl"))
       [:div.login-form
        (if-let [error @error] [:p.error error])
+       (if-let [warning @warnings] [:p.warning warning])
        [:input {:type :email
                 :value @email
                 :on-change #(reset! email (-> %  .-target .-value))
@@ -77,7 +115,22 @@
                 :value @password
                 :on-change #(reset! password (-> %  .-target .-value))
                 }]
-       [:button {:on-click #(login! @email @password error)} "Login"]])))
+       [:button {:on-click #(login! @email @password error)} "Login"]]
+      )))
+
+(defn dashboard []
+  (let [users (r/atom {})
+        error (r/atom nil)
+        _ (GET (str js/context "/users")
+               {:handler (fn [response]
+                           (reset! users response) nil)
+                :error-handler (fn [response] (reset! error (get "error" response)))})]
+    [:div.container [:legend "dashboard"]
+     [:p "Role: " (:role (session/get :user))]
+     (if (@error) [:p.error @error])
+     (if-let [users (seq @users)]
+       (for [user users]
+         [:p (str user)]))]))
 
 (defn home-page []
   [:div.container
@@ -97,7 +150,9 @@
 (def pages
   {:home #'home-page
    :about #'about-page
-   :login #'login-page})
+   :login #'login-page
+   :debug #'debug
+   :dashboard #'dashboard})
 
 (defn page []
   [(pages (session/get :page))])
@@ -114,6 +169,12 @@
 
 (secretary/defroute "/login" []
   (session/put! :page :login))
+
+(secretary/defroute "/debug" []
+  (session/put! :page :debug))
+
+(secretary/defroute "/dashboard" []
+  (session/put! :page :dashboard))
 
 ;; -------------------------
 ;; History

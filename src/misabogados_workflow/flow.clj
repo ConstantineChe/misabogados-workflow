@@ -65,7 +65,8 @@
                val (val field)]
            (if (nil? val)
              (if (record-exist? key) nil
-                 {key (->TextField  (util/remove-kebab (name key)) (name key) (get-in  data (vec (map ->snake_case_keyword (conj ancestry key))) ))})
+                 {key (->TextField  (util/remove-kebab (name key)) (name key)
+                                    (get-in  data (vec (map ->snake_case_keyword (conj ancestry key))) ))})
              {key ((get-factory key) (populate-struct val data (conj ancestry key)))}))) struct))
 
 (defn get-rendered-form [fieldset dataset]

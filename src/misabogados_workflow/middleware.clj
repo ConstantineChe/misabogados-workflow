@@ -13,7 +13,8 @@
             [buddy.auth.accessrules :refer [restrict]]
             [buddy.auth :refer [authenticated?]]
             [misabogados-workflow.layout :refer [*identity*]]
-            [misabogados-workflow.config :refer [defaults]])
+            [misabogados-workflow.config :refer [defaults]]
+            [ring.middleware.json :as json])
   (:import [javax.servlet ServletContext]))
 
 (defn wrap-context [handler]
@@ -30,6 +31,9 @@
                 ;; instead
                 (:app-context env))]
       (handler request))))
+
+(defn wrap-json [handler]
+  (-> handler json/wrap-json-response json/wrap-json-params))
 
 (defn wrap-internal-error [handler]
   (fn [req]
@@ -82,6 +86,7 @@
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
       wrap-auth
+      wrap-csrf
       wrap-formats
       wrap-webjars
       wrap-flash

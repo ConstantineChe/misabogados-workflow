@@ -4,7 +4,9 @@
             [misabogados-workflow.routes.home :refer [home-routes]]
             [misabogados-workflow.routes.registration :refer [registration-routes]]
             [misabogados-workflow.routes.session :refer [session-routes]]
+            [misabogados-workflow.routes.users :refer [users-routes]]
             [misabogados-workflow.middleware :as middleware]
+            [ring.middleware.json :as json]
             [clojure.tools.logging :as log]
             [compojure.route :as route]
             [misabogados-workflow.db.core :as db]
@@ -36,12 +38,13 @@
 
 (def app-routes
   (routes
-   (wrap-routes #'home-routes middleware/wrap-csrf)
-   (wrap-routes #'registration-routes middleware/wrap-csrf)
-   (wrap-routes #'session-routes middleware/wrap-csrf)
-    (route/not-found
-      (:body
-        (error-page {:status 404
-                     :title "page not found"})))))
+   home-routes
+   registration-routes
+   session-routes
+   users-routes
+   (route/not-found
+    (:body
+     (error-page {:status 404
+                  :title "page not found"})))))
 
 (def app (middleware/wrap-base #'app-routes))
