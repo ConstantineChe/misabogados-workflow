@@ -20,10 +20,11 @@
 (defn lawyer-access [request] (role-access request :lawyer))
 
 (defroutes users-routes
-  (GET "/users" [] (restrict (fn [request] (response (doall (db/get-users)))) 
+  (GET "/users" [] (restrict (fn [request] (response (doall (db/get-users))))
                              {:handler {:or [admin-access lawyer-access]}
                               :on-error (fn [request value] {:status 403
                                                              :header {}
-                                                             :body {:error "not autherized"
+                                                            :body {:error "not autherized"
+                                                                   :value value
                                                                     :role (-> request :session :role)}})}))
   (GET "/user/:id" [] (fn [request] (response {:status 200 :body (str (-> request :params :id) (-> request :session :role))}))))
