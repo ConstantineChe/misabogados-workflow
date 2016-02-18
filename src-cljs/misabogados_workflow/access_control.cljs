@@ -2,8 +2,6 @@
   (:require [reagent.core :as r]
             [reagent.session :as session]))
 
-
-
 (def no-role-links [["#" "Home" :home]
                     ["#about" "About" :about]
                     ["#debug" "Debug" :debug]])

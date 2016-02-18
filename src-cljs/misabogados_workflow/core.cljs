@@ -6,7 +6,7 @@
             [goog.history.EventType :as HistoryEventType]
             [markdown.core :refer [md->html]]
             [ajax.core :refer [GET POST ajax-request]]
-            [misabogados-workflow.access-controll :as ac])
+            [misabogados-workflow.access-control :as ac])
   (:import goog.History))
 
 (defn handler [response]
