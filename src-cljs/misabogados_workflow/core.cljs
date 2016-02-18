@@ -5,11 +5,9 @@
             [goog.events :as events]
             [goog.history.EventType :as HistoryEventType]
             [markdown.core :refer [md->html]]
-            [ajax.core :refer [GET]]
             [misabogados-workflow.access-control :as ac]
-            [misabogados-workflow.elements :refer [nav-link]]
             [misabogados-workflow.dashboard :refer [dashboard]]
-            [misabogados-workflow.ajax :refer [POST PUT DELETE csrf-token update-csrf-token]])
+            [misabogados-workflow.ajax :refer [GET POST csrf-token update-csrf-token!]])
   (:import goog.History))
 
 (defn https? []
@@ -32,7 +30,7 @@
                                                                            :role (get response "role")})
                                                       (ac/reset-access!)
                                                       (aset js/window "location" "#/dashboard")
-                                                      (update-csrf-token))
+                                                      (update-csrf-token!))
                                                   (reset! error (get response "error")))
                                                 nil)
                                      :error-handler (fn [response]
@@ -42,10 +40,24 @@
 (defn logout! []
   (GET (str js/context "/logout") {:handler (fn [response] (session/put! :user {})
                                               (ac/reset-access!)
-                                              (update-csrf-token)
+                                              (update-csrf-token!)
                                               nil)}))
 
 (defn logged-in? [] (not (empty? (session/get :user))))
+
+(defn nav-link
+  ([uri title page collapsed?]
+   [:ul.nav.navbar-nav {:key title}
+    [:a.navbar-brand
+     {:class (when (= page (session/get :page)) "active")
+      :href uri
+      :on-click #(reset! collapsed? true)}
+     title]])
+  ([uri title collapsed?]
+   [:ul.nav.navbar-nav>a.navbar-brand
+    {:on-click #(do (swap! collapsed? not)
+                    (logout!))
+               :href uri} title]))
 
 (defn navbar []
   (let [collapsed? (r/atom true)]
@@ -56,12 +68,7 @@
        [:div.collapse.navbar-toggleable-xs
         (when-not @collapsed? {:class "in"})
         [:a.navbar-brand {:href "#/"} "misabogados-workflow"]
-        (conj [:ul.nav.navbar-nav
-           (if-not (logged-in?)
-             [nav-link "#/login" "Login" :login collapsed?]
-             [:ul.nav.navbar-nav>a.navbar-brand
-              {:on-click #(logout!)
-               :href "#"} "Logout"])]
+        (into [:ul.nav.navbar-nav]
               (doall (map (fn [item]  (apply nav-link (conj item collapsed?))) (:nav-links @ac/components)))
               )]])))
 
@@ -90,7 +97,7 @@
         password (r/atom "")
         error (r/atom nil)
         warnings (r/atom nil)
-        _ (update-csrf-token)]
+        _ (update-csrf-token!)]
     (fn []
       (if (not https?) (reset! warnings "Not using ssl"))
       [:div.login-form
@@ -182,6 +189,7 @@
 
 (defn init! []
   (get-session!)
+  (update-csrf-token!)
   (fetch-docs!)
   (hook-browser-navigation!)
   (mount-components))

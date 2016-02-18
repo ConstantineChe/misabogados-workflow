@@ -4,8 +4,11 @@
 
 (def csrf-token (r/atom nil))
 
-(defn update-csrf-token []
+(defn update-csrf-token! []
   (ajax/GET (str js/context "/csrf-token") {:handler #(reset! csrf-token (get % "token"))}))
+
+(defn GET [url body]
+  (ajax/GET url body))
 
 (defn POST [url body]
   (ajax/POST url (if-not (contains? :headers body)

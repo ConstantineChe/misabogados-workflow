@@ -5,7 +5,7 @@
 
 (defn role-access [request role] (if (is-role? request role)
                                    true
-                                   (error "no")))
+                                   (error (str (name role) " access required"))))
 
 (defn admin-access [request] (role-access request :admin))
 
