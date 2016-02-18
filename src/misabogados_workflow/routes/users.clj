@@ -9,21 +9,12 @@
             [misabogados-workflow.db.core :as db]
             [buddy.auth :refer [authenticated?]]
             [misabogados-workflow.layout.core :as layout]
-            [buddy.auth.accessrules :refer [restrict success error]]))
-
-(defn role-access [request role] (if (= role (-> request :session :role))
-                                   true
-                                   (error "no")))
-
-(defn admin-access [request] (role-access request :admin))
-
-(defn lawyer-access [request] (role-access request :lawyer))
+            [misabogados-workflow.access-control :as ac]
+            [misabogados-workflow.middleware :as mw]
+            [buddy.auth.accessrules :refer [restrict]]))
 
 (defroutes users-routes
   (GET "/users" [] (restrict (fn [request] (response (doall (db/get-users)))) 
-                             {:handler {:or [admin-access lawyer-access]}
-                              :on-error (fn [request value] {:status 403
-                                                             :header {}
-                                                             :body {:error "not autherized"
-                                                                    :role (-> request :session :role)}})}))
+                             {:handler {:or [ac/admin-access ac/lawyer-access]}
+                              :on-error mw/on-error-json}))
   (GET "/user/:id" [] (fn [request] (response {:status 200 :body (str (-> request :params :id) (-> request :session :role))}))))

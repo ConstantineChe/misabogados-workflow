@@ -70,6 +70,12 @@
     {:status 403
      :title (str "Access to " (:uri request) " is not authorized")}))
 
+(defn on-error-json [request value] 
+  {:status 403
+   :header {}
+   :body {:error "not autherized"
+          :role (-> request :session :role)}})
+
 (defn wrap-restricted [handler]
   (restrict handler {:handler authenticated?
                      :on-error on-error}))
