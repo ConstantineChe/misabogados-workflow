@@ -5,20 +5,15 @@
             [goog.events :as events]
             [goog.history.EventType :as HistoryEventType]
             [markdown.core :refer [md->html]]
-            [ajax.core :refer [GET POST ajax-request]]
+            [ajax.core :refer [GET]]
             [misabogados-workflow.access-control :as ac]
             [misabogados-workflow.elements :refer [nav-link]]
-            [misabogados-workflow.dashboard :refer [dashboard]])
+            [misabogados-workflow.dashboard :refer [dashboard]]
+            [misabogados-workflow.ajax :refer [POST PUT DELETE csrf-token update-csrf-token]])
   (:import goog.History))
-
-(defn handler [response]
-  (.log js/console response))
 
 (defn https? []
   (= "https:" (.-protocol js/location)))
-
-
-(def csrf-token (r/atom nil))
 
 (defn login! [email password error]
   (cond
@@ -31,32 +26,26 @@
     (reset! error nil)
     (POST (str js/context "/login") {:params {:email email
                                               :password password}
-                                     :headers {:X-CSRF-Token  @csrf-token}
-                                     :handler (fn [response] (.log js/console (str response))
+                                     :handler (fn [response]
                                                 (if (= (get response "status") "ok")
                                                   (do (session/put! :user {:identity (get response "identity")
                                                                            :role (get response "role")})
                                                       (ac/reset-access!)
-                                                      (aset js/window "location" "#/dashboard"))
+                                                      (aset js/window "location" "#/dashboard")
+                                                      (update-csrf-token))
                                                   (reset! error (get response "error")))
                                                 nil)
                                      :error-handler (fn [response]
-                                                      (.log js/console response)
                                                       (reset! error "Invalid anti-forgery token")
                                                       nil)} ))))
 
 (defn logout! []
-  (GET (str js/context "/logout") {:handler (fn [response] (session/put! :user {}) (ac/reset-access!) nil)}))
+  (GET (str js/context "/logout") {:handler (fn [response] (session/put! :user {})
+                                              (ac/reset-access!)
+                                              (update-csrf-token)
+                                              nil)}))
 
 (defn logged-in? [] (not (empty? (session/get :user))))
-
-
-
-(defn update-csrf-token []
-  (GET (str js/context "/csrf-token") {:handler #(reset! csrf-token (get % "token"))}))
-
-
-
 
 (defn navbar []
   (let [collapsed? (r/atom true)]
@@ -79,7 +68,7 @@
 (defn debug []
   (let [request (r/atom nil)
         _ (GET (str js/context "/request") {:handler (fn [resp]
-                                                       (do (.log js/console resp)
+                                                       (do
                                                            (reset! request (str resp)))
                                                        nil)})
         _ (ac/reset-access!)]
@@ -117,9 +106,6 @@
                 }]
        [:button {:on-click #(login! @email @password error)} "Login"]]
       )))
-
-
-
 
 (defn home-page []
   [:div.container
