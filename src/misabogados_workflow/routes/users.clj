@@ -15,7 +15,7 @@
 
 (defroutes users-routes
   (GET "/users" [] (restrict (fn [request] (response (doall (db/get-users))))
-                             {:handler {:or [admin-access lawyer-access]}
+                             {:handler {:or [ac/admin-access ac/lawyer-access]}
                               :on-error (fn [request value] {:status 403
                                                              :header {}
                                                             :body {:error "not autherized"
