@@ -75,7 +75,10 @@
     (fn [] 
       [:div.container 
        [:h1 "PagoLegal"]
-       [:button.btn {:type :button :data-toggle "modal" :data-target "#payment-form"} "Create payment request"]
+       [:button.btn {:type :button
+                     :on-click #(do 
+                                  (show-modal "payment-form") 
+                                  (reset! form-data {}))} "Create payment request"]
        [table]
        [bind-fields 
         payment-form-template
