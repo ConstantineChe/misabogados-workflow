@@ -15,16 +15,16 @@
 (defn reset-access! []
   (cond (= "client" (:role (session/get :user)))
         (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
-                                                            ["#" "Logout"]])})
+                                                            ["#logout" "Logout"]])})
         (= "lawyer" (:role (session/get :user)))
         (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
                                                             ["#payments" "Pagos" :payments]
-                                                            ["#" "Logout"]
+                                                            ["#logout" "Logout"]
                                                             ])})
         (= "admin" (:role (session/get :user)))
         (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
                                                             ["#payments" "Pagos" :payments]
-                                                            ["#" "Logout"
+                                                            ["#logout" "Logout"
                                                              ]])})
         :default
         (reset! components {:nav-links (into no-role-links [["#login" "Login" :login]])})))

@@ -1,6 +1,6 @@
 (ns misabogados-workflow.payments
   (:require [reagent.core :as r]
-            [json-html.core :refer [edn->hiccup]]
+            [misabogados-workflow.utils :as u]
             [reagent-forms.core :refer [bind-fields init-field value-of]]))
 
 (def table-data (r/atom 
@@ -8,25 +8,14 @@
                   "2" {:client "Tobias Knight" :amount 200}}
                  ))
 
-
-
 (def form-data (r/atom {:client "Name" :amount 1000}))
 
 ;;probably for move into helpers
-(defn row [label input]
-  [:div.row
-   [:div.col-md-4 [:label label]]
-   [:div.col-md-8 input]])
-
 (defn input [label type id]
-  (row label [:input.form-control {:field type :id id}]))
+  [:div.form-group 
+   [:label {:for id} label]
+   [:input.form-control {:field type :id id}]])
 
-(def jquery (js* "$"))
-
-(defn show-modal [id]
-  (-> 
-   (jquery (str "#" id))
-   (.modal "show")))
 ;; 
 
 ;;todo server request
@@ -46,7 +35,7 @@
       (input "Client name" :text :client)
       (input "Amount" :numeric :amount)]
      [:div.modal-footer
-      [:button.btn.btn-default {:type :button} "Cerrar"]
+      [:button.btn.btn-default {:type :button :data-dismiss :modal} "Cerrar"]
       [:button.btn.btn-primary {:type :button} "Guardar"]]]
     ]]
   )
@@ -64,7 +53,7 @@
                 values (get @table-data row-key)]
            [:tr {:key row-key
                  :on-click #(do 
-                              (show-modal "payment-form") 
+                              (u/show-modal "payment-form") 
                               (reset! form-data (into {:_id row-key} values)))}
             [:td (:client values)]
             [:td (:amount values)]
@@ -77,7 +66,7 @@
        [:h1 "PagoLegal"]
        [:button.btn {:type :button
                      :on-click #(do 
-                                  (show-modal "payment-form") 
+                                  (u/show-modal "payment-form") 
                                   (reset! form-data {}))} "Create payment request"]
        [table]
        [bind-fields 

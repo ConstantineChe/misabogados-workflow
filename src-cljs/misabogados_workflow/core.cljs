@@ -6,6 +6,7 @@
             [goog.history.EventType :as HistoryEventType]
             [markdown.core :refer [md->html]]
             [misabogados-workflow.access-control :as ac]
+            [misabogados-workflow.utils :as u]
             [misabogados-workflow.dashboard :refer [dashboard]]
             [misabogados-workflow.payments :refer [payments]]
             [misabogados-workflow.ajax :refer [GET POST csrf-token update-csrf-token!]])
@@ -47,31 +48,37 @@
 (defn logged-in? [] (not (empty? (session/get :user))))
 
 (defn nav-link
-  ([uri title page collapsed?]
-   [:ul.nav.navbar-nav {:key title}
-    [:a.navbar-brand
-     {:class (when (= page (session/get :page)) "active")
-      :href uri
-      :on-click #(reset! collapsed? true)}
+  ([uri title page]
+   [:li {:key title
+         :class (when (= page (session/get :page)) "active")}
+    [:a
+     {:href uri
+      :on-click #(-> 
+                  (u/jquery "#navbar-hamburger:visible")
+                  (.click))}
      title]])
-  ([uri title collapsed?]
-   [:ul.nav.navbar-nav>a.navbar-brand
-    {:on-click #(do (swap! collapsed? not)
-                    (logout!))
-               :href uri} title]))
+  ([uri title]
+   [:li>a
+    {:href uri
+      :on-click #(-> 
+                  (u/jquery "#navbar-hamburger:visible")
+                  (.click))} title]))
 
 (defn navbar []
-  (let [collapsed? (r/atom true)]
-    (fn []
-      [:nav.navbar.navbar-light.bg-faded
-       [:button.navbar-toggler.hidden-sm-up
-        {:on-click #(swap! collapsed? not)} "☰"]
-       [:div.collapse.navbar-toggleable-xs
-        (when-not @collapsed? {:class "in"})
-        [:a.navbar-brand {:href "#/"} "misabogados-workflow"]
-        (into [:ul.nav.navbar-nav]
-              (doall (map (fn [item]  (apply nav-link (conj item collapsed?))) (:nav-links @ac/components)))
-              )]])))
+  
+  (fn []
+    [:nav.navbar.navbar-default
+     [:div.container-fluid
+      [:div.navbar-header
+       [:button#navbar-hamburger.navbar-toggle.collapsed {:data-toggle "collapse" :data-target "#navbar-body" :aria-expanded "false"}
+        [:span.sr-only "Toggle navigation"] [:span.icon-bar][:span.icon-bar][:span.icon-bar]]
+       [:a.navbar-brand {:href "#/"} "Misabogados Workflow"]]
+      
+      [:div#navbar-body.navbar-collapse.collapse
+       
+       (into [:ul.nav.navbar-nav]
+             (doall (map (fn [item]  (apply nav-link item)) (:nav-links @ac/components)))
+             )]]]))
 
 (defn debug []
   (let [request (r/atom nil)
@@ -162,6 +169,10 @@
 
 (secretary/defroute "/payments" []
   (session/put! :page :payments))
+
+(secretary/defroute "/logout" []
+  (do (logout!)
+      (session/put! :page :home)))
 
 ;; -------------------------
 ;; History
