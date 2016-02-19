@@ -27,7 +27,8 @@
 (defn signup [request]
   (let [session (:session request)]
       (db/create-user (into {:verification-code (-> request :params :email get-verification-code)
-                           :password (-> request :params :password encrypt)}
+                             :password (-> request :params :password encrypt)
+                             :role :client}
                           (filter #(contains? permitted  (key %))
                                   (:params request))))
       (-> (redirect "/") (assoc :session (assoc session :identity (-> request :params :email keyword))))))

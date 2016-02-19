@@ -7,6 +7,7 @@
             [markdown.core :refer [md->html]]
             [misabogados-workflow.access-control :as ac]
             [misabogados-workflow.dashboard :refer [dashboard]]
+            [misabogados-workflow.payments :refer [payments]]
             [misabogados-workflow.ajax :refer [GET POST csrf-token update-csrf-token!]])
   (:import goog.History))
 
@@ -134,7 +135,8 @@
    :about #'about-page
    :login #'login-page
    :debug #'debug
-   :dashboard #'dashboard})
+   :dashboard #'dashboard
+   :payments #'payments})
 
 (defn page []
   [(pages (session/get :page))])
@@ -157,6 +159,9 @@
 
 (secretary/defroute "/dashboard" []
   (session/put! :page :dashboard))
+
+(secretary/defroute "/payments" []
+  (session/put! :page :payments))
 
 ;; -------------------------
 ;; History

@@ -18,9 +18,13 @@
                                                             ["#" "Logout"]])})
         (= "lawyer" (:role (session/get :user)))
         (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
-                                                            ["#" "Logout"]])})
+                                                            ["#payments" "Pagos" :payments]
+                                                            ["#" "Logout"]
+                                                            ])})
         (= "admin" (:role (session/get :user)))
         (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
-                                                            ["#" "Logout"]])})
+                                                            ["#payments" "Pagos" :payments]
+                                                            ["#" "Logout"
+                                                             ]])})
         :default
         (reset! components {:nav-links (into no-role-links [["#login" "Login" :login]])})))

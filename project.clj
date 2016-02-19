@@ -38,7 +38,8 @@
                  [hiccup "1.0.5"]
                  [camel-snake-kebab "0.3.2"]
                  [com.draines/postal "1.11.3"]
-                 [midje "1.8.3"]]
+                 [midje "1.8.3"]
+                 [reagent-forms "0.5.17"]]
 
   :min-lein-version "2.0.0"
   :uberjar-name "misabogados-workflow.jar"
@@ -116,7 +117,7 @@
                         :port       3000
                         :nrepl-port 7000
                         :log-path "log/misabogados.log"
-                        :database-url "mongodb://127.0.0.1/misabogados-workflow_dev"}
+                        :database-url "mongodb://127.0.0.1/misabogados_workflow_dev"}
                   }
    :project/test {:env {:test       true
                         :port       3001
