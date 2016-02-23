@@ -1,7 +1,8 @@
 (ns misabogados-workflow.access-control
-  (:require [buddy.auth.accessrules :refer [success error]]))
+  (:require [buddy.auth.accessrules :refer [success error]]
+            [misabogados-workflow.test.util :refer [*test-role*]]))
 
-(defn is-role? [request role] (= role (-> request :session :role)))
+(defn is-role? [request role] (if *test-role* (= role *test-role*) (= role (-> request :session :role))))
 
 (defn role-access [request role] (if (is-role? request role)
                                    true

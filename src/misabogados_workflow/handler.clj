@@ -5,6 +5,7 @@
             [misabogados-workflow.routes.registration :refer [registration-routes]]
             [misabogados-workflow.routes.session :refer [session-routes]]
             [misabogados-workflow.routes.users :refer [users-routes]]
+            [misabogados-workflow.routes.payments :refer [payments-routes]]
             [misabogados-workflow.middleware :as middleware]
             [ring.middleware.json :as json]
             [clojure.tools.logging :as log]
@@ -42,6 +43,7 @@
    registration-routes
    session-routes
    users-routes
+   payments-routes
    (route/not-found
     (:body
      (error-page {:status 404
