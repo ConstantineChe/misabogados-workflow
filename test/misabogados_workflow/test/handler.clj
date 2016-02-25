@@ -5,7 +5,7 @@
             [misabogados-workflow.handler :refer :all]
             [misabogados-workflow.db.core :as db]
             [ring-test.core :refer [run-ring-app]]
-            [misabogados-workflow.test.util :refer [*test-role* *test-csrf*]]))
+))
 
 (db/connect!)
 
