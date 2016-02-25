@@ -21,6 +21,7 @@
                  [ring/ring-defaults "0.1.5"]
                  [ring "1.4.0" :exclusions [ring/ring-jetty-adapter]]
                  [ring/ring-json "0.4.0"]
+                 [ring-test "0.1.3"]
                  [mount "0.1.8"]
                  [luminus-nrepl "0.1.2"]
                  [buddy "0.10.0"]

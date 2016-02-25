@@ -15,7 +15,8 @@
             [misabogados-workflow.layout :refer [*identity*]]
             [misabogados-workflow.config :refer [defaults]]
             [ring.middleware.json :as json]
-            [cheshire.generate :refer [add-encoder]])
+            [cheshire.generate :refer [add-encoder]]
+            [misabogados-workflow.test.util :refer [*test-csrf*]])
   (:import [javax.servlet ServletContext]))
 
 (defn wrap-context [handler]
@@ -49,12 +50,14 @@
                      :message "We've dispatched a team of highly trained gnomes to take care of the problem."})))))
 
 (defn wrap-csrf [handler]
-  (wrap-anti-forgery
-    handler
-    {:error-response
-     (error-page
+  (if-not *test-csrf*
+    (wrap-anti-forgery
+     handler
+     {:error-response
+      (error-page
        {:status 403
-        :title "Invalid anti-forgery token"})}))
+        :title "Invalid anti-forgery token"})})
+    handler))
 
 (defn wrap-formats [handler]
   (let [wrapped (wrap-restful-format
@@ -70,7 +73,7 @@
     {:status 403
      :title (str "Access to " (:uri request) " is not authorized")}))
 
-(defn on-error-json [request value] 
+(defn on-error-json [request value]
   {:status 403
    :header {}
    :body {:error "not autherized"

@@ -13,6 +13,9 @@
             [misabogados-workflow.middleware :as mw]
             [buddy.auth.accessrules :refer [restrict]]))
 
+(defn get-current-user-id [request]
+  (:_id (db/get-user (:identity request))))
+
 (defn access-error-handler [request value]
   {:status 403
    :header {}
@@ -20,13 +23,20 @@
           :role (-> request :session :role)}})
 
 (defn get-payments [request]
-  (response {:payments {} :status "ok" :role (-> request :session :role)}))
+  (let [payments (apply merge (map (fn [payment]
+                          {(str (:_id payment)) (dissoc payment :_id)})
+                        (db/get-payments (get-current-user-id request))))]
+    (response {:payments payments :status "ok" :role (-> request :session :role)})))
 
 (defn get-payment [id request]
   (response {:payment {:get id} :status "ok" :role (-> request :session :role)}))
 
 (defn create-payment [request]
-  (response {:payment {:create "new"} :status "ok" :role (-> request :session :role)}))
+  (db/create-payment (assoc (:params request) :lawyer (get-current-user-id request)))
+  (response {:payment {:create "new"}
+             :status "ok"
+             :role (-> request :session :role)
+             :params (:params request)}))
 
 (defn update-payment [id request]
   (response {:payment {:update id} :status "ok" :role (-> request :session :role)}))

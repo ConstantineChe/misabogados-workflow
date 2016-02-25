@@ -47,3 +47,12 @@
 
 (defn find-user-by-code [code]
   (mc/find-one-as-map @db "users" {:verification-code code}))
+
+(defn create-payment [fields]
+  (mc/insert @db "payments" fields))
+
+(defn get-payments
+  ([]
+   (mc/find-maps @db "payments"))
+  ([lawyer]
+   (mc/find-maps @db "payments" {:lawyer lawyer})))
