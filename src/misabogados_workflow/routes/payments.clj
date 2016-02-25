@@ -44,7 +44,17 @@
 (defn remove-payment [id request]
   (response {:payment {:remove id} :status "ok" :role (-> request :session :role)}))
 
+(def payment-data {})
+
+(defn get-pay [code request]
+    (layout/blank-page "Pagar"
+                       (layout/render-form "Pagar"
+                                           ["POST" "https://stg.gateway.payulatam.com/ppp-web-gateway"]
+                                           ([:p "test"] 
+                                                 [:button.btn.btn-secondary "Pagar"]))))
+
 (defroutes payments-routes
+  (GET "/pay/:code" [code :as request] get-pay)
   (GET "/payments" [] (restrict get-payments
                                 {:handler {:or [ac/admin-access ac/lawyer-access]}
                                  :on-error access-error-handler}))
