@@ -8,11 +8,11 @@
 (fact "get payments returns array of ids to data"
       (type (:payments
              (:body
-              (payments/get-payments
+              (payments/get-payment-requests
                {:identity "che.constantine@gmail.com"})))) =>  (type {})
       )
 (fact "keys are strings"
       (-> (:payments
            (:body
-            (payments/get-payments
+            (payments/get-payment-requests
              {:identity "che.constantine@gmail.com"}))) keys first string?) => true)

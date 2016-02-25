@@ -8,8 +8,8 @@
 
 (def table-data (r/atom {}
                  ))
-
 (def form-data (r/atom {}))
+
 
 ;;probably for move into helpers
 (defn input [label type id]
@@ -21,35 +21,28 @@
 
 
 (defn input-select-btn [options id]
-  [:div.btn-group {:field :single-select :id id}
+  [:select.form-control {:field :list :id id}
    (for [[label value] options]
-     [:button.btn.btn-default {:key value} label])])
+     [:option {:key value} label])])
 
 ;;
 
 
 ;;todo server request
 (defn refresh-table []
-  (GET (str js/context "/payments")
-                      {:handler #((reset! table-data (get % "payments"))
+  (GET (str js/context "/payment-requests")
+                      {:handler #((reset! table-data (get % "payment-requests"))
                                   nil)})())
 
-(defn create-payment [form-data]
-  (POST (str js/context "/payments") {:params form-data
+(defn create-payment-request [form-data]
+  (POST (str js/context "/payment-requests") {:params form-data
                                       :handler #(js/alert (str %))
                                       :error-handler #(js/alert (str "error: " %))}))
+(defn update-payment-request [form-data]
+  (js/alert (str form-data)))
 
-
-(def payment-form-template
-  [:div#payment-form.modal.fade {:role :dialog}
-   [:div.modal-dialog
-    [:div.modal-content
-     [:div.modal-header
-      [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
-       [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]
-      [:h3.modal-title "Payment Request"]]
+(def payment-request-form-template
      [:div.modal-body
-      [:div (str @form-data)]
       [:label {:field :label :id :_id}]
       (input "Nombre del cliente" :text :client)
       (input "Email del cliente" :email :client_email)
@@ -57,25 +50,66 @@
       (input "Servicio" :text :service)
       (input "Descripción del servicio" :textarea :service_description)
       (input "Amount" :numeric :amount)
-      (input-select-btn [["Cliente MisAbogados" :MisAbogados]
-                         ["Cliente propio" :own]] :own_client)
+      [:div.form-group
+       [:div.list-group {:field :single-select :id :own_client}
+         [:div.list-group-item {:key :own} "Own"]
+         [:div.list-group-item {:key :MisAbogados} "MisAbogados"]]]
       [:div.form-group
        [:label "Acepto los Términos y condiciones Transacciones"]
        [:input.form-control {:field :checkbox}]]]
-     [:div.modal-footer
-      [:button.btn.btn-default {:type :button :data-dismiss :modal} "Cerrar"]
-      [:button.btn.btn-primary {:type :button
-                                :on-click #(do (create-payment @form-data)
-                                               (u/close-modal "payment-form")
-                                               (reset! form-data {})
-                                               (refresh-table))} "Guardar"]]]
-    ]]
   )
+
+
+
+(defn create-payment-request-form []
+  (fn []
+    [:div#payment-request-form.modal.fade {:role :dialog}
+     [:div.modal-dialog
+      [:div.modal-content
+       [:div.modal-header
+        [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
+         [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]
+        [:h3.modal-title "Payment-Request Request"]]
+       [bind-fields
+        payment-request-form-template
+        form-data]
+       [:div.modal-footer
+        [:button.btn.btn-default {:type :button :data-dismiss :modal} "Cerrar"]
+        [:button.btn.btn-primary {:type :button
+                                  :on-click #(do (create-payment-request @form-data)
+                                                 (u/close-modal "payment-request-form")
+                                                 (reset! form-data {})
+                                                 (refresh-table))} "Guardar"]]]
+      ]]
+    ))
+
+(defn edit-payment-request-form [data]
+  (let [edit-form-data (r/atom data)]
+    (fn []
+            [:div.modal.fade {:role :dialog :id (str "payment-request-form" (:_id data))}
+             [:div.modal-dialog
+              [:div.modal-content
+               [:div.modal-header
+                [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
+                 [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]
+                [:h3.modal-title "Edit Payment-Request Request"]]
+               (edn->hiccup @edit-form-data)
+               [bind-fields
+                payment-request-form-template
+                edit-form-data]
+               [:div.modal-footer
+                [:button.btn.btn-default {:type :button :data-dismiss :modal} "Cerrar"]
+                [:button.btn.btn-primary {:type :button
+                                          :on-click #(do (update-payment-request @edit-form-data)
+                                                         (u/close-modal (str "payment-request-form" (:_id data)))
+                                                         (refresh-table))} "Guardar"]]]
+              ]]
+            )))
 
 (defn table []
   (if-not (empty? @table-data)
     [:div
-     [:legend "Payment Requests"]
+     [:legend "Payment-Request Requests"]
      [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
       [:th "Client"]
       [:th "Service"]
@@ -86,30 +120,42 @@
          (let [row-key (key row)
                values (apply merge (map (fn [field]
                                {(keyword (key field)) (val field)})
-                             (get @table-data row-key)))]
+                                        (get @table-data row-key)))]
+
            [:tr {:key row-key
                  :on-click #(do
-                              (u/show-modal "payment-form")
+                              (u/show-modal (str "payment-request-form" row-key))
                               (reset! form-data (into {:_id row-key} values)))}
-            [:td (get values :client)]
+            [:td (get values :client) ]
             [:td (get values :service)]
             [:td (get values :amount)]
             [:td (get values :own_client)]
             ])))]]
-    [:h4 "You have no payment requests"]))
+    [:h4 "You have no payment-request requests"]))
 
 (defn payments []
-  (let [payments (GET (str js/context "/payments")
-                      {:handler #((reset! table-data (get % "payments"))
+  (let [payment-requests (GET (str js/context "/payment-requests")
+                      {:handler #((reset! table-data (get % "payment-requests"))
                                   nil)})]
     (fn []
       [:div.container
        [:h1 "PagoLegal"]
        [:button.btn {:type :button
                      :on-click #(do
-                                  (u/show-modal "payment-form")
-                                  (reset! form-data {}))} "Create payment request"]
+                                  (u/show-modal "payment-request-form")
+                                  (reset! form-data {}))} "Create payment-request request"]
+       [:button.btn {:type :button
+                     :on-click #(do
+                                  (u/show-modal "payment-request-form1")
+                                  (reset! form-data {}))} "Create test"]
        [table]
-       [bind-fields
-        payment-form-template
-        form-data]])))
+       [create-payment-request-form]
+       [edit-payment-request-form (into {:_id "56ce38d3d8963c5c72fdfde81"} (:56ce38d3d8963c5c72fdfde8 @table-data))]
+        (for [row @table-data]
+         (let [row-key (key row)
+               values (apply merge (map (fn [field]
+                               {(keyword (key field)) (val field)})
+                                        (get @table-data row-key)))]
+           [edit-payment-request-form (into {:_id row-key} values)]
+))
+       ])))

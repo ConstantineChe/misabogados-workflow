@@ -22,44 +22,46 @@
    :body {:error (str "not autherized, " value)
           :role (-> request :session :role)}})
 
-(defn get-payments [request]
-  (let [payments (apply merge (map (fn [payment]
-                          {(str (:_id payment)) (dissoc payment :_id)})
-                        (db/get-payments (get-current-user-id request))))]
-    (response {:payments payments :status "ok" :role (-> request :session :role)})))
+(defn get-payment-requests [request]
+  (let [payment-requests (apply merge (map (fn [payment-request]
+                          {(str (:_id payment-request)) (dissoc payment-request :_id)})
+                        (db/get-payment-requests (get-current-user-id request))))]
+    (response {:payment-requests payment-requests :status "ok" :role (-> request :session :role)})))
 
-(defn get-payment [id request]
-  (response {:payment {:get id} :status "ok" :role (-> request :session :role)}))
 
-(defn create-payment [request]
-  (db/create-payment (assoc (:params request) :lawyer (get-current-user-id request)))
-  (response {:payment {:create "new"}
+
+(defn get-payment-request [id request]
+  (response {:payment-request {:get id} :status "ok" :role (-> request :session :role)}))
+
+(defn create-payment-request [request]
+  (db/create-payment-request (assoc (:params request) :lawyer (get-current-user-id request)))
+  (response {:payment-request {:create "new"}
              :status "ok"
              :role (-> request :session :role)
              :params (:params request)}))
 
-(defn update-payment [id request]
-  (response {:payment {:update id} :status "ok" :role (-> request :session :role)}))
+(defn update-payment-request [id request]
+  (response {:payment-request {:update id} :status "ok" :role (-> request :session :role)}))
 
-(defn remove-payment [id request]
-  (response {:payment {:remove id} :status "ok" :role (-> request :session :role)}))
+(defn remove-payment-request [id request]
+  (response {:payment-request {:remove id} :status "ok" :role (-> request :session :role)}))
 
 (defroutes payments-routes
-  (GET "/payments" [] (restrict get-payments
+  (GET "/payment-requests" [] (restrict get-payment-requests
                                 {:handler {:or [ac/admin-access ac/lawyer-access]}
                                  :on-error access-error-handler}))
-  (GET "/payments/:id" [id :as request]
-       (restrict (fn [request] (get-payment id request))
+  (GET "/payment-requests/:id" [id :as request]
+       (restrict (fn [request] (get-payment-request id request))
                  {:handler {:or [ac/admin-access ac/lawyer-access]}
                   :on-error access-error-handler}))
-  (POST "/payments" [] (restrict (fn [request] (create-payment request))
+  (POST "/payment-requests" [] (restrict (fn [request] (create-payment-request request))
                                  {:handler {:or [ac/admin-access ac/lawyer-access]}
                                   :on-error access-error-handler}))
-  (PUT "/payments/:id" [id :as request]
-       (restrict (fn [request] (update-payment id request))
+  (PUT "/payment-requests/:id" [id :as request]
+       (restrict (fn [request] (update-payment-request id request))
                  {:handler {:or [ac/admin-access ac/lawyer-access]}
                   :on-error access-error-handler}))
-  (DELETE "/payments/:id" [id :as request]
-          (restrict (fn [request] (remove-payment id request))
+  (DELETE "/payment-requests/:id" [id :as request]
+          (restrict (fn [request] (remove-payment-request id request))
                     {:handler {:or [ac/admin-access ac/lawyer-access]}
                      :on-error access-error-handler})))

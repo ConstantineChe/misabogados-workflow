@@ -48,11 +48,11 @@
 (defn find-user-by-code [code]
   (mc/find-one-as-map @db "users" {:verification-code code}))
 
-(defn create-payment [fields]
-  (mc/insert @db "payments" fields))
+(defn create-payment-request [fields]
+  (mc/insert @db "payment_requests" fields))
 
-(defn get-payments
+(defn get-payment-requests
   ([]
-   (mc/find-maps @db "payments"))
+   (mc/find-maps @db "payment_requests"))
   ([lawyer]
-   (mc/find-maps @db "payments" {:lawyer lawyer})))
+   (mc/find-maps @db "payment_requests" {:lawyer lawyer})))
