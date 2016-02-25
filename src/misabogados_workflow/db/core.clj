@@ -56,3 +56,6 @@
    (mc/find-maps @db "payment_requests"))
   ([lawyer]
    (mc/find-maps @db "payment_requests" {:lawyer lawyer})))
+
+(defn get-payment-request-by-code [code]
+  (mc/find-one-as-map @db "payment_requests" {:code code}))

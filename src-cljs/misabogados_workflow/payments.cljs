@@ -66,7 +66,7 @@
 (defn validate-payment-request-form [data]
   (reset! validation-message nil)
   (some false? (for [field data]
-                 (if-not (empty? (str (val field)))
+                 (if (empty? (str (val field)))
                    (do (reset! validation-message (str (key field) " not present"))
                        false)
                    true))))
@@ -86,18 +86,16 @@
        [bind-fields
         payment-request-form-template
         form-data]
-       (edn->hiccup @form-data)
-       [:p @validation-message]
        [:div.modal-footer
+       [:p @validation-message]
         [:button.btn.btn-default {:type :button :data-dismiss :modal} "Cerrar"]
         [:button.btn.btn-primary {:type :button
-                                  :on-click #(if (validate-payment-request-form @form-data)
+                                  :on-click #(if-not (validate-payment-request-form @form-data)
                                                (do (create-payment-request @form-data)
                                                 (u/close-modal "payment-request-form")
                                                 (reset! form-data {})
                                                 (refresh-table))
-                                               (js/alert "INVALID!!!#!#!@"))} "Guardar"]
-        [:div "disabled"]]]
+                                               (js/alert "INVALID!!!#!#!@"))} "Guardar"]]]
       ]]
     ))
 
@@ -111,7 +109,6 @@
                 [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
                  [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]
                 [:h3.modal-title "Edit Payment Request"]]
-               (edn->hiccup @edit-form-data)
                [bind-fields
                 payment-request-form-template
                 edit-form-data]
@@ -126,31 +123,37 @@
 
 (defn table []
   (fn []
-    (if-not (empty? @table-data)
-      [:div
-       [:legend "Payment Requests"]
-       [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
-        [:th "Client"]
-        [:th "Service"]
-        [:th "Amount"]
-        [:th "Client type"]
-        [:tbody
-         (doall
-          (for [row @table-data]
-            (let [row-key (key row)
-                  values (apply merge (map (fn [field]
-                                             {(keyword (key field)) (val field)})
-                                           (get @table-data row-key)))]
+  (if-not (empty? @table-data)
+    [:div
+     [:legend "Payment Requests"]
+     [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
+      [:th "Botón de pago"]
+      [:th "Client"]
+      [:th "Service"]
+      [:th "Amount"]
+      [:th "Client type"]
+      [:th "Actions"]
+      [:tbody
+       (doall
+        (for [row @table-data]
+          (let [row-key (key row)
+                values (apply merge (map (fn [field]
+                                           {(keyword (key field)) (val field)})
+                                         (get @table-data row-key)))]
 
-              [:tr {:key row-key
-                    :on-click #(do
-                                 (u/show-modal (str "payment-request-form" row-key)))}
-               [:td (get values :client) ]
-               [:td (get values :service)]
-               [:td (get values :amount)]
-               [:td (get values :own_client)]
-               ])))]]]
-      [:h4 "You have no payment-request requests"])))
+            [:tr {:key row-key}
+             [:td [:a {:href (str "/payments/" (get values :code))
+                       :data-toggle "tooltip"
+                       :title "Este enlace fue enviado al cliente"
+                       } "Pagar"]]
+             [:td (get values :client) ]
+             [:td (get values :service)]
+             [:td (get values :amount)]
+             [:td (get values :own_client)]
+             [:td [:button.btn {:on-click #(do
+                                             (u/show-modal (str "payment-request-form" row-key)))} "edit"]]
+             ])))]]]
+    [:h4 "You have no payment-request requests"])))
 
 (defn payments []
   (let [payment-requests (GET (str js/context "/payment-requests")
