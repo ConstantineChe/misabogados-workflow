@@ -42,8 +42,14 @@
   (POST (str js/context "/payment-requests") {:params form-data
                                       :handler #(refresh-table)
                                       :error-handler (fn [] nil)}))
-(defn update-payment-request [form-data]
-  (js/alert (str form-data)))
+(defn update-payment-request [id form-data]
+  (PUT (str js/context "/payment-requests/" id) {:params (dissoc form-data :_id :terms)
+                                                 :handler #(refresh-table)
+                                                 :error-handler #(js/alert (str %))}))
+
+(defn remove-payment-request [id]
+  (DELETE (str js/context "/payment-requests/" id) {:handler #(do (js/alert (str %)) (refresh-table))
+                                                    :error-handler #(js/alert (str %))}))
 
 (def payment-request-form-template
      [:div.modal-body
@@ -60,21 +66,23 @@
          [:div.list-group-item {:key "MisAbogados"} "Cliente MisAbogados"]]]
       [:div.form-group
        [:label "Acepto los Términos y condiciones Transacciones"]
-       [:input.form-control {:type :checkbox :required "true"}]]]
+       [:input.form-control {:field :checkbox :id :terms}]]]
   )
 
 (defn validate-payment-request-form [data]
-  (reset! validation-message nil)
-  (some false? (for [field data]
-                 (if (empty? (str (val field)))
-                   (do (reset! validation-message (str (key field) " not present"))
-                       false)
-                   true))))
+  (b/valid? data
+            :client v/required
+            :amount v/required
+            :client_email [v/required v/email]
+            :client_tel v/required
+            :service v/required
+            :service_description v/required
+            :own_client v/required
+            :terms v/required))
 
 
 
 (defn create-payment-request-form []
-
   (fn []
     [:div#payment-request-form.modal.fade {:role :dialog}
      [:div.modal-dialog
@@ -87,15 +95,15 @@
         payment-request-form-template
         form-data]
        [:div.modal-footer
-       [:p @validation-message]
+        [:p @validation-message]
+        (str @form-data)
         [:button.btn.btn-default {:type :button :data-dismiss :modal} "Cerrar"]
         [:button.btn.btn-primary {:type :button
-                                  :on-click #(if-not (validate-payment-request-form @form-data)
+                                  :on-click #(if (validate-payment-request-form @form-data)
                                                (do (create-payment-request @form-data)
                                                 (u/close-modal "payment-request-form")
                                                 (reset! form-data {})
-                                                (refresh-table))
-                                               (js/alert "INVALID!!!#!#!@"))} "Guardar"]]]
+                                                (refresh-table)))} "Guardar"]]]
       ]]
     ))
 
@@ -115,9 +123,10 @@
                [:div.modal-footer
                 [:button.btn.btn-default {:type :button :data-dismiss :modal} "Cerrar"]
                 [:button.btn.btn-primary {:type :button
-                                          :on-click #(do (update-payment-request @edit-form-data)
-                                                         (u/close-modal (str "payment-request-form" (:_id data)))
-                                                         (refresh-table))} "Guardar"]]]
+                                          :on-click #(if (validate-payment-request-form @edit-form-data)
+                                                       (do (update-payment-request (:_id data) @edit-form-data)
+                                                           (u/close-modal (str "payment-request-form" (:_id data)))
+                                                           (refresh-table)))} "Guardar"]]]
               ]]
             )))
 
@@ -150,8 +159,10 @@
              [:td (get values :service)]
              [:td (get values :amount)]
              [:td (get values :own_client)]
-             [:td [:button.btn {:on-click #(do
-                                             (u/show-modal (str "payment-request-form" row-key)))} "edit"]]
+             [:td
+              [:button.btn {:on-click #(do
+                                         (u/show-modal (str "payment-request-form" row-key)))} "Edit"]
+              [:button.btn {:on-click #(remove-payment-request row-key)} "Delete"]]
              ])))]]]
     [:h4 "You have no payment-request requests"])))
 

@@ -7,6 +7,8 @@
             [ring.util.response :refer [redirect response]]
             [ring.middleware.session :as s]
             [misabogados-workflow.db.core :as db]
+            [monger.collection :as mc]
+            [monger.operators :refer :all]
             [buddy.auth :refer [authenticated?]]
             [misabogados-workflow.layout.core :as layout]
             [misabogados-workflow.access-control :as ac]
@@ -22,6 +24,12 @@
    :header {}
    :body {:error (str "not autherized, " value)
           :role (-> request :session :role)}})
+
+(defn allowed-to-edit [id request]
+  (if (= (:lawyer (mc/find-one-as-map @db/db "payment_requests" {:_id id}))
+         (get-current-user-id request))
+    true
+    {:message "Not allowed"}))
 
 (defn get-payment-requests [request]
   (let [payment-requests (apply merge (map (fn [payment-request]
@@ -42,10 +50,26 @@
              :params (:params request)}))
 
 (defn update-payment-request [id request]
-  (response {:payment-request {:update id} :status "ok" :role (-> request :session :role)}))
+  (let [id (db/oid id)
+        params (:params request)
+        allowed? (allowed-to-edit id request)]
+    (if (true? allowed?)
+      (do (mc/update-by-id @db/db "payment_requests" id {$set (dissoc params :lawyer)})
+          (response {:payment-request {:update id} :status "ok" :role (-> request :session :role)}))
+      {:status 403
+       :header {}
+       :body {:error (:message allowed?)}})))
 
 (defn remove-payment-request [id request]
-  (response {:payment-request {:remove id} :status "ok" :role (-> request :session :role)}))
+  (let [id (db/oid id)
+        params (:params request)
+        allowed? (allowed-to-edit id request)]
+    (if (true? allowed?)
+      (do (mc/remove-by-id @db/db "payment_requests" id)
+          (response {:payment-request {:delete id} :status "ok" :role (-> request :session :role)}))
+      {:status 403
+       :header {}
+       :body {:error (:message allowed?)}})))
 
 (def test-payment-data {
                         :merchantId "500238"
@@ -69,13 +93,13 @@
                                 ]
                                [:form {:method "POST" :action "https://stg.gateway.payulatam.com/ppp-web-gateway"}
 
-                                  (list 
-                                   (map (fn [field] [:input {:type :hidden 
+                                  (list
+                                   (map (fn [field] [:input {:type :hidden
                                                              :name (key field)
-                                                             :value (val field)}]) 
+                                                             :value (val field)}])
                                         (merge test-payment-data {:amount (:amount payment-request)
                                                                   :buyerEmail (:client_email payment-request)}))
-                                   
+
                                    [:div.col-md-4.col-md-offset-4
                                     [:div.panel.panel-info
                                      [:div.panel-heading
@@ -84,7 +108,7 @@
                                      [:div.panel-body.text-center
                                       [:p.lead (str (:currency test-payment-data) " " (:amount payment-request))]]
                                      [:ul.list-group.list-group-flush.text-center
-                                      (map (fn [elem] [:li.list-group-item [:b (str (name (key elem)) ": ")] (val elem)]) 
+                                      (map (fn [elem] [:li.list-group-item [:b (str (name (key elem)) ": ")] (val elem)])
                                            (select-keys payment-request [:client :client_email :lawyer]))]
                                      [:div.panel-footer
                                       [:button.btn.btn-lg.btn-block.btn-info "Pagar"]
