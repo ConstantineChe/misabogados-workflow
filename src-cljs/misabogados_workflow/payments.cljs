@@ -54,12 +54,12 @@
 (def payment-request-form-template
      [:div.modal-body
       [:label {:field :label :id :_id}]
-      (input "Nombre del cliente" :text :client)
-      (input "Email del cliente" :email :client_email)
-      (input "Teléfono del cliente" :text :client_tel)
-      (input "Servicio" :text :service)
-      (input "Descripción del servicio" :textarea :service_description)
-      (input "Amount" :numeric :amount)
+      (input "Nombre del cliente*" :text :client)
+      (input "Email del cliente*" :email :client_email)
+      (input "Teléfono del cliente*" :text :client_tel)
+      (input "Servicio*" :text :service)
+      (input "Descripción del servicio*" :textarea :service_description)
+      (input "Amount*" :numeric :amount)
       [:div.form-group
        [:div.list-group {:field :single-select :id :own_client}
          [:div.list-group-item {:key "own"} "Cliente propio"]
@@ -96,14 +96,17 @@
         form-data]
        [:div.modal-footer
         [:p @validation-message]
-        (str @form-data)
-        [:button.btn.btn-default {:type :button :data-dismiss :modal} "Cerrar"]
+        [:button.btn.btn-default {:type :button
+                                  :on-click #(do ((u/close-modal "payment-request-form")
+                                                  (reset! validation-message nil)))} "Cerrar"]
         [:button.btn.btn-primary {:type :button
                                   :on-click #(if (validate-payment-request-form @form-data)
                                                (do (create-payment-request @form-data)
-                                                (u/close-modal "payment-request-form")
-                                                (reset! form-data {})
-                                                (refresh-table)))} "Guardar"]]]
+                                                   (u/close-modal "payment-request-form")
+                                                   (reset! form-data {})
+                                                   (refresh-table)
+                                                   (reset! validation-message nil))
+                                               (reset! validation-message "Fill all required fields."))} "Guardar"]]]
       ]]
     ))
 
@@ -121,12 +124,17 @@
                 payment-request-form-template
                 edit-form-data]
                [:div.modal-footer
-                [:button.btn.btn-default {:type :button :data-dismiss :modal} "Cerrar"]
+                [:p @validation-message]
+                [:button.btn.btn-default {:type :button
+                                          :on-click #(do (u/close-modal (str "payment-request-form" (:_id data)))
+                                                         (reset! validation-message nil))} "Cerrar"]
                 [:button.btn.btn-primary {:type :button
                                           :on-click #(if (validate-payment-request-form @edit-form-data)
                                                        (do (update-payment-request (:_id data) @edit-form-data)
                                                            (u/close-modal (str "payment-request-form" (:_id data)))
-                                                           (refresh-table)))} "Guardar"]]]
+                                                           (refresh-table)
+                                                           (reset! validation-message nil))
+                                                       (reset! validation-message "Fill all required fields."))} "Guardar"]]]
               ]]
             )))
 
@@ -146,9 +154,9 @@
        (doall
         (for [row @table-data]
           (let [row-key (key row)
-                values (apply merge (map (fn [field]
-                                           {(keyword (key field)) (val field)})
-                                         (get @table-data row-key)))]
+                values (apply merge (doall (map (fn [field]
+                                             {(keyword (key field)) (val field)})
+                                           (get @table-data row-key))))]
 
             [:tr {:key row-key}
              [:td [:a {:href (str "/payments/" (get values :code))
@@ -179,11 +187,11 @@
                                   (reset! form-data {}))} "Create payment request"]
        [table]
        [create-payment-request-form]
-        (for [row @table-data]
-         (let [row-key (key row)
-               values (apply merge (map (fn [field]
-                               {(keyword (key field)) (val field)})
-                                        (get @table-data row-key)))]
-           [(edit-payment-request-form (into {:_id row-key} values))]
-))
+       (doall (for [row @table-data]
+           (let [row-key (key row)
+                 values (apply merge (map (fn [field]
+                                            {(keyword (key field)) (val field)})
+                                          (get @table-data row-key)))]
+             [(edit-payment-request-form (into {:_id row-key} values))]
+             )))
        ])))

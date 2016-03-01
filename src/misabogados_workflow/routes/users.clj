@@ -21,16 +21,17 @@
 
 (defn get-users [request] (response (doall (db/get-users))))
 
-(defn update-user [{:keys [params]}]
+(defn update-user [id {:keys [params]}]
   (try
-    (db/update-user (:id params) (:data params))
+    (db/update-user id (:data params))
     (response {:success true})))
 
 (defn get-user [{:keys [params]}] (response (db/get-user (:id params))))
 
 (defroutes users-routes
   (GET "/users" [] (restrict get-users
-                             {:handler {:or [ac/admin-access ac/lawyer-access]}
+                             {:handler {:or [ac/admin-access]}
                               :on-error access-error-handler}))
-  (GET "/user" [] get-user)
-  (PUT "/user" [] update-user))
+  (PUT "/users/:id" [id :as request] (restrict (update-user id request)
+                            {:handler {:or [ac/admin-access]}
+                              :on-error access-error-handler})))
