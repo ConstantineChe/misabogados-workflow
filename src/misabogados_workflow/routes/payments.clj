@@ -61,8 +61,8 @@
                                           :lawyer (:_id current-user)
                                           :code (util/generate-hash params)
                                           :date_created (new java.util.Date)))
-    (email/payment-request-email (:client_email params) {:lawyer-name (:name current-user)
-                                                  :payment-request params})
+    (future (email/payment-request-email (:client_email params) {:lawyer-name (:name current-user)
+                                                           :payment-request params}))
     (response {:payment-request {:create "new"}
                :status "ok"
                :role (-> request :session :role)
@@ -162,7 +162,7 @@
                                                       :buyerEmail (:client_email payment-request)
                                                       }))]
     (if (= (:code params) (:code payment-request))
-      (do 
+      (do
         (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date date
                                                                                               :action "start_payment_attempt"
                                                                                               :data data}}})
@@ -184,7 +184,7 @@
 
   (POST "/payments/pay" []
         start-payment-attempt)
-  (POST "/payments/confirmation" [] 
+  (POST "/payments/confirmation" []
         confirmation)
 
   (GET "/payment-requests" [] (restrict get-payment-requests
