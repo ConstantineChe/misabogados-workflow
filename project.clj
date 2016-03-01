@@ -50,7 +50,12 @@
   :main misabogados-workflow.core
 
   :plugins [[lein-environ "1.0.1"]
-            [lein-cljsbuild "1.1.1"]]
+            [lein-cljsbuild "1.1.1"]
+            [lein-uberwar "0.1.0"]]
+  :uberwar {:handler misabogados-workflow.handler/app
+            :init misabogados-workflow.handler/init
+            :destroy misabogados-workflow.handler/destroy
+            :name "misabogados-workflow.war"}
   :clean-targets ^{:protect false} [:target-path [:cljsbuild :builds :app :compiler :output-dir] [:cljsbuild :builds :app :compiler :output-to]]
   :cljsbuild
   {:builds
