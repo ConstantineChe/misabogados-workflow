@@ -23,7 +23,7 @@
   ((keyword action) steps))
 
 (defn home-page [request]
-  (render "home.html"))
+  (render "app.html"))
   ;; (layout/blank-page "home" [:div.container [:div "hi"
                                ;; (map (fn [item] [:div.row [:h4 (key item)]
                                                ;; [:p (val item)]]) request)]]))

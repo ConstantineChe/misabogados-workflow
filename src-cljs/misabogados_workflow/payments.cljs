@@ -6,9 +6,34 @@
             [reagent-forms.core :refer [bind-fields init-field value-of]]
             [json-html.core :refer [edn->hiccup]]))
 
+;;TODO this is for non-reagent payment pages. Move everything else to payment_requests.cljs
+(.addEventListener
+  js/window
+  "DOMContentLoaded"
+  (fn [] 
+    (.submit (js/jQuery "form#payment_form")
+             (fn [e]
+               (this-as form
+                 (do (-> (js/jQuery form)
+                            (.find "button")
+                            (.button "loading"))
+                     (POST (str js/context "pay")
+                           {:handler #((do (js/alert "handler")
+                                           (-> (js/jQuery "form#payment_form")
+                                               (.find "button")
+                                               (.button "reset")))
+                                        
+                                        nil)}))
+                 (.preventDefault e))
+               ))
+    ))
+
+
 (def table-data (r/atom {}
                  ))
 (def form-data (r/atom {}))
+
+
 
 
 ;;probably for move into helpers

@@ -3,6 +3,7 @@
             [ring.util.http-response :refer [ok content-type]]
             [clojure.java.io :as io]
             [misabogados-workflow.layout.core :as layout]
+            [misabogados-workflow.layout :refer [render]]
             [hiccup.form :as form]
             [ring.util.response :refer [redirect response]]
             [ring.middleware.session :as s]
@@ -62,36 +63,52 @@
                         ;; :buyerEmail "test@test.com"
                         })
 
-(defn get-payment [code request]
+
+
+
+(defn get-payment-hiccup [code request]
     (layout/blank-page "Pagar"
                        (let [payment-request (db/get-payment-request-by-code code)]
                          (list [:ul
                                 ]
                                [:form {:method "POST" :action "https://stg.gateway.payulatam.com/ppp-web-gateway"}
 
-                                  (list 
-                                   (map (fn [field] [:input {:type :hidden 
-                                                             :name (key field)
-                                                             :value (val field)}]) 
-                                        (merge test-payment-data {:amount (:amount payment-request)
-                                                                  :buyerEmail (:client_email payment-request)}))
-                                   
-                                   [:div.col-md-4.col-md-offset-4
-                                    [:div.panel.panel-info
-                                     [:div.panel-heading
-                                      [:h3.text-center (:service payment-request)]
-                                      [:p.text-center (:service_description payment-request)]]
-                                     [:div.panel-body.text-center
-                                      [:p.lead (str (:currency test-payment-data) " " (:amount payment-request))]]
-                                     [:ul.list-group.list-group-flush.text-center
-                                      (map (fn [elem] [:li.list-group-item [:b (str (name (key elem)) ": ")] (val elem)]) 
-                                           (select-keys payment-request [:client :client_email :lawyer]))]
-                                     [:div.panel-footer
-                                      [:button.btn.btn-lg.btn-block.btn-info "Pagar"]
-                                      ]]])]))))
+                                  ;; (list 
+                                  ;;  (map (fn [field] [:input {:type :hidden 
+                                  ;;                            :name (key field)
+                                  ;;                            :value (val field)}]) 
+                                  ;;       (merge test-payment-data {:amount (:amount payment-request)
+                                  ;;                                 :buyerEmail (:client_email payment-request)})))
+                                [:input {:type :hidden
+                                         :name :code
+                                         :value code}]
+                                [:div.col-md-4.col-md-offset-4
+                                 [:div.panel.panel-info
+                                  [:div.panel-heading
+                                   [:h3.text-center (:service payment-request)]
+                                   [:p.text-center (:service_description payment-request)]]
+                                  [:div.panel-body.text-center
+                                   [:p.lead (str (:currency test-payment-data) " " (:amount payment-request))]]
+                                  [:ul.list-group.list-group-flush.text-center
+                                   (map (fn [elem] [:li.list-group-item [:b (str (name (key elem)) ": ")] (val elem)]) 
+                                        (select-keys payment-request [:client :client_email :lawyer]))]
+                                  [:div.panel-footer
+                                   [:button.btn.btn-lg.btn-block.btn-info "Pagar"]
+                                   ]]]]))))
+
+(defn get-payment [code request]
+  (render "payment.html" 
+          {:payment-request (db/get-payment-request-by-code code)
+           :payment-options test-payment-data}))
+
+(defn pay [request]
+  "")
 
 (defroutes payments-routes
   (GET "/payments/:code" [code :as request] (get-payment code request))
+  ;; (POST "/payments/pay" [code :as request] (pay code request))
+  (POST "/payments/pay" [] 
+        pay)
 
   (GET "/payment-requests" [] (restrict get-payment-requests
                                 {:handler {:or [ac/admin-access ac/lawyer-access]}

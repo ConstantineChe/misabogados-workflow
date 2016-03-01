@@ -16,7 +16,7 @@
 (defn include-bootstrap []
   (list (hp/include-js "https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js")
         (hp/include-js "/js/jquery.bootstrap.wizard.min.js")
-        (hp/include-js "/js/main.js")
+        (hp/include-js "/js/app.js")
 
         [:link {:rel "stylesheet"
                 :integrity
