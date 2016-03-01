@@ -35,7 +35,14 @@
 (defn get-payment-requests [request]
   (let [payment-requests (apply merge (map (fn [payment-request]
                           {(str (:_id payment-request)) (dissoc payment-request :_id)})
-                        (dbcore/get-payment-requests (get-current-user-id request))))]
+                                           (cond (= :lawyer (-> request :session :role))
+                                                 (dbcore/get-payment-requests (get-current-user-id request))
+                                                 (= :admin (-> request :session :role))
+                                                 (mc/aggregate @db "payment_requests"
+                                                               [{"$lookup" {:from "users"
+                                                                          :localField :lawyer
+                                                                          :foreignField :_id
+                                                                          :as :lawyer_data}}]))))]
     (response {:payment-requests payment-requests :status "ok" :role (-> request :session :role)})))
 
 
@@ -60,7 +67,8 @@
     (if (true? allowed?)
       (do (mc/update-by-id @db "payment_requests" id {$set
                                                          (assoc (dissoc params :lawyer)
-                                                                :date_updated (new java.util.Date))})
+                                                                :date_updated (new java.util.Date)
+                                                                :code (util/generate-hash (:params request)))})
           (response {:payment-request {:update id} :status "ok" :role (-> request :session :role)}))
       {:status 403
        :header {}
@@ -101,7 +109,6 @@
                          (list [:ul
                                 ]
                                [:form {:method "POST" :action "https://stg.gateway.payulatam.com/ppp-web-gateway"}
-                                  
                                 [:input {:type :hidden
                                          :name :code
                                          :value code}]
@@ -113,14 +120,14 @@
                                   [:div.panel-body.text-center
                                    [:p.lead (str (:currency test-payment-data) " " (:amount payment-request))]]
                                   [:ul.list-group.list-group-flush.text-center
-                                   (map (fn [elem] [:li.list-group-item [:b (str (name (key elem)) ": ")] (val elem)]) 
+                                   (map (fn [elem] [:li.list-group-item [:b (str (name (key elem)) ": ")] (val elem)])
                                         (select-keys payment-request [:client :client_email :lawyer]))]
                                   [:div.panel-footer
                                    [:button.btn.btn-lg.btn-block.btn-info "Pagar"]
                                    ]]]]))))
 
 (defn get-payment [code request]
-  (render "payment.html" 
+  (render "payment.html"
           {:payment-request (mc/find-one-as-map @db "payment_requests" {:code code})
            :payment-options test-payment-data}))
 
@@ -131,7 +138,7 @@
         data (merge test-payment-data {:amount (:amount payment-request)
                                        :buyerEmail (:client_email payment-request)})]
     (if (= (:code params) (:code payment-request))
-      (do 
+      (do
         (println (str "----ID " params) )
         (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date (new java.util.Date)
                                                                                               :action "start_payment_attempt"
@@ -145,7 +152,8 @@
 (defroutes payments-routes
   (GET "/payments/:code" [code :as request] (get-payment code request))
   ;; (POST "/payments/pay" [code :as request] (pay code request))
-  (POST "/payments/pay" [] 
+
+  (POST "/payments/pay" []
         start-payment-attempt)
 
   (GET "/payment-requests" [] (restrict get-payment-requests
