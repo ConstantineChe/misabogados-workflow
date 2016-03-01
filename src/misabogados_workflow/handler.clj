@@ -7,6 +7,7 @@
             [misabogados-workflow.routes.users :refer [users-routes]]
             [misabogados-workflow.routes.payments :refer [payments-routes]]
             [misabogados-workflow.middleware :as middleware]
+            [misabogados-workflow.db.indexes :as indexes]
             [ring.middleware.json :as json]
             [clojure.tools.logging :as log]
             [compojure.route :as route]
@@ -24,6 +25,7 @@
   []
   (logger/init env)
   (db/connect!)
+  (indexes/setup-indexes)
   (doseq [component (:started (mount/start))]
     (log/info component "started"))
   ((:init defaults)))

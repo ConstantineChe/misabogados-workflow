@@ -1,19 +1,41 @@
 (ns misabogados-workflow.core
-  (:require [reagent.core :as r]
-            [reagent.session :as session]
-            [secretary.core :as secretary :include-macros true]
+  (:require [bouncer.core :as b]
+            [bouncer.validators :as v]
+            [clojure.string :as str]
             [goog.events :as events]
             [goog.history.EventType :as HistoryEventType]
-            [markdown.core :refer [md->html]]
             [misabogados-workflow.access-control :as ac]
-            [misabogados-workflow.utils :as u]
+            [misabogados-workflow.admin :refer [admin]]
+            [misabogados-workflow.ajax :refer [GET POST csrf-token update-csrf-token!]]
             [misabogados-workflow.dashboard :refer [dashboard]]
             [misabogados-workflow.payments :refer [payments]]
-            [misabogados-workflow.ajax :refer [GET POST csrf-token update-csrf-token!]])
+            [misabogados-workflow.utils :as u]
+            [reagent.core :as r]
+            [reagent.session :as session]
+            [secretary.core :as secretary :include-macros true])
   (:import goog.History))
 
 (defn https? []
   (= "https:" (.-protocol js/location)))
+
+(defn get-session! []
+  (GET (str js/context "/session")
+       {:handler (fn [response]
+                   (if-not (nil? (get response "identity"))
+                     (session/put! :user {:identity (get response "identity" )
+                                          :role (get response "role")}))
+                   (ac/reset-access!)
+                   nil)}))
+
+
+(defn signup! [signup-form]
+  (POST (str js/context "/signup") {:params signup-form
+                                    :handler #(do (session/put! :user {:identity (get % "identity")
+                                                                       :role (get % "role")})
+                                                  (ac/reset-access!)
+                                                  (aset js/window "location" "#/dashboard")
+                                                  (update-csrf-token!))
+                                    :error-handler #(js/alert (str "error: " %))}))
 
 (defn login! [email password error]
   (cond
@@ -53,19 +75,19 @@
          :class (when (= page (session/get :page)) "active")}
     [:a
      {:href uri
-      :on-click #(-> 
+      :on-click #(->
                   (u/jquery "#navbar-hamburger:visible")
                   (.click))}
      title]])
   ([uri title]
    [:li>a
     {:href uri
-      :on-click #(-> 
+      :on-click #(->
                   (u/jquery "#navbar-hamburger:visible")
                   (.click))} title]))
 
 (defn navbar []
-  
+
   (fn []
     [:nav.navbar.navbar-default
      [:div.container-fluid
@@ -73,32 +95,75 @@
        [:button#navbar-hamburger.navbar-toggle.collapsed {:data-toggle "collapse" :data-target "#navbar-body" :aria-expanded "false"}
         [:span.sr-only "Toggle navigation"] [:span.icon-bar][:span.icon-bar][:span.icon-bar]]
        [:a.navbar-brand {:href "#/"} "Misabogados Workflow"]]
-      
+
       [:div#navbar-body.navbar-collapse.collapse
-       
+
        (into [:ul.nav.navbar-nav]
              (doall (map (fn [item]  (apply nav-link item)) (:nav-links @ac/components)))
              )]]]))
 
-(defn debug []
-  (let [request (r/atom nil)
-        _ (GET (str js/context "/request") {:handler (fn [resp]
-                                                       (do
-                                                           (reset! request (str resp)))
-                                                       nil)})
-        _ (ac/reset-access!)]
-    (fn []
-      [:div.container
-       [:legend "Debug"]
-       [:h3 "request"] [:p @request]
-       [:h3 "ac"] [:p (str (ac/get-access))]
-       [:h3 "session"] [:p (str (dissoc @session/state :docs))]])))
+;; (defn debug []
+;;   (let [request (r/atom nil)
+;;         _ (GET (str js/context "/request") {:handler (fn [resp]
+;;                                                        (do
+;;                                                            (reset! request (str resp)))
+;;                                                        nil)})
+;;         _ (ac/reset-access!)]
+;;     (fn []
+;;       [:div.container
+;;        [:legend "Debug"]
+;;        [:h3 "request"] [:p @request]
+;;        [:h3 "ac"] [:p (str (ac/get-access))]
+;;        [:h3 "session"] [:p (str (dissoc @session/state :docs))]])))
 
 (defn about-page []
   [:div.container
    [:div.row
     [:div.col-md-12
      "this is the story of misabogados-workflow... work in progress"]]])
+
+(defn validate-form [form validation]
+  b/valid? form
+  :email [v/email v/required]
+  :name v/required
+  :password v/required
+  :password_confirmation v/required)
+
+(defn signup-page []
+  (let [signup-form (r/atom {})
+        validation (r/atom {})]
+    (fn []
+;      (if (not https?) (reset! warnings "Not using ssl"))
+      [:div.container
+       [:div.signup-form
+        [:form.form-horizontal
+         [:legend "Sign-up"
+          [:div.form-group
+           [:label.control-label {:for :email} "Email"]
+            [:input#email {:type :email
+                           :value (:email @signup-form)
+                           :on-change #(reset! signup-form (assoc @signup-form :email (-> %  .-target .-value)))
+                           }]]
+          [:div.form-group
+           [:label.control-label {:for :name} "Name"]
+            [:input#name {:type :text
+                          :value (:name @signup-form)
+                          :on-change #(reset! signup-form (assoc @signup-form :name (-> %  .-target .-value)))
+                          }]]
+          [:div.form-group
+           [:label.control-label {:for :pwd} "Password"]
+           [:input#pwd {:type :password
+                        :value (:password @signup-form)
+                        :on-change #(reset! signup-form (assoc @signup-form :password (-> %  .-target .-value)))
+                        }]]
+          [:div.form-group
+           [:label.control-label {:for :pwd_conf} "Confirm password"]
+           [:input#conf {:type :password
+                         :value (:password_confirmation @signup-form)
+                         :on-change #(reset! signup-form (assoc @signup-form :password_confirmation (-> %  .-target .-value)))
+                         }]]
+          [:div.form-group [:button {:on-click #(if () (signup! @signup-form))} "Sign-up"]]
+          ]]]])))
 
 (defn login-page []
   (let [email (r/atom "")
@@ -126,24 +191,17 @@
   [:div.container
    [:div.jumbotron
     [:h1 "Welcome to misabogados-workflow"]
-    [:p "Time to start building your site!"]
-    [:p [:a.btn.btn-primary.btn-lg {:href "http://luminusweb.net"} "Learn more »"]]]
-   [:div.row
-    [:div.col-md-12
-     [:h2 "Welcome to ClojureScript"]]]
-   (when-let [docs (session/get :docs)]
-     [:div.row
-      [:div.col-md-12
-       [:div {:dangerouslySetInnerHTML
-              {:__html (md->html docs)}}]]])])
+    [:p "This is a home page"]]])
 
 (def pages
   {:home #'home-page
    :about #'about-page
    :login #'login-page
-   :debug #'debug
+   :signup #'signup-page
+;   :debug #'debug
    :dashboard #'dashboard
-   :payments #'payments})
+   :payments #'payments
+   :admin #'admin})
 
 (defn page []
   [(pages (session/get :page))])
@@ -161,8 +219,8 @@
 (secretary/defroute "/login" []
   (session/put! :page :login))
 
-(secretary/defroute "/debug" []
-  (session/put! :page :debug))
+;; (secretary/defroute "/debug" []
+;;   (session/put! :page :debug))
 
 (secretary/defroute "/dashboard" []
   (session/put! :page :dashboard))
@@ -170,9 +228,15 @@
 (secretary/defroute "/payments" []
   (session/put! :page :payments))
 
+(secretary/defroute "/signup" []
+  (session/put! :page :signup))
+
 (secretary/defroute "/logout" []
   (do (logout!)
       (session/put! :page :home)))
+
+(secretary/defroute "/admin" []
+  (session/put! :page :admin))
 
 ;; -------------------------
 ;; History
@@ -187,17 +251,7 @@
 
 ;; -------------------------
 ;; Initialize app
-(defn fetch-docs! []
-  (GET (str js/context "/docs") {:handler #(session/put! :docs %)}))
 
-(defn get-session! []
-  (GET (str js/context "/session")
-       {:handler (fn [response]
-                   (if-not (nil? (get response "identity"))
-                     (session/put! :user {:identity (get response "identity" )
-                                          :role (get response "role")}))
-                   (ac/reset-access!)
-                   nil)}))
 
 (defn mount-components []
   (r/render [#'navbar] (.getElementById js/document "navbar"))
@@ -206,6 +260,5 @@
 (defn init! []
   (get-session!)
   (update-csrf-token!)
-  (fetch-docs!)
   (hook-browser-navigation!)
   (mount-components))

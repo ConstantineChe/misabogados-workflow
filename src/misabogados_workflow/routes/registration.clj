@@ -4,7 +4,7 @@
             [clojure.java.io :as io]
             [misabogados-workflow.layout.core :as layout]
             [hiccup.form :as form]
-            [ring.util.response :refer [redirect]]
+            [ring.util.response :refer [redirect response]]
             [misabogados-workflow.db.core :as db]
             [misabogados-workflow.util :as util]
             [buddy.auth :refer [authenticated?]]
@@ -25,7 +25,9 @@
                              :role :client}
                           (filter #(contains? permitted  (key %))
                                   (:params request))))
-      (-> (redirect "/") (assoc :session (assoc session :identity (-> request :params :email keyword))))))
+      (-> (response {:identity (-> request :params :email)
+                     :role (-> request :params :role)})
+          (assoc :session (assoc session :identity (-> request :params :email keyword))))))
 
 ;; TODO add validation!!
 ;; TODO add messages
