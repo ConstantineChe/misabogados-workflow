@@ -9,6 +9,21 @@
             [json-html.core :refer [edn->hiccup]]))
 
 ;;TODO this is for non-reagent payment pages. Move everything else to payment_requests.cljs
+(defn- create-hidden-input [param]
+  (let [key (key param) val (val param) input (.createElement js/document "input")]
+    (aset input "type" "hidden")
+    (aset input "name" key)
+    (aset input "value" val)
+
+    input))
+
+(defn- redirect [url method params]
+  (let [form (.createElement js/document "form")]
+    (aset form "action" url)
+    (aset form "method" method)
+    (doall (map #(.appendChild form (create-hidden-input %)) params))
+    (.submit form)))
+
 (.addEventListener
   js/window
   "DOMContentLoaded"
@@ -20,15 +35,18 @@
                             (.find "button")
                             (.button "loading"))
                      (POST (str js/context "pay")
-                           {:handler #((do (js/alert "handler")
-                                           (-> (js/jQuery "form#payment_form")
-                                               (.find "button")
-                                               (.button "reset")))
-                                        
-                                        nil)}))
+                           {:params {:code (-> (js/jQuery "form#payment_form")
+                                               (.find "input[name='code']")
+                                               .val)
+                                     :_id (-> (js/jQuery "form#payment_form")
+                                               (.find "input[name='_id']")
+                                               .val)}
+                            :handler (fn [response] 
+                                       (redirect "https://stg.gateway.payulatam.com/ppp-web-gateway/" "post" response))}))
                  (.preventDefault e))
                ))
     ))
+
 
 
 (def table-data (r/atom {}

@@ -1,7 +1,9 @@
 {% extends "home.html" %}
 {% block content %}
 <form id="payment_form">
-  <input name="code" type="hidden" value="286f5b37bfc33e430fb32f2b84448d34d545f56e07de3869fa6a496ae89f2d6c">
+  <input name="code" type="hidden" value="{{payment-request.code}}">
+  <input name="_id" type="hidden" value="{{payment-request._id}}">
+
   <div class="col-md-4 col-md-offset-4">
     <div class="panel panel-info">
       <div class="panel-heading">

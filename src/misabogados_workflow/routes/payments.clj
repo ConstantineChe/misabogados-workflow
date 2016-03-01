@@ -101,12 +101,7 @@
                          (list [:ul
                                 ]
                                [:form {:method "POST" :action "https://stg.gateway.payulatam.com/ppp-web-gateway"}
-                                  ;; (list 
-                                  ;;  (map (fn [field] [:input {:type :hidden 
-                                  ;;                            :name (key field)
-                                  ;;                            :value (val field)}]) 
-                                  ;;       (merge test-payment-data {:amount (:amount payment-request)
-                                  ;;                                 :buyerEmail (:client_email payment-request)})))
+                                  
                                 [:input {:type :hidden
                                          :name :code
                                          :value code}]
@@ -126,17 +121,32 @@
 
 (defn get-payment [code request]
   (render "payment.html" 
-          {:payment-request (db/get-payment-request-by-code code)
+          {:payment-request (mc/find-one-as-map @db "payment_requests" {:code code})
            :payment-options test-payment-data}))
 
-(defn pay [request]
-  "")
+(defn start-payment-attempt [request]
+  (let [params (:params request)
+        id (oid (:_id params))
+        payment-request (mc/find-one-as-map @db "payment_requests" {:_id id})
+        data (merge test-payment-data {:amount (:amount payment-request)
+                                       :buyerEmail (:client_email payment-request)})]
+    (if (= (:code params) (:code payment-request))
+      (do 
+        (println (str "----ID " params) )
+        (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date (new java.util.Date)
+                                                                                              :action "start_payment_attempt"
+                                                                                              :data data}}})
+          {:status 200
+           :body data})
+      {:status 409
+       :body {:error "Codigo de pago no es valido. Probablemente el comprobante ha sido cambiado, el enlace nuevo debe ser en su correo."}}
+      )))
 
 (defroutes payments-routes
   (GET "/payments/:code" [code :as request] (get-payment code request))
   ;; (POST "/payments/pay" [code :as request] (pay code request))
   (POST "/payments/pay" [] 
-        pay)
+        start-payment-attempt)
 
   (GET "/payment-requests" [] (restrict get-payment-requests
                                 {:handler {:or [ac/admin-access ac/lawyer-access]}
