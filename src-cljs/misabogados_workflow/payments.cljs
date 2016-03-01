@@ -27,7 +27,7 @@
 (.addEventListener
   js/window
   "DOMContentLoaded"
-  (fn [] 
+  (fn []
     (.submit (js/jQuery "form#payment_form")
              (fn [e]
                (this-as form
@@ -41,9 +41,8 @@
                                      :_id (-> (js/jQuery "form#payment_form")
                                                (.find "input[name='_id']")
                                                .val)}
-                            :handler (fn [response] 
-                                       (do (js/alert response)
-                                         (redirect "https://stg.gateway.payulatam.com/ppp-web-gateway/" "post" response)))}))
+                            :handler (fn [response]
+                                       (redirect "https://stg.gateway.payulatam.com/ppp-web-gateway/" "post" response))}))
                  (.preventDefault e))
                ))
     ))
@@ -97,7 +96,6 @@
 
 (def payment-request-form-template
      [:div.modal-body
-      [:label {:field :label :id :_id}]
       (input "Nombre del cliente*" :text :client)
       (input "Email del cliente*" :email :client_email)
       (input "Teléfono del cliente*" :numeric :client_tel)
@@ -116,14 +114,15 @@
 (defn validate-payment-request-form [data]
   (reset! validation-message
           (b/validate data
-                      :client v/required
-                      :amount v/required
-                      :client_email [v/required v/email]
-                      :client_tel v/required
-                      :service v/required
-                      :service_description v/required
-                      :own_client v/required
-                      :terms v/required))
+                      :client [[v/required :message "Client's name should me present"]]
+                      :amount [[v/required :message "Payment amount sould be present"]]
+                      :client_email [[v/required :message "Client's email should be present"]
+                                     [v/email :message "Client's email should be a valid email address"]]
+                      :client_tel [[v/required :message "Client's phone number should be present"]]
+                      :service [[v/required :message "Service name should be present"]]
+                      :service_description [[v/required :message "Service description should be present"]]
+                      :own_client [[v/required :message "Client type should be specified"]]
+                      :terms [[v/required :message "Youd should accept terms and conditions in order to send payment request"]]))
   (b/valid? data
             :client v/required
             :amount v/required
@@ -203,10 +202,12 @@
      [:legend "Payment Requests"]
      [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
       [:th "Botón de pago"]
+      (if (= "admin" (session/get-in [:user :role])) [:th "Lawyer" ])
       [:th "Client"]
       [:th "Service"]
       [:th "Amount"]
       [:th "Client type"]
+      [:th "Last action"]
       [:th "Actions"]
       [:tbody
        (doall
@@ -221,10 +222,15 @@
                        :data-toggle "tooltip"
                        :title "Este enlace fue enviado al cliente"
                        } "Pagar"]]
+             (if (= "admin" (session/get-in [:user :role]))
+               [:td {:on-click #(js/alert (str (first (get values :lawyer_data))))}
+                (get (first (get values :lawyer_data)) "name")])
              [:td (get values :client) ]
              [:td (get values :service)]
              [:td (get values :amount)]
              [:td (get values :own_client)]
+             [:td {:on-click #(js/alert (str (get values :payment_log)))}
+              (-> (get values :payment_log) last :action)]
              [:td
               [:button.btn {:on-click #(do
                                          (u/show-modal (str "payment-request-form" row-key)))} "Edit"]
@@ -235,14 +241,15 @@
 (defn payments []
   (let [payment-requests (GET (str js/context "/payment-requests")
                       {:handler #((reset! table-data (get % "payment-requests"))
-                                  nil)})]
+                                  nil)
+                       :error-handler #(u/get-session!)})]
     (fn []
       [:div.container
        [:h1 "PagoLegal"]
-       [:button.btn {:type :button
-                     :on-click #(do
-                                  (u/show-modal "payment-request-form")
-                                  (reset! form-data {}))} "Create payment request"]
+       (if (= "lawyer" (session/get-in [:user :role])) [:button.btn {:type :button
+                                                :on-click #(do
+                                                             (u/show-modal "payment-request-form")
+                                                             (reset! form-data {}))} "Create payment request"])
        [table]
        [create-payment-request-form]
        (doall (for [row @table-data]
@@ -250,6 +257,6 @@
                  values (apply merge (map (fn [field]
                                             {(keyword (key field)) (val field)})
                                           (get @table-data row-key)))]
-             [(edit-payment-request-form (into {:_id row-key} values))]
+             [:div {:key row-key} [(edit-payment-request-form (into {:_id row-key} values))]]
              )))
        ])))

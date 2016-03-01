@@ -9,7 +9,7 @@
             [misabogados-workflow.ajax :refer [GET POST csrf-token update-csrf-token!]]
             [misabogados-workflow.dashboard :refer [dashboard]]
             [misabogados-workflow.payments :refer [payments]]
-            [misabogados-workflow.utils :as u]
+            [misabogados-workflow.utils :as u :refer [get-session!]]
             [reagent.core :as r]
             [reagent.session :as session]
             [secretary.core :as secretary :include-macros true])
@@ -17,15 +17,6 @@
 
 (defn https? []
   (= "https:" (.-protocol js/location)))
-
-(defn get-session! []
-  (GET (str js/context "/session")
-       {:handler (fn [response]
-                   (if-not (nil? (get response "identity"))
-                     (session/put! :user {:identity (get response "identity" )
-                                          :role (get response "role")}))
-                   (ac/reset-access!)
-                   nil)}))
 
 
 (defn signup! [signup-form]
@@ -102,19 +93,19 @@
              (doall (map (fn [item]  (apply nav-link item)) (:nav-links @ac/components)))
              )]]]))
 
-;; (defn debug []
-;;   (let [request (r/atom nil)
-;;         _ (GET (str js/context "/request") {:handler (fn [resp]
-;;                                                        (do
-;;                                                            (reset! request (str resp)))
-;;                                                        nil)})
-;;         _ (ac/reset-access!)]
-;;     (fn []
-;;       [:div.container
-;;        [:legend "Debug"]
-;;        [:h3 "request"] [:p @request]
-;;        [:h3 "ac"] [:p (str (ac/get-access))]
-;;        [:h3 "session"] [:p (str (dissoc @session/state :docs))]])))
+(comment (defn debug []
+    (let [request (r/atom nil)
+          _ (GET (str js/context "/request") {:handler (fn [resp]
+                                                         (do
+                                                           (reset! request (str resp)))
+                                                         nil)})
+          _ (ac/reset-access!)]
+      (fn []
+        [:div.container
+         [:legend "Debug"]
+         [:h3 "request"] [:p @request]
+         [:h3 "ac"] [:p (str (ac/get-access))]
+         [:h3 "session"] [:p (str (dissoc @session/state :docs))]]))))
 
 (defn about-page []
   [:div.container
@@ -140,25 +131,25 @@
          [:legend "Sign-up"
           [:div.form-group
            [:label.control-label {:for :email} "Email"]
-            [:input#email {:type :email
+            [:input#email.form-control {:type :email
                            :value (:email @signup-form)
                            :on-change #(reset! signup-form (assoc @signup-form :email (-> %  .-target .-value)))
                            }]]
           [:div.form-group
            [:label.control-label {:for :name} "Name"]
-            [:input#name {:type :text
+            [:input#name.form-control {:type :text
                           :value (:name @signup-form)
                           :on-change #(reset! signup-form (assoc @signup-form :name (-> %  .-target .-value)))
                           }]]
           [:div.form-group
            [:label.control-label {:for :pwd} "Password"]
-           [:input#pwd {:type :password
+           [:input#pwd.form-control {:type :password
                         :value (:password @signup-form)
                         :on-change #(reset! signup-form (assoc @signup-form :password (-> %  .-target .-value)))
                         }]]
           [:div.form-group
            [:label.control-label {:for :pwd_conf} "Confirm password"]
-           [:input#conf {:type :password
+           [:input#conf.form-control {:type :password
                          :value (:password_confirmation @signup-form)
                          :on-change #(reset! signup-form (assoc @signup-form :password_confirmation (-> %  .-target .-value)))
                          }]]
@@ -173,18 +164,24 @@
         _ (update-csrf-token!)]
     (fn []
       (if (not https?) (reset! warnings "Not using ssl"))
-      [:div.login-form
-       (if-let [error @error] [:p.error error])
-       (if-let [warning @warnings] [:p.warning warning])
-       [:input {:type :email
-                :value @email
-                :on-change #(reset! email (-> %  .-target .-value))
-                }]
-       [:input {:type :password
-                :value @password
-                :on-change #(reset! password (-> %  .-target .-value))
-                }]
-       [:button {:on-click #(login! @email @password error)} "Login"]]
+      [:div.container
+       [:form.form-horizontal
+        [:legend "Login"]
+         (if-let [error @error] [:p.error error])
+         (if-let [warning @warnings] [:p.warning warning])
+        [:div.form-group
+         [:label.control-label {:for :email} "Email"]
+         [:input#email.form-control {:type :email
+                   :value @email
+                   :on-change #(reset! email (-> %  .-target .-value))
+                   }]]
+        [:div.form-group
+         [:label.control-label {:for :pwd} "Password"]
+         [:input#pwd.form-control {:type :password
+                   :value @password
+                   :on-change #(reset! password (-> %  .-target .-value))
+                   }]]
+        [:div.form-group [:button {:on-click #(login! @email @password error)} "Login"]]]]
       )))
 
 (defn home-page []
@@ -219,8 +216,8 @@
 (secretary/defroute "/login" []
   (session/put! :page :login))
 
-;; (secretary/defroute "/debug" []
-;;   (session/put! :page :debug))
+(comment (secretary/defroute "/debug" []
+    (session/put! :page :debug)))
 
 (secretary/defroute "/dashboard" []
   (session/put! :page :dashboard))
