@@ -15,10 +15,14 @@
             [misabogados-workflow.access-control :as ac]
             [misabogados-workflow.middleware :as mw]
             [misabogados-workflow.util :as util]
+            [misabogados-workflow.email :as email]
             [buddy.auth.accessrules :refer [restrict]]))
 
+(defn get-current-user [request]
+  (dbcore/get-user (:identity request)))
+
 (defn get-current-user-id [request]
-  (:_id (dbcore/get-user (:identity request))))
+  (:_id (get-current-user request)))
 
 (defn access-error-handler [request value]
   {:status 403
@@ -51,14 +55,18 @@
   (response {:payment-request {:get id} :status "ok" :role (-> request :session :role)}))
 
 (defn create-payment-request [request]
-  (dbcore/create-payment-request (assoc (:params request)
-                                    :lawyer (get-current-user-id request)
-                                    :code (util/generate-hash (:params request))
-                                    :date_created (new java.util.Date)))
-  (response {:payment-request {:create "new"}
-             :status "ok"
-             :role (-> request :session :role)
-             :params (:params request)}))
+  (let [params (:params request)
+        current-user (get-current-user request)]
+    (dbcore/create-payment-request (assoc (:params request)
+                                          :lawyer (:_id current-user)
+                                          :code (util/generate-hash params)
+                                          :date_created (new java.util.Date)))
+    (email/payment-request-email (:client_email params) {:lawyer-name (:name current-user)
+                                                  :payment-request params})
+    (response {:payment-request {:create "new"}
+               :status "ok"
+               :role (-> request :session :role)
+               :params params})))
 
 (defn update-payment-request [id request]
   (let [id (oid id)

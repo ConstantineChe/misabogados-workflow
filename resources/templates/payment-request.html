@@ -1,6 +1,6 @@
 <h3>Paga tus servicios legales con MisAbogados.com:</h3>
-<p>Hola {{ name }}, el abogado {{ lawyer }} te ha solicitado el pago de {{ amount }} por
-  el servicio de: Servicio de prueba a través de MisAbogados.com:</p>
-<p> Servicio: {{ service }} </p>
+<p>Hola {{payment-request.client }}, el abogado {{lawyer-name}} te ha solicitado el pago de MXN {{payment-request.amount }} por
+  el servicio a través de MisAbogados.com:</p>
+<p> Servicio: {{payment-request.service }} </p>
 
-<a href="http://misabogados.com/payments/{{code}}">Para pagar haz click acá</a>
+<a href="http://misabogados.com/payments/{{payment-request.code}}">Para pagar haz click acá</a>

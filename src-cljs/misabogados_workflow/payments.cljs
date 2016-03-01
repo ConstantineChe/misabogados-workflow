@@ -230,11 +230,12 @@
              [:td (get values :amount)]
              [:td (get values :own_client)]
              [:td {:on-click #(js/alert (str (get values :payment_log)))}
-              (-> (get values :payment_log) last :action)]
+              (get (last (get values :payment_log)) "action")]
              [:td
-              [:button.btn {:on-click #(do
-                                         (u/show-modal (str "payment-request-form" row-key)))} "Edit"]
-              [:button.btn {:on-click #(remove-payment-request row-key)} "Delete"]]
+              (if-not (get values :payment_log)  
+                (list [:button.btn {:on-click #(do
+                                                 (u/show-modal (str "payment-request-form" row-key)))} "Edit"]
+                      [:button.btn {:on-click #(remove-payment-request row-key)} "Delete"]))]
              ])))]]]
     [:h4 "You have no payment-request requests"])))
 
