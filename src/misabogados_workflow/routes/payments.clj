@@ -82,15 +82,27 @@
                         :ApiKey "6u39nqhq8ftd0hlvnjfs66eh8c"
                         :referenceCode "TestPayU"
                         :accountId "500537"
-                        :description "Test PAYU"
+                        ;; :description "Test PAYU"
                         ;; :amount "3"
                         :tax "0"
                         :taxReturnBase "0"
                         :currency "MXN"
-                        :signature "be2f083cb3391c84fdf5fd6176801278"
+                        ;; :signature "be2f083cb3391c84fdf5fd6176801278"
                         :test "1"
+                        :confirmationUrl "http://localhost:3000/payments/confirmation"
                         ;; :buyerEmail "test@test.com"
                         })
+
+(defn- add-signature [data]
+  (let [signature-string (clojure.string/join "~" [(:ApiKey data)
+                                                   (:merchantId data)
+                                                   (:referenceCode data)
+                                                   (:amount data)
+                                                   (:currency data)
+                                    ])
+        signature (util/md5 signature-string)]
+    (println (str "~~~SIGNATURE-STRING " signature-string))
+    (assoc data :signature signature)))
 
 
 
@@ -126,14 +138,17 @@
 
 (defn start-payment-attempt [request]
   (let [params (:params request)
+        date (new java.util.Date)
         id (oid (:_id params))
         payment-request (mc/find-one-as-map @db "payment_requests" {:_id id})
-        data (merge test-payment-data {:amount (:amount payment-request)
-                                       :buyerEmail (:client_email payment-request)})]
+        data (add-signature (merge test-payment-data {:amount (:amount payment-request)
+                                                      :referenceCode (str (:_id payment-request) "-" (.getTime date))
+                                                      :description (:service payment-request)
+                                                      :buyerEmail (:client_email payment-request)
+                                                      }))]
     (if (= (:code params) (:code payment-request))
       (do 
-        (println (str "----ID " params) )
-        (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date (new java.util.Date)
+        (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date date
                                                                                               :action "start_payment_attempt"
                                                                                               :data data}}})
           {:status 200
@@ -142,11 +157,19 @@
        :body {:error "Codigo de pago no es valido. Probablemente el comprobante ha sido cambiado, el enlace nuevo debe ser en su correo."}}
       )))
 
+(defn confirmation [request]
+  (let [params (:params request)
+        ]
+    (println (str "----CONFIRMATION " params) )
+    (redirect "/")))
+
 (defroutes payments-routes
   (GET "/payments/:code" [code :as request] (get-payment code request))
   ;; (POST "/payments/pay" [code :as request] (pay code request))
   (POST "/payments/pay" [] 
         start-payment-attempt)
+  (POST "/payments/confirmation" [] 
+        confirmation)
 
   (GET "/payment-requests" [] (restrict get-payment-requests
                                 {:handler {:or [ac/admin-access ac/lawyer-access]}

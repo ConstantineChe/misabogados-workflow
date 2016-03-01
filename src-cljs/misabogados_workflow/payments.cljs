@@ -42,7 +42,8 @@
                                                (.find "input[name='_id']")
                                                .val)}
                             :handler (fn [response] 
-                                       (redirect "https://stg.gateway.payulatam.com/ppp-web-gateway/" "post" response))}))
+                                       (do (js/alert response)
+                                         (redirect "https://stg.gateway.payulatam.com/ppp-web-gateway/" "post" response)))}))
                  (.preventDefault e))
                ))
     ))
