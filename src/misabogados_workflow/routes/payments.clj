@@ -6,7 +6,7 @@
             [hiccup.form :as form]
             [ring.util.response :refer [redirect response]]
             [ring.middleware.session :as s]
-            [misabogados-workflow.db.core :as db]
+            [misabogados-workflow.db.core :as dbcore :refer [db oid]]
             [monger.collection :as mc]
             [monger.operators :refer :all]
             [buddy.auth :refer [authenticated?]]
@@ -17,7 +17,7 @@
             [buddy.auth.accessrules :refer [restrict]]))
 
 (defn get-current-user-id [request]
-  (:_id (db/get-user (:identity request))))
+  (:_id (dbcore/get-user (:identity request))))
 
 (defn access-error-handler [request value]
   {:status 403
@@ -26,7 +26,7 @@
           :role (-> request :session :role)}})
 
 (defn allowed-to-edit [id request]
-  (if (= (:lawyer (mc/find-one-as-map @db/db "payment_requests" {:_id id}))
+  (if (= (:lawyer (mc/find-one-as-map @db "payment_requests" {:_id id}))
          (get-current-user-id request))
     true
     {:message "Not allowed"}))
@@ -34,7 +34,7 @@
 (defn get-payment-requests [request]
   (let [payment-requests (apply merge (map (fn [payment-request]
                           {(str (:_id payment-request)) (dissoc payment-request :_id)})
-                        (db/get-payment-requests (get-current-user-id request))))]
+                        (dbcore/get-payment-requests (get-current-user-id request))))]
     (response {:payment-requests payment-requests :status "ok" :role (-> request :session :role)})))
 
 
@@ -43,29 +43,34 @@
   (response {:payment-request {:get id} :status "ok" :role (-> request :session :role)}))
 
 (defn create-payment-request [request]
-  (db/create-payment-request (assoc (:params request) :lawyer (get-current-user-id request) :code (util/generate-hash (:params request))))
+  (dbcore/create-payment-request (assoc (:params request)
+                                    :lawyer (get-current-user-id request)
+                                    :code (util/generate-hash (:params request))
+                                    :date_created (new java.util.Date)))
   (response {:payment-request {:create "new"}
              :status "ok"
              :role (-> request :session :role)
              :params (:params request)}))
 
 (defn update-payment-request [id request]
-  (let [id (db/oid id)
+  (let [id (oid id)
         params (:params request)
         allowed? (allowed-to-edit id request)]
     (if (true? allowed?)
-      (do (mc/update-by-id @db/db "payment_requests" id {$set (dissoc params :lawyer)})
+      (do (mc/update-by-id @db "payment_requests" id {$set
+                                                         (assoc (dissoc params :lawyer)
+                                                                :date_updated (new java.util.Date))})
           (response {:payment-request {:update id} :status "ok" :role (-> request :session :role)}))
       {:status 403
        :header {}
        :body {:error (:message allowed?)}})))
 
 (defn remove-payment-request [id request]
-  (let [id (db/oid id)
+  (let [id (oid id)
         params (:params request)
         allowed? (allowed-to-edit id request)]
     (if (true? allowed?)
-      (do (mc/remove-by-id @db/db "payment_requests" id)
+      (do (mc/remove-by-id @db "payment_requests" id)
           (response {:payment-request {:delete id} :status "ok" :role (-> request :session :role)}))
       {:status 403
        :header {}
@@ -88,7 +93,7 @@
 
 (defn get-payment [code request]
     (layout/blank-page "Pagar"
-                       (let [payment-request (db/get-payment-request-by-code code)]
+                       (let [payment-request (dbcore/get-payment-request-by-code code)]
                          (list [:ul
                                 ]
                                [:form {:method "POST" :action "https://stg.gateway.payulatam.com/ppp-web-gateway"}

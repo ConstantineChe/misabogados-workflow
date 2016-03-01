@@ -56,7 +56,7 @@
       [:label {:field :label :id :_id}]
       (input "Nombre del cliente*" :text :client)
       (input "Email del cliente*" :email :client_email)
-      (input "Teléfono del cliente*" :text :client_tel)
+      (input "Teléfono del cliente*" :numeric :client_tel)
       (input "Servicio*" :text :service)
       (input "Descripción del servicio*" :textarea :service_description)
       (input "Amount*" :numeric :amount)
@@ -70,6 +70,16 @@
   )
 
 (defn validate-payment-request-form [data]
+  (reset! validation-message
+          (b/validate data
+                      :client v/required
+                      :amount v/required
+                      :client_email [v/required v/email]
+                      :client_tel v/required
+                      :service v/required
+                      :service_description v/required
+                      :own_client v/required
+                      :terms v/required))
   (b/valid? data
             :client v/required
             :amount v/required
@@ -95,7 +105,9 @@
         payment-request-form-template
         form-data]
        [:div.modal-footer
-        [:p @validation-message]
+        [:div.validation-messages
+         (doall (for [message (first @validation-message)]
+                  [:p {:key (key message)} (str (first (val message)))]))]
         [:button.btn.btn-default {:type :button
                                   :on-click #(do ((u/close-modal "payment-request-form")
                                                   (reset! validation-message nil)))} "Cerrar"]
@@ -106,14 +118,15 @@
                                                    (reset! form-data {})
                                                    (refresh-table)
                                                    (reset! validation-message nil))
-                                               (reset! validation-message "Fill all required fields."))} "Guardar"]]]
+                                               )} "Guardar"]]]
       ]]
     ))
 
 (defn edit-payment-request-form [data]
   (let [edit-form-data (r/atom data)]
     (fn []
-            [:div.modal.fade {:role :dialog :id (str "payment-request-form" (:_id data))}
+      [:div.modal.fade {:role :dialog :id (str "payment-request-form" (:_id data))
+                        :key (:_id data)}
              [:div.modal-dialog
               [:div.modal-content
                [:div.modal-header
@@ -124,7 +137,8 @@
                 payment-request-form-template
                 edit-form-data]
                [:div.modal-footer
-                [:p @validation-message]
+                (doall (for [message (first @validation-message)]
+                         [:p {:key (key message)} (str (first (val message)))]))
                 [:button.btn.btn-default {:type :button
                                           :on-click #(do (u/close-modal (str "payment-request-form" (:_id data)))
                                                          (reset! validation-message nil))} "Cerrar"]
@@ -134,7 +148,7 @@
                                                            (u/close-modal (str "payment-request-form" (:_id data)))
                                                            (refresh-table)
                                                            (reset! validation-message nil))
-                                                       (reset! validation-message "Fill all required fields."))} "Guardar"]]]
+                                                       )} "Guardar"]]]
               ]]
             )))
 

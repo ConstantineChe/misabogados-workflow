@@ -32,7 +32,4 @@
 (deftest test-users-routes
   (testing "Get users"
     (let [response (app (request :get "/users"))]
-      (is (= 403 (:status response)))))
-  (testing "Get user"
-    (let [response (app (request :get "/user"))]
-      (is (= 200 (:status response))))))
+      (is (= 403 (:status response))))))

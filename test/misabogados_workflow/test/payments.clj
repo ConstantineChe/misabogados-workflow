@@ -3,6 +3,7 @@
             [midje.sweet :refer :all]
             [misabogados-workflow.db.core :as db]
             [misabogados-workflow.routes.payments :as payments]))
+
 (db/connect!)
 
 (fact "get payments returns array of ids to data"
