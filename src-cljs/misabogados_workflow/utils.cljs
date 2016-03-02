@@ -1,19 +1,19 @@
 (ns misabogados-workflow.utils
   (:require [misabogados-workflow.ajax :refer [GET]]
             [reagent.session :as session]
-            [misabogados-workflow.access-control :as ac])
+            [misabogados-workflow.access-control :as ac]
+)
 )
 
-(def jquery (js* "$"))
 
 (defn show-modal [id]
   (->
-   (jquery (str "#" id))
+   (js/jQuery (str "#" id))
    (.modal "show")))
 
 (defn close-modal [id]
   (->
-   (jquery (str "#" id))
+   (js/jQuery (str "#" id))
    (.modal "hide")))
 
 (defn get-session! []

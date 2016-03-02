@@ -12,7 +12,9 @@
             [misabogados-workflow.utils :as u :refer [get-session!]]
             [reagent.core :as r]
             [reagent.session :as session]
-            [secretary.core :as secretary :include-macros true])
+            [secretary.core :as secretary :include-macros true]
+            [cljsjs.jquery]
+            [cljsjs.bootstrap])
   (:import goog.History))
 
 (defn https? []
@@ -67,14 +69,14 @@
     [:a
      {:href uri
       :on-click #(->
-                  (u/jquery "#navbar-hamburger:visible")
+                  (js/jQuery "#navbar-hamburger:visible")
                   (.click))}
      title]])
   ([uri title]
    [:li>a
     {:href uri
       :on-click #(->
-                  (u/jquery "#navbar-hamburger:visible")
+                  (js/jQuery "#navbar-hamburger:visible")
                   (.click))} title]))
 
 (defn navbar []
