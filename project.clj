@@ -76,7 +76,7 @@
                {:app
                 {:source-paths ["env/prod/cljs"]
                  :compiler
-                 {:optimizations :advanced
+                 {:optimizations :whitespace
                   :pretty-print false
                   :closure-warnings
                   {:externs-validation :off :non-standard-jsdoc :off}}}}}

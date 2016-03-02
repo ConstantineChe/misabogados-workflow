@@ -241,16 +241,16 @@
 
 (defn payments []
   (let [payment-requests (GET (str js/context "/payment-requests")
-                      {:handler #((reset! table-data (get % "payment-requests"))
+                      {:handler (fn [data] (reset! table-data (get data "payment-requests"))
                                   nil)
                        :error-handler #(u/get-session!)})]
     (fn []
       [:div.container
        [:h1 "PagoLegal"]
        (if (= "lawyer" (session/get-in [:user :role])) [:button.btn {:type :button
-                                                :on-click #(do
-                                                             (u/show-modal "payment-request-form")
-                                                             (reset! form-data {}))} "Create payment request"])
+                                                                     :on-click (fn [] (do
+                                                                                        (u/show-modal "payment-request-form")
+                                                                                        (reset! form-data {})))} "Create payment request"])
        [table]
        [create-payment-request-form]
        (doall (for [row @table-data]
