@@ -10,10 +10,10 @@
                  [ring-middleware-format "0.7.0"]
                  [metosin/ring-http-response "0.6.5"]
                  [bouncer "1.0.0"]
-                 [org.webjars/bootstrap "4.0.0-alpha.2"]
+                 [cljsjs/bootstrap "3.3.6-0"]
                  [org.webjars/font-awesome "4.5.0"]
                  [org.webjars.bower/tether "1.1.1"]
-                 [org.webjars/jquery "2.2.0"]
+                 [cljsjs/jquery "2.1.4-0"]
                  [org.clojure/tools.logging "0.3.1"]
                  [com.taoensso/tower "3.0.2"]
                  [compojure "1.4.0"]
@@ -69,21 +69,26 @@
 
   :profiles
   {:uberjar {:omit-source true
-             :env {:production true}
+             :env {:production true
+                   :log-path "log/misabogados.log"
+                   :database-url "mongodb://127.0.0.1/misabogados_workflow"                   }
               :prep-tasks ["compile" ["cljsbuild" "once"]]
               :cljsbuild
               {:builds
                {:app
                 {:source-paths ["env/prod/cljs"]
                  :compiler
-                 {:optimizations :advanced
+                 {:externs ["resoureces/public/js/externs/externs.js"]
+                  :optimizations :advanced
                   :pretty-print false
+                  :pseudo-names false
                   :closure-warnings
                   {:externs-validation :off :non-standard-jsdoc :off}}}}}
 
              :aot :all
              :source-paths ["env/prod/clj"]
              :resource-paths ["env/prod/resources"]}
+   :production [:project/production :profiles/production]
    :dev           [:project/dev :profiles/dev]
    :test          [:project/test :profiles/test]
    :project/dev  {:dependencies [[prone "1.0.1"]
@@ -128,5 +133,9 @@
    :project/test {:env {:test       true
                         :port       3001
                         :nrepl-port 7001}}
+   :project/production {:env {:production true
+                              :log-path "log/misabogados.log"
+                              :database-url "mongodb://127.0.0.1/misabogados_workflow"}}
+   :profiles/production {}
    :profiles/dev {}
    :profiles/test {}})
