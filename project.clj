@@ -72,19 +72,19 @@
              :env {:production true
                    :log-path "log/misabogados.log"
                    :database-url "mongodb://127.0.0.1/misabogados_workflow"                   }
-              :prep-tasks ["compile" ["cljsbuild" "once"]]
-              :cljsbuild
-              {:builds
-               {:app
-                {:source-paths ["env/prod/cljs"]
-                 :compiler
-                 {:externs ["resoureces/public/js/externs/externs.js"]
-                  :optimizations :advanced
-                  :pretty-print false
-                  :pseudo-names false
-                  :closure-warnings
-                  {:externs-validation :off :non-standard-jsdoc :off}}}}}
-
+             :prep-tasks ["compile" ["cljsbuild" "once"]]
+             :cljsbuild
+             {:builds
+              {:app
+               {:source-paths ["env/prod/cljs"]
+                :compiler
+                {:externs ["resoureces/public/js/externs/externs.js"]
+                 :optimizations :advanced
+                 :pretty-print false
+                 :pseudo-names false
+                 :closure-warnings
+                 {:externs-validation :off :non-standard-jsdoc :off}}}}}
+             
              :aot :all
              :source-paths ["env/prod/clj"]
              :resource-paths ["env/prod/resources"]}
