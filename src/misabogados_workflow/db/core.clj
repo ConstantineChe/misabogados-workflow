@@ -10,7 +10,8 @@
 
 (defn connect! []
   ;; Tries to get the Mongo URI from the environment variable
-  (reset! db (-> (:database-url env) mg/connect-via-uri :db)))
+  (reset! db (-> (:database-url env) 
+                 mg/connect-via-uri :db)))
 
 (defn disconnect! []
   (when-let [conn @db]
