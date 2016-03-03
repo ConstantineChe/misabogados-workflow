@@ -56,13 +56,15 @@
 
 (defn create-payment-request [request]
   (let [params (:params request)
-        current-user (get-current-user request)]
-    (dbcore/create-payment-request (assoc (:params request)
+        current-user (get-current-user request)
+        payment-request (assoc (:params request)
                                           :lawyer (:_id current-user)
                                           :code (util/generate-hash params)
-                                          :date_created (new java.util.Date)))
+                                          :date_created (new java.util.Date))]
+    (dbcore/create-payment-request payment-request)
     (future (email/payment-request-email (:client_email params) {:lawyer-name (:name current-user)
-                                                           :payment-request params}))
+                                                                 :payment-request payment-request
+                                                                 :base-url (get (:headers request) "host")}))
     (response {:payment-request {:create "new"}
                :status "ok"
                :role (-> request :session :role)
