@@ -10,7 +10,7 @@
 
 (defn connect! []
   ;; Tries to get the Mongo URI from the environment variable
-  (reset! db (-> (:database-url env) 
+  (reset! db (-> (:database-url env)
                  mg/connect-via-uri :db)))
 
 (defn disconnect! []
@@ -36,8 +36,15 @@
 (defn get-lead [id]
   (mc/find-one-as-map @db "leads" {:_id (oid id)}))
 
-(defn get-leads []
-  (mc/find-maps @db "leads"))
+(defn get-leads [role identity]
+  (cond (= :admin role)
+        (mc/find-maps @db "leads")
+        (= :operator role)
+        (mc/find-maps @db "leads" {$not {:step "archive"}})
+        (= :lawyer role)
+        {}
+        (= :client role)
+        {}))
 
 (defn update-lead [id fields]
 

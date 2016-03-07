@@ -2,9 +2,13 @@
   (:require [misabogados-workflow.ajax :refer [GET]]
             [reagent.session :as session]
             [misabogados-workflow.access-control :as ac]
+            [clojure.string :as str]
 )
 )
 
+(defn remove-kebab [str]
+  "removes kebab and makes string human-eatable"
+  (if str (str/capitalize (str/replace str "-" " "))))
 
 (defn show-modal [id]
   (->

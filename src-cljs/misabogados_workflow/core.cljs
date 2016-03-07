@@ -130,33 +130,33 @@
       [:div.container
        [:div.signup-form
         [:form.form-horizontal
-         [:legend "Sign-up"
-          [:div.form-group
-           [:label.control-label {:for :email} "Email"]
-            [:input#email.form-control {:type :email
-                           :value (:email @signup-form)
-                           :on-change #(reset! signup-form (assoc @signup-form :email (-> %  .-target .-value)))
-                           }]]
-          [:div.form-group
-           [:label.control-label {:for :name} "Name"]
-            [:input#name.form-control {:type :text
-                          :value (:name @signup-form)
-                          :on-change #(reset! signup-form (assoc @signup-form :name (-> %  .-target .-value)))
-                          }]]
-          [:div.form-group
-           [:label.control-label {:for :pwd} "Password"]
-           [:input#pwd.form-control {:type :password
-                        :value (:password @signup-form)
-                        :on-change #(reset! signup-form (assoc @signup-form :password (-> %  .-target .-value)))
-                        }]]
-          [:div.form-group
-           [:label.control-label {:for :pwd_conf} "Confirm password"]
-           [:input#conf.form-control {:type :password
-                         :value (:password_confirmation @signup-form)
-                         :on-change #(reset! signup-form (assoc @signup-form :password_confirmation (-> %  .-target .-value)))
-                         }]]
-          [:div.form-group [:button {:on-click #(if () (signup! @signup-form))} "Sign-up"]]
-          ]]]])))
+         [:legend "Sign-up"]
+         [:div.form-group
+          [:label.control-label {:for :email} "Email"]
+          [:input#email.form-control {:type :email
+                                      :value (:email @signup-form)
+                                      :on-change #(reset! signup-form (assoc @signup-form :email (-> %  .-target .-value)))
+                                      }]]
+         [:div.form-group
+          [:label.control-label {:for :name} "Name"]
+          [:input#name.form-control {:type :text
+                                     :value (:name @signup-form)
+                                     :on-change #(reset! signup-form (assoc @signup-form :name (-> %  .-target .-value)))
+                                     }]]
+         [:div.form-group
+          [:label.control-label {:for :pwd} "Password"]
+          [:input#pwd.form-control {:type :password
+                                    :value (:password @signup-form)
+                                    :on-change #(reset! signup-form (assoc @signup-form :password (-> %  .-target .-value)))
+                                    }]]
+         [:div.form-group
+          [:label.control-label {:for :pwd_conf} "Confirm password"]
+          [:input#conf.form-control {:type :password
+                                     :value (:password_confirmation @signup-form)
+                                     :on-change #(reset! signup-form (assoc @signup-form :password_confirmation (-> %  .-target .-value)))
+                                     }]]
+         [:div.form-group [:button {:on-click #(if () (signup! @signup-form))} "Sign-up"]]
+          ]]])))
 
 (defn login-page []
   (let [email (r/atom "")

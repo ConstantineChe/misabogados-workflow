@@ -46,10 +46,11 @@
            [:th "email"]
            [:th "role"]
            [:th "verified"]
-           (doall
-            (for [user @table-data]
-              [:tr {:key (key user)}
-               (cell "name" (val user) (key user) selected-cell)
-               (cell "email" (val user) (key user) selected-cell)
-               (cell "role" (val user) (key user) selected-cell)
-               (cell "verified" (val user) (key user) selected-cell)]))]])])))
+           [:tbody
+            (doall
+             (for [user @table-data]
+               [:tr {:key (key user)}
+                (cell "name" (val user) (key user) selected-cell)
+                (cell "email" (val user) (key user) selected-cell)
+                (cell "role" (val user) (key user) selected-cell)
+                (cell "verified" (val user) (key user) selected-cell)]))]]])])))

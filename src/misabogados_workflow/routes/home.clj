@@ -6,7 +6,7 @@
             [misabogados-workflow.layout.core :as layout]
             [misabogados-workflow.layout :refer [render]]
             [hiccup.form :as form]
-            [ring.util.response :refer [redirect]]
+            [ring.util.response :refer [redirect response]]
             [camel-snake-kebab.core :refer :all]
             [camel-snake-kebab.extras :refer [transform-keys]]
             [misabogados-workflow.db.core :as db]
@@ -31,7 +31,7 @@
 (defn update-lead
   [id {:keys [params]}]
   (db/update-lead id  (:lead (select-keys (transform-keys ->snake_case_keyword params) [:lead])))
-  (redirect "/leads")
+  (redirect "/#dashboard")
   )
 
 (defn do-action [id action {:keys [params]}]
@@ -39,17 +39,17 @@
         step ((keyword action) steps)]
     (db/update-lead id lead)
     (cond (satisfies? PManual step)
-          (redirect "/leads")
+          (redirect "/#dashboard")
           (satisfies? PAutomatic step)
           (do
             (.do-action step lead)
             (db/update-lead id {:step (:action step)})
-            (redirect "/leads"))
+            (redirect "/#dashboard"))
           )))
 
 (defn create-lead [{:keys [params]}]
   (db/create-lead (assoc  (:lead (transform-keys ->snake_case_keyword params)) :step :check))
-  (redirect "/leads"))
+  (redirect "/#dashboard"))
 
 (defn edit-lead [id]
   (let [lead (db/get-lead id)]
@@ -71,6 +71,11 @@
   (pprint doc)
   {:status "ok"})
 
+(defn get-leads [request]
+  (let [role (-> request :session :role)
+        identity (:identity request)]
+    (response {:status "ok" :leads (doall (db/get-leads role identity))})))
+
 (defroutes home-routes
   (GET "/" [] home-page)
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
@@ -85,5 +90,5 @@
   (PUT "/lead/:id/action/:action" [id action :as request]
        (if (contains? steps (keyword action)) (do-action id action request)))
   (POST "/leads" [] create-lead)
-  (GET "/leads" [] (layout/dashboard (db/get-leads)))
+  (GET "/leads" [] get-leads)
 )
