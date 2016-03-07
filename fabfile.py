@@ -1,4 +1,4 @@
-from fabric.api import env, run, settings, sudo, cd
+from fabric.api import env, run, settings, sudo, cd, local
 from fabric.context_managers import cd
 from fabric.contrib import files
 from fabfile_local import user, hosts
@@ -15,6 +15,8 @@ workflow_repo =  "git@bitbucket.org:constantineche/misabogados-workflow.git"
 deploy_location = "/var/deploy/"
 
 def deploy(branch="master"):
+    local("ssh-agent")
+    local("ssh-add")
     with cd(deploy_location):
         if not files.exists("misabogados-workflow"):
             run("git clone " + workflow_repo)

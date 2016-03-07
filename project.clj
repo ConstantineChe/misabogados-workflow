@@ -84,7 +84,7 @@
                  :pseudo-names false
                  :closure-warnings
                  {:externs-validation :off :non-standard-jsdoc :off}}}}}
-             
+
              :aot :all
              :source-paths ["env/prod/clj"]
              :resource-paths ["env/prod/resources"]}
