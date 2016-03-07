@@ -56,7 +56,7 @@
     (layout/blank-page "Form"
                        (layout/render-form "Edit lead"
                                            ["PUT" (str "/lead/" id)]
-                                           (list (.create-form (get-step "archive")  {:lead lead})
+                                           (list (.create-form (get-step "archive")  {:lead lead} :admin)
                                                             [:button.btn.btn-secondary "Save"])))))
 
 (defn new-lead [params]
@@ -82,11 +82,12 @@
   (GET "/lead/:id/edit" {{id :id} :params} (edit-lead id))
   (GET "/leads/create" [] new-lead)
   (PUT "/lead/:id" [id :as request] (update-lead id request))
-  (GET "/lead/:id/action/:action" {{id :id action :action} :params}
+  (GET "/lead/:id/action/:action" {{id :id action :action} :params {role :role} :session}
        (if (contains? steps (keyword action))
          (layout/render-form action ["PUT" (str "/lead/" id)]
                              (.create-form (get-step action)
-                                           {:lead (db/get-lead id)}))))
+                                           {:lead (db/get-lead id)}
+                                           role))))
   (PUT "/lead/:id/action/:action" [id action :as request]
        (if (contains? steps (keyword action)) (do-action id action request)))
   (POST "/leads" [] create-lead)

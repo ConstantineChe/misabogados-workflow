@@ -12,14 +12,32 @@
                  :subject "Test"
                  :body (str "Hi, " (-> lead :user :name) " Lead was:" lead)}))
 
-(def steps {:check (->Step [:lead :user :basic-info] {:finalize :archive
-                                                      :refer :find-lawyer
-                                                      :finalize-and-print :archive-and-print
-                                                      :finalize-and-send :archive-and-send})
-            :find-lawyer (->Step [:lead :user :basic-info :match] {:done :arrange-meeting
-                                                                   :finalize :archive})
-            :arrange-meeting (->Step [:lead :user :basic-info [:match :meeting]] {:change-lawyer :find-lawyer
-                                                                                  :done :archive})
-            :archive (->Step [:lead :user :basic-info [:match :meeting]] {:reopen :check})
+(def steps {:check (->Step [:lead :user :basic-info] [{:name :finalize
+                                                       :action :archive
+                                                       :roles #{:admin :operator}}
+                                                      {:name :refer
+                                                       :action :find-lawyer
+                                                       :roles #{:admin :operator}}
+                                                      {:name :finalize-and-print
+                                                       :action :archive-and-print
+                                                       :roles #{:admin :operator}}
+                                                      {:name :finalize-and-send
+                                                       :action :archive-and-send
+                                                       :roles #{:admin :operator}}])
+            :find-lawyer (->Step [:lead :user :basic-info :match] [{:name :done
+                                                                    :action :arrange-meeting
+                                                                    :roles #{:admin :operator}}
+                                                                   {:name :finalize
+                                                                    :action :archive
+                                                                    :roles #{:admin :operator}}])
+            :arrange-meeting (->Step [:lead :user :basic-info [:match :meeting]] [{:name :change-lawyer
+                                                                                   :action :find-lawyer
+                                                                                   :roles #{:admin :operator}}
+                                                                                  {:name :done
+                                                                                   :action :archive
+                                                                                   :roles #{:admin :operator}}])
+            :archive (->Step [:lead :user :basic-info [:match :meeting]] [{:name :reopen
+                                                                           :action :check
+                                                                           :roles #{:admin}}])
             :archive-and-print (->AutoStep (fn [lead] (println (str "[AUTOMATIC ACTION]" lead))) :archive)
             :archive-and-send (->AutoStep send-mail :archive)})
