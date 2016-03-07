@@ -10,7 +10,7 @@
            ))
 
 (defprotocol PManual
-  (create-form [this dataset]))
+  (create-form [this dataset role]))
 
 (defprotocol PAutomatic
   (do-action [this dataset]))
@@ -46,8 +46,7 @@
   {(get-key child) (get-struct
                     child
                     dataset
-                     ancestry)}
-  )
+                    ancestry)})
 
 (defn get-struct [fieldset dataset ancestry]
   (let [key (get-key fieldset)
@@ -76,22 +75,27 @@
                               (update-in dataset [:lead] dissoc :_id) [])
                              dataset [:lead])) "lead"))
 
-(defn get-action-buttons [actions dataset]
-  (map (fn [[label action]]
-         [:button.btn.btn-primary
-          {:type :submit
-           :title (str "Saves and goes to \"" (util/remove-kebab (name action)) "\"")
-           :formaction (str "/lead/"
-                            (get-in dataset [:lead :_id])
-                            "/action/" (name action))} (util/remove-kebab (name label))]) actions))
+(defn get-action-buttons [actions dataset role]
+  (map (fn [action-def]
+         (if (contains? (:roles action-def) role) 
+           (let [label (name (:name action-def))
+                 action (name (:action action-def))]
+             [:button.btn.btn-primary
+              {:type :submit
+               :title (str "Saves and goes to \"" (util/remove-kebab action) "\"")
+               :formaction (str "/lead/"
+                                (get-in dataset [:lead :_id])
+                                "/action/" action)} 
+              (util/remove-kebab label)]))) 
+       actions))
 
 
 (defrecord Step [fieldset actions]
   PManual
-  (create-form [this dataset] (list (get-rendered-form fieldset dataset)
+  (create-form [this dataset role] (list (get-rendered-form fieldset dataset)
                                [:div.btn-group {:role "group"}
                                 [:button.btn.btn-secondary "Save"]
-                                (get-action-buttons actions dataset)])))
+                                (get-action-buttons actions dataset role)])))
 
 
 (defrecord AutoStep [function action]
