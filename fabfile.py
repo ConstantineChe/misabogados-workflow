@@ -26,6 +26,7 @@ def deploy(branch="master"):
     with cd(deploy_location + "misabogados-workflow"):
         run("git checkout " + branch)
         run("git pull")
+        run("lein clean")
         run("lein uberjar")
         runapp()
 
