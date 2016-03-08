@@ -31,8 +31,9 @@
           :role (-> request :session :role)}})
 
 (defn allowed-to-edit [id request]
-  (if (= (:lawyer (mc/find-one-as-map @db "payment_requests" {:_id id}))
-         (get-current-user-id request))
+  (if (or (= :admin (-> request :session :role))
+          (= (:lawyer (mc/find-one-as-map @db "payment_requests" {:_id id}))
+             (get-current-user-id request)))
     true
     {:message "Not allowed"}))
 
@@ -52,7 +53,8 @@
 
 
 (defn get-payment-request [id request]
-  (response {:payment-request {:get id} :status "ok" :role (-> request :session :role)}))
+  (response {:payment-request (mc/find-one-as-map @db "payment-requests" {:_id (oid id)})
+             :status "ok" :role (-> request :session :role)}))
 
 (defn create-payment-request [request]
   (let [params (:params request)
@@ -196,11 +198,11 @@
         confirmation)
 
   (GET "/payment-requests" [] (restrict get-payment-requests
-                                {:handler {:or [ac/admin-access ac/lawyer-access]}
+                                {:handler {:or [ac/admin-access ac/operator-access ac/lawyer-access]}
                                  :on-error access-error-handler}))
   (GET "/payment-requests/:id" [id :as request]
        (restrict (fn [request] (get-payment-request id request))
-                 {:handler {:or [ac/admin-access ac/lawyer-access]}
+                 {:handler {:or [ac/admin-access ac/operator-access ac/lawyer-access]}
                   :on-error access-error-handler}))
   (POST "/payment-requests" [] (restrict (fn [request] (create-payment-request request))
                                  {:handler {:or [ac/admin-access ac/lawyer-access]}

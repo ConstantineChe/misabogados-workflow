@@ -51,7 +51,7 @@
                                                   (reset! error (get response "error")))
                                                 nil)
                                      :error-handler (fn [response]
-                                                      (reset! error "Invalid anti-forgery token")
+                                                      (reset! error "Error")
                                                       nil)} ))))
 
 (defn logout! []
@@ -165,6 +165,7 @@
         warnings (r/atom nil)
         _ (update-csrf-token!)]
     (fn []
+      (if (logged-in?) (aset js/window "location" "/#dashboard"))
       (if (not https?) (reset! warnings "Not using ssl"))
       [:div.container
        [:form.form-horizontal

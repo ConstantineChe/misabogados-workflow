@@ -40,7 +40,7 @@
   (cond (= :admin role)
         (mc/find-maps @db "leads")
         (= :operator role)
-        (mc/find-maps @db "leads" {$not {:step "archive"}})
+        (mc/find-maps @db "leads" {:step {$nin ["archive"]}})
         (= :lawyer role)
         {}
         (= :client role)
