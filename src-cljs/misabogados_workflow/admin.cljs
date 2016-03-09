@@ -8,7 +8,7 @@
 (defn cell [col item id selected-cell]
   (let [value (get-in @table-data [id col])]
                  [:td {:on-click #(reset! selected-cell [id col])
-                       :on-blur #(do (PUT (str js/context "/users/" (get item "email")) {:params {:id (get item "email")
+                       :on-blur #(do (PUT (str js/context "/users/" id) {:params {:id id
                                                                              :data {col (-> % .-target .-value)}}
                                                                        :handler (fn [response]
 

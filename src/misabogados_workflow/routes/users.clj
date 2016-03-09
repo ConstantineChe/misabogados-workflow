@@ -22,9 +22,9 @@
 (defn get-users [request] (response (doall (db/get-users))))
 
 (defn update-user [id {:keys [params]}]
-  (try
-    (db/update-user id (:data params))
-    (response {:success true})))
+  (db/update-user id (clojure.walk/keywordize-keys (:data params)))
+  (clojure.pprint/pprint (clojure.walk/keywordize-keys (:data params)))
+  (response {:req params :id id})  )
 
 (defn get-user [{:keys [params]}] (response (db/get-user (:id params))))
 
@@ -32,6 +32,6 @@
   (GET "/users" [] (restrict get-users
                              {:handler {:or [ac/admin-access]}
                               :on-error access-error-handler}))
-  (PUT "/users/:id" [id :as request] (restrict (update-user id request)
-                            {:handler {:or [ac/admin-access]}
-                              :on-error access-error-handler})))
+  (PUT "/users/:id" [id :as request] (restrict (fn [request] (update-user id request))
+                                               {:handler {:or [ac/admin-access]}
+                                                :on-error access-error-handler})))

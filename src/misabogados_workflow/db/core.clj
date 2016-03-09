@@ -23,8 +23,8 @@
 (defn create-user [user]
   (mc/insert @db "users" user))
 
-(defn update-user [email data]
-  (mc/update @db "users" {:email email}
+(defn update-user [id data]
+  (mc/update @db "users" {:_id (oid id)}
              {$set data}))
 
 (defn get-user [email]
