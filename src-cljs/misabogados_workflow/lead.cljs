@@ -14,7 +14,9 @@
                                   :email "no@mail.re"
                                   :count 15
                                   :check true}
-                           :etc {:etc "hahhahahhaha"}})]
+                           :etc {:etc "hahhahahhaha"
+                                 :select 1}})
+        options [["one" 1] ["two" 2] ["three" 3]]]
     (fn []
       [:div.container
        (str @lead-data)
@@ -25,4 +27,5 @@
                  (el/input-number "Count" [:base :count])
                  (el/input-checkbox "Check" [:base :check])]
                 ["Etc"
-                 (el/input-text "Etc" [:etc :etc])])])))
+                 (el/input-text "Etc" [:etc :etc])
+                 (el/input-dropdown "Select" [:etc :select] options)])])))

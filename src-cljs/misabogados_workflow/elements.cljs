@@ -16,7 +16,7 @@
      [:input.form-control {:type type
                            :id name
                            :value @cursor
-                           :on-change #(reset! cursor (-> %  .-target .-value))
+                           :on-change #(reset! cursor (-> % .-target .-value))
                            }]]))
 
 (defn form-input [f & args]
@@ -27,7 +27,7 @@
   (fn [form]
     (let [[name cursor] (prepare-input cursor form)]
       [:div.form-group {:key name}
-       [:label.control-label label]
+       [:label.control-label {:for name} label]
        [:input.form-control (merge {:type :checkbox
                                     :on-change #(swap! cursor not)
                                     :id name}
@@ -36,7 +36,12 @@
 (defn input-dropdown [label cursor options]
   (fn [form]
     (let [[name cursor] (prepare-input cursor form)]
-      [:div "noen"])))
+      [:div.form-group {:key name}
+       [:label.control-label {:for name} label]
+       (into [:select.form-control {:id name
+                                    :on-change #(reset! cursor (-> % .-target .-value))
+                                    }]
+             (map (fn [[label value]] [:option {:key value :value value} label]) options))])))
 
 
 (def input-text (partial form-input input :text))
@@ -48,7 +53,7 @@
 (def input-number (partial form-input input :number))
 
 (defn form [legend form-data & fieldsets]
-  [:form.form-horizontal
+  [:div.form-horizontal
    [:legend legend]
    (doall (for [[legend & fields] fieldsets]
        [:fieldset {:key legend}

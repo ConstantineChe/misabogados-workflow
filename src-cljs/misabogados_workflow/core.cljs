@@ -27,7 +27,7 @@
                                     :handler #(do (session/put! :user {:identity (get % "identity")
                                                                        :role (get % "role")})
                                                   (ac/reset-access!)
-                                                  (aset js/window "location" "#/dashboard")
+                                                  (aset js/window "location" "#dashboard")
                                                   (update-csrf-token!))
                                     :error-handler #(js/alert (str "error: " %))}))
 
@@ -47,7 +47,7 @@
                                                   (do (session/put! :user {:identity (get response "identity")
                                                                            :role (get response "role")})
                                                       (ac/reset-access!)
-                                                      (aset js/window "location" "#/dashboard")
+                                                      (aset js/window "location" "#dashboard")
                                                       (update-csrf-token!))
                                                   (reset! error (get response "error")))
                                                 nil)
@@ -130,7 +130,7 @@
 ;      (if (not https?) (reset! warnings "Not using ssl"))
       [:div.container
        [:div.signup-form
-        [:form.form-horizontal
+        [:div.form-horizontal
          [:legend "Sign-up"]
          [:div.form-group
           [:label.control-label {:for :email} "Email"]
@@ -166,10 +166,10 @@
         warnings (r/atom nil)
         _ (update-csrf-token!)]
     (fn []
-      (if (logged-in?) (aset js/window "location" "/#dashboard"))
+      (if (logged-in?) (aset js/window "location" "#dashboard"))
       (if (not https?) (reset! warnings "Not using ssl"))
       [:div.container
-       [:form.form-horizontal
+       [:div.form-horizontal
         [:legend "Login"]
          (if-let [error @error] [:p.error error])
          (if-let [warning @warnings] [:p.warning warning])

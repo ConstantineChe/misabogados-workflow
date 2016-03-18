@@ -42,5 +42,5 @@
       [:div.container
        [:h3 "Dashboard"]
        [:a {:class "btn btn-primary"
-            :href "/leads/create"} "New Lead"]
+            :href "/#lead"} "New Lead"]
        [table]])))
