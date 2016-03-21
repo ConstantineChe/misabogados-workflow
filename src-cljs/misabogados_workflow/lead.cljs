@@ -15,12 +15,16 @@
                                   :count 15
                                   :check true}
                            :etc {:etc "hahhahahhaha"
-                                 :select 1}})
-        options [["one" 1] ["two" 2] ["three" 3]]]
+                                 :select 1
+                                 :ta 18}})
+        options (r/atom {:etc {:select [["one" 1] ["two" 2] ["three" 3]]
+                               :ta (map (fn [x] [(str "label" x)
+                                                x]) (range 50))}})]
     (fn []
       [:div.container
-       (str @lead-data)
-       (el/form "Lead" lead-data
+       (str "form data: " @lead-data) [:br]
+       (str "options: " @options)
+       (el/form "Lead" [lead-data options]
                 ["Base"
                  (el/input-text "Name" [:base :name])
                  (el/input-email "Email" [:base :email])
@@ -28,4 +32,5 @@
                  (el/input-checkbox "Check" [:base :check])]
                 ["Etc"
                  (el/input-text "Etc" [:etc :etc])
-                 (el/input-dropdown "Select" [:etc :select] options)])])))
+                 (el/input-dropdown "Select" [:etc :select])
+                 (el/input-typeahead "Typeashead" [:etc :ta])])])))
