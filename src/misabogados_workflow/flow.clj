@@ -77,7 +77,7 @@
 
 (defn get-action-buttons [actions dataset role]
   (map (fn [action-def]
-         (if (contains? (:roles action-def) role) 
+         (if (contains? (:roles action-def) role)
            (let [label (name (:name action-def))
                  action (name (:action action-def))]
              [:button.btn.btn-primary
@@ -85,8 +85,8 @@
                :title (str "Saves and goes to \"" (util/remove-kebab action) "\"")
                :formaction (str "/lead/"
                                 (get-in dataset [:lead :_id])
-                                "/action/" action)} 
-              (util/remove-kebab label)]))) 
+                                "/action/" action)}
+              (util/remove-kebab label)])))
        actions))
 
 

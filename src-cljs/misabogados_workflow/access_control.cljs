@@ -23,6 +23,14 @@
         (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
                                                             ["#payments" "Pagos" :payments]
                                                             ["#logout" "Logout"]])})
+        (= "operator" (:role (session/get :user)))
+        (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
+                                                            ["#payments" "Pagos" :payments]
+                                                            ["#logout" "Logout"]])})
+        (= "finance" (:role (session/get :user)))
+        (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
+                                                            ["#payments" "Pagos" :payments]
+                                                            ["#logout" "Logout"]])})
         (= "admin" (:role (session/get :user)))
         (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
                                                             ["#payments" "Pagos" :payments]

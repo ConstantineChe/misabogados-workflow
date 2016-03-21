@@ -47,8 +47,6 @@
                ))
     ))
 
-
-
 (def table-data (r/atom {}
                  ))
 (def form-data (r/atom {}))
@@ -193,7 +191,43 @@
                                                            (reset! validation-message nil))
                                                        )} "Guardar"]]]
               ]]
-            )))
+      )))
+
+(defn payment-data-modal []
+  (let [data (r/cursor session/state [:payments :payment-log])]
+      (fn []
+      [:div.modal.fade {:role :dialog :id "payment-data-modal"
+                        :key (:_id data)}
+       [:div.modal-dialog
+        [:div.modal-content
+         [:div.modal-header
+          [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
+           [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]
+          [:h3.modal-title "Payment request history"]]
+         [:div.modal-body
+          [:div (edn->hiccup @data)]]
+         [:div.modal-footer
+          [:button.btn.btn-default {:type :button
+                                    :on-click #(u/close-modal "payment-data-modal")} "Cerrar"]]]
+        ]])))
+
+(defn lawyer-data-modal []
+  (let [data (r/cursor session/state [:payments :lawyer])]
+    (fn []
+      [:div.modal.fade {:role :dialog :id "lawyer-data-modal"
+                        :key (:_id data)}
+       [:div.modal-dialog
+        [:div.modal-content
+         [:div.modal-header
+          [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
+           [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]
+          [:h3.modal-title "Lawyer"]]
+         [:div.modal-body
+          [:div (edn->hiccup @data)]]
+         [:div.modal-footer
+          [:button.btn.btn-default {:type :button
+                                    :on-click #(u/close-modal "lawyer-data-modal")} "Cerrar"]]]
+        ]])))
 
 (defn table []
   (fn []
@@ -202,7 +236,8 @@
      [:legend "Payment Requests"]
      [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
       [:th "Botón de pago"]
-      (if (= "admin" (session/get-in [:user :role])) [:th "Lawyer" ])
+      (if (or (= "admin" (session/get-in [:user :role]))
+              (= "finance" (session/get-in [:user :role]))) [:th "Lawyer" ])
       [:th "Client"]
       [:th "Service"]
       [:th "Amount"]
@@ -222,22 +257,25 @@
                        :data-toggle "tooltip"
                        :title "Este enlace fue enviado al cliente"
                        } "Pagar"]]
-             (if (= "admin" (session/get-in [:user :role]))
-               [:td {:on-click #(js/alert (str (first (get values :lawyer_data))))}
+             (if (or (= "admin" (session/get-in [:user :role]))
+                     (= "finance" (session/get-in [:user :role])))
+               [:td {:on-click #(do (session/assoc-in! [:payments :lawyer] (first (get values :lawyer_data)))
+                                    (u/show-modal "lawyer-data-modal"))}
                 (get (first (get values :lawyer_data)) "name")])
              [:td (get values :client) ]
              [:td (get values :service)]
              [:td (get values :amount)]
              [:td (get values :own_client)]
-             [:td {:on-click #(js/alert (str (get values :payment_log)))}
+             [:td {:on-click #(do (session/assoc-in! [:payments :payment-log] (get values :payment_log))
+                                  (u/show-modal "payment-data-modal"))}
               (get (last (get values :payment_log)) "action")]
              [:td
-              (if-not (get values :payment_log)  
-                (list [:button.btn {:on-click #(do
-                                                 (u/show-modal (str "payment-request-form" row-key)))} "Edit"]
-                      [:button.btn {:on-click #(remove-payment-request row-key)} "Delete"]))]
+              (if-not (get values :payment_log)
+                [:div.btn-group [:button.btn.btn-primary {:on-click #(do
+                                            (u/show-modal (str "payment-request-form" row-key)))} "Edit"]
+                 [:button.btn {:on-click #(remove-payment-request row-key)} "Delete"]])]
              ])))]]]
-    [:h4 "You have no payment-request requests"])))
+    [:h4 "You have no payment-requests"])))
 
 (defn payments []
   (let [payment-requests (GET (str js/context "/payment-requests")
@@ -253,6 +291,8 @@
                                                                                         (reset! form-data {})))} "Create payment request"])
        [table]
        [create-payment-request-form]
+       [lawyer-data-modal]
+       [payment-data-modal]
        (doall (for [row @table-data]
            (let [row-key (key row)
                  values (apply merge (map (fn [field]

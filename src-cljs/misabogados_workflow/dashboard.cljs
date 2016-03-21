@@ -15,23 +15,25 @@
   (let []
     [:div
      [:legend "Leads"]
-     [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
-      [:th "ID"]
-      [:th "User name"]
-      [:th "Pedning action"]
-      [:th ""]
-      [:tbody
-       (doall (for [lead @table-data
-                     :let [id (get lead "_id")
-                           name (get-in lead ["user" "name"])
-                           pending-action (util/remove-kebab (get lead "step"))
-                           actions (get-actions lead)]]
-                [:tr {:key id}
-                 [:td id]
-                 [:td name]
-                 [:td pending-action]
-                 [:td actions]]
-                ))]]]))
+     (if-not (empty? @table-data)
+       [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
+        [:th "ID"]
+        [:th "User name"]
+        [:th "Pedning action"]
+        [:th ""]
+        [:tbody
+         (doall (for [lead @table-data
+                      :let [id (get lead "_id")
+                            name (get-in lead ["user" "name"])
+                            pending-action (util/remove-kebab (get lead "step"))
+                            actions (get-actions lead)]]
+                  [:tr {:key id}
+                   [:td id]
+                   [:td name]
+                   [:td pending-action]
+                   [:td actions]]
+                  ))]]
+       [:p "there are no leads to show."])]))
 
 (defn dashboard []
   (let [leads (GET (str js/context "/leads") {:handler #(reset! table-data (get % "leads"))
@@ -40,5 +42,5 @@
       [:div.container
        [:h3 "Dashboard"]
        [:a {:class "btn btn-primary"
-            :href "/leads/create"} "New Lead"]
+            :href "/#lead"} "New Lead"]
        [table]])))

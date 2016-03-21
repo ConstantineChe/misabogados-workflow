@@ -9,4 +9,8 @@
 
 (defn admin-access [request] (role-access request :admin))
 
+(defn operator-access [request] (role-access request :operator))
+
+(defn finance-access [request] (role-access request :finance))
+
 (defn lawyer-access [request] (role-access request :lawyer))
