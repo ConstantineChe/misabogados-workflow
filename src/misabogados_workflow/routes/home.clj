@@ -10,6 +10,7 @@
             [camel-snake-kebab.core :refer :all]
             [camel-snake-kebab.extras :refer [transform-keys]]
             [misabogados-workflow.db.core :as db]
+            [monger.collection :as mc]
             [clojure.pprint :refer [pprint]]
             [misabogados-workflow.flow :refer [get-rendered-form dataset PManual PAutomatic]]
             [misabogados-workflow.flow-definition :refer [steps]])
@@ -92,4 +93,8 @@
        (if (contains? steps (keyword action)) (do-action id action request)))
   (POST "/leads" [] create-lead)
   (GET "/leads" [] get-leads)
-)
+  (GET "/lead/:id" [id :as request] (response (db/get-lead id)))
+  (GET "/leads/options" [] (response {:lead_type_code (map #((juxt :name :code) %) (mc/find-maps @db/db "lead_types"))
+                                      :lead_source_code (map #((juxt :name :code) %) (mc/find-maps @db/db "lead_sources"))
+                                      :category_id (map #((juxt :name :_id) %) (mc/find-maps @db/db "categories"))
+                                      :matches {:lawyer_id (map #((juxt :name :_id) %) (mc/find-maps @db/db "lawyers"))}})))
