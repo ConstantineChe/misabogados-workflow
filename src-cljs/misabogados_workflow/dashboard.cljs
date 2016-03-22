@@ -8,8 +8,10 @@
 (def table-data (r/atom {}))
 
 (defn get-actions [lead]
-  [:a {:class "btn btn-success"
-       :href (str "/lead/" (get lead "_id") "/action/" (get lead "step"))} [:span.glyphicon.glyphicon-play]])
+  (list [:a {:class "btn btn-secondary"
+             :href (str "/lead/" (get lead "_id") "/edit")} [:span.glyphicon.glyphicon-edit]]
+        [:a {:class "btn btn-success"
+             :href (str "/lead/" (get lead "_id") "/action/" (get lead "step"))} [:span.glyphicon.glyphicon-play]]))
 
 (defn table []
   (let []
@@ -20,6 +22,17 @@
         [:th "ID"]
         [:th "User name"]
         [:th "Pedning action"]
+        [:th "Tipo"]
+        [:th "Nombre de usuario"]
+        [:th "Email de usuario"]
+        [:th "Categoría"]
+        [:th "Telefono"]
+        [:th "Problema"]
+        [:th "Region"]
+        [:th "Ciudad"]
+        [:th "Fuente"]
+        [:th "Abogado"]
+        [:th "Enlaces"]
         [:th ""]
         [:tbody
          (doall (for [lead @table-data
@@ -31,6 +44,19 @@
                    [:td id]
                    [:td name]
                    [:td pending-action]
+                   [:td (get-in lead ["lead_type" 0 "name"])]
+                   [:td "Nombre de usuario"]
+                   [:td (get lead "client_email")]
+                   [:td (get-in lead ["category" 0 "name"])]
+                   [:td "Telefono"]
+                   [:td (get lead "problem")]
+                   [:td (get lead "region_id")]
+                   [:td (get lead "city")]
+                   [:td (get lead "lead_source_code")]
+                   [:td (get-in lead ["lawyer" 0 "name"])]
+                   [:td 
+                    (if (get lead "referrer") [:a {:href (get lead "referrer")} "Referrer "] "")
+                    (if (get lead "adwords_url") [:a {:href (get lead "adwords_url")} "Adwords"] "")]
                    [:td actions]]
                   ))]]
        [:p "there are no leads to show."])]))
