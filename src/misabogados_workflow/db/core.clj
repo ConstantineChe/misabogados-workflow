@@ -54,6 +54,7 @@
                                    :foreignField :_id
                                    :as :lawyer}}
                        ;;{"$limit" 20}
+                       {"$sort" {:_id -1}}
                        ])
         (= :operator role)
         (mc/find-maps @db "leads" {:step {$nin ["archive"]}})
@@ -85,4 +86,3 @@
 
 (defn get-payment-request-by-code [code]
   (mc/find-one-as-map @db "payment_requests" {:code code}))
-

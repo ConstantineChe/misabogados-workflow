@@ -9,7 +9,7 @@
             [misabogados-workflow.ajax :refer [GET POST csrf-token update-csrf-token!]]
             [misabogados-workflow.dashboard :refer [dashboard]]
             [misabogados-workflow.payments :refer [payments]]
-            [misabogados-workflow.lead :refer [lead]]
+            [misabogados-workflow.lead :as lead]
             [misabogados-workflow.utils :as u :refer [get-session!]]
             [reagent.core :as r]
             [reagent.session :as session]
@@ -195,15 +195,14 @@
     [:p "This is a home page"]]])
 
 (def pages
-  {:home #'home-page
-   :about #'about-page
-   :login #'login-page
-   :signup #'signup-page
-;   :debug #'debug
-   :dashboard #'dashboard
-   :lead #'lead
-   :payments #'payments
-   :admin #'admin})
+  (merge lead/pages {:home #'home-page
+     :about #'about-page
+     :login #'login-page
+     :signup #'signup-page
+                                        ;   :debug #'debug
+     :dashboard #'dashboard
+     :payments #'payments
+     :admin #'admin}))
 
 (defn page []
   [(pages (session/get :page))])
@@ -214,9 +213,6 @@
 
 (secretary/defroute "/" []
   (session/put! :page :home))
-
-(secretary/defroute "/lead" []
-  (session/put! :page :lead))
 
 (secretary/defroute "/about" []
   (session/put! :page :about))

@@ -4,7 +4,7 @@
             [clojure.string :as s])
 )
 
-(defn gen-name [cursor] (->> cursor (into []) (map name) (interpose "-") (apply str)))
+(defn gen-name [cursor] (->> cursor (into []) (map #(if (keyword? %) (name %) %)) (interpose "-") (apply str)))
 
 (defn prepare-input [cursor form]
   ((juxt gen-name #(r/cursor form (into [] %))) cursor))
@@ -32,7 +32,7 @@
 
 (defn input-dropdown [label cursor]
   (fn [[form options]]
-    (let [options (get-in @options cursor)
+    (let [options (get-in @options (->> cursor (filter keyword?) vec))
           [name cursor] (prepare-input cursor form)]
       [:div.form-group {:key name}
        [:label.control-label {:for name} label]
@@ -46,7 +46,7 @@
     (let [f-opts (r/cursor options (into [:typeahead] cursor))
           text (r/cursor options (into [:typeahead-t] cursor))
           dropdown-class (r/cursor options (into [:typeahead-c] cursor))
-          options (get-in @options cursor)
+          options (get-in @options (->> cursor (filter keyword?) vec))
           [name cursor] (prepare-input cursor form)
           match #(some (fn [[l v]] (when (= v %) l)) options)]
       (if (nil? @text) (reset! text (match @cursor)))
@@ -81,11 +81,18 @@
 
 (def input-number (partial input :number))
 
+(def input-texarea (partial input :textarea))
+
+(defn fieldset-fn [form-data [legend & fields]]
+  [:fieldset {:key legend}
+        [:legend legend]
+   (doall (for [field fields]
+            (if (sequential? field)
+              (fieldset-fn form-data field)
+              (field form-data))))])
+
 (defn form [legend form-data & fieldsets]
   [:div.form-horizontal
    [:legend legend]
-   (doall (for [[legend & fields] fieldsets]
-       [:fieldset {:key legend}
-        [:legend legend]
-        (doall (for [field fields]
-            (field form-data)))]))])
+   (doall (for [fieldset fieldsets]
+       (fieldset-fn form-data fieldset)))])
