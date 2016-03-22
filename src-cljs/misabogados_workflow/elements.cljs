@@ -52,7 +52,7 @@
           dropdown-class (r/cursor options (into [:typeahead-c] cursor))
           options (get-in @options cursor)
           [name cursor] (prepare-input cursor form)]
-      (if (nil? @text) (dorun (for [[l v] options :when (= v @cursor)] (reset! text l))))
+      (if (nil? @text) (reset! text (some (fn [[l v]] (when (= v @cursor) l)) options)))
       [:div.form-group {:key name}
        [:label.control-label {:for name} label]
        [:input.form-control {:type :text
@@ -60,8 +60,8 @@
                              :on-click #(.setSelectionRange (.-target %) 0 (count @text))
                              :on-focus #(js/setTimeout (fn [_] (reset! dropdown-class "open")) 100)
                              :on-blur #(js/setTimeout (fn [_] (do (reset! dropdown-class "")
-                                                                 (dorun (for [[l v] options :when (= v @cursor)]
-                                                                          (reset! text l))))) 100)
+                                                                 (reset! text (some (fn [[l v]]
+                                                                                      (when (= v @cursor) l)) options)))) 100)
                              :on-change #(do (reset! text (-> % .-target .-value))
                                              (reset! f-opts (filter (fn [[l]]
                                                                       (re-find (re-pattern @text) l))
