@@ -38,13 +38,31 @@
 
 (defn get-leads [role identity]
   (cond (= :admin role)
-        (mc/find-maps @db "leads")
+        (mc/aggregate @db "leads"
+                      [;;{"$match" {:matches {"$exists" true}}}
+                       {"$unwind" "$matches"}
+                       {"$lookup" {:from "categories"
+                                   :localField :category_id
+                                   :foreignField :_id
+                                   :as :category}}
+                       {"$lookup" {:from "lead_types"
+                                   :localField :lead_type_code
+                                   :foreignField :code
+                                   :as :lead_type}}
+                       {"$lookup" {:from "lawyers"
+                                   :localField :matches.lawyer_id
+                                   :foreignField :_id
+                                   :as :lawyer}}
+                       ;;{"$limit" 20}
+                       ])
         (= :operator role)
         (mc/find-maps @db "leads" {:step {$nin ["archive"]}})
         (= :lawyer role)
         {}
         (= :client role)
         {}))
+
+
 
 (defn update-lead [id fields]
 
@@ -67,3 +85,13 @@
 
 (defn get-payment-request-by-code [code]
   (mc/find-one-as-map @db "payment_requests" {:code code}))
+
+
+(:lawyer (mc/aggregate @db "leads"
+                       [{"$match" {:matches {"$exists" true}}}
+                        {"$unwind" "$matches"}
+                        
+                        {"$lookup" {:from "lawyers"
+                                    :localField :matches.lawyer_id
+                                    :foreignField :_id
+                                    :as :lawyer}}]))
