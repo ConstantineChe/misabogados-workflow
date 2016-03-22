@@ -45,6 +45,7 @@
   :min-lein-version "2.0.0"
   :uberjar-name "misabogados-workflow.jar"
   :jvm-opts ["-server"]
+  :target-path "target/%s/"
   :resource-paths ["resources" "target/cljsbuild"]
 
   :main misabogados-workflow.core
