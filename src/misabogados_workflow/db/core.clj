@@ -86,12 +86,3 @@
 (defn get-payment-request-by-code [code]
   (mc/find-one-as-map @db "payment_requests" {:code code}))
 
-
-(:lawyer (mc/aggregate @db "leads"
-                       [{"$match" {:matches {"$exists" true}}}
-                        {"$unwind" "$matches"}
-                        
-                        {"$lookup" {:from "lawyers"
-                                    :localField :matches.lawyer_id
-                                    :foreignField :_id
-                                    :as :lawyer}}]))
