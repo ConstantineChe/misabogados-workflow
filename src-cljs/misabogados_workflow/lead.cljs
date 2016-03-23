@@ -50,7 +50,7 @@
     (fn []
       [:div.container
        (str "form data: " @lead-data) [:br]
-;       (str "options: " @options)
+       (str "options: " (dissoc @options :lead))
        (el/form "Edit Lead" [lead-data options]
                 (reduce conj ["Lead"
                        (el/input-text "Client Id" [:lead :client_income_id])

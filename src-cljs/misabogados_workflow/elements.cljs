@@ -46,17 +46,23 @@
     (let [f-opts (r/cursor options (into [:typeahead] cursor))
           text (r/cursor options (into [:typeahead-t] cursor))
           dropdown-class (r/cursor options (into [:typeahead-c] cursor))
+          selected-index (r/cursor options (into [:typeahead-i] cursor))
           options (get-in @options (->> cursor (filter keyword?) vec))
           [name cursor] (prepare-input cursor form)
           match #(some (fn [[l v]] (when (= v %) l)) options)
-          list (map (fn [[label value]] [:li {:key value
-                                             :on-click #(do (reset! cursor value)
-                                                            (reset! text label))
-                                             :on-focus #((do (print value)
-                                                             (reset! cursor value)))} [:a label]])
-                   (if @f-opts @f-opts options))
-          toggle-list (fn [x] x)]
+          select (fn [[l v]] (do (reset! cursor v)
+                                (reset! text l)
+                                (reset! dropdown-class "")))
+          list (map-indexed (fn [i [label value :as option]]
+                              [:li {:key i
+                                    :on-mouse-over #(reset! selected-index i)
+                                    :class (if (= i @selected-index) "active" "")
+                                    :on-click #(select option)
+                                    :on-focus #((do (print value)
+                                                    (reset! cursor value)))} [:a label]])
+                   (if @f-opts @f-opts options))]
       (if (nil? @text) (reset! text (match @cursor)))
+      (if (nil? @selected-index) (reset! selected-index -1))
       [:div.form-group {:id (str name "-g") :key name}
        [:label.control-label {:for name} label]
        [:input.form-control
@@ -64,12 +70,26 @@
          :value @text
          :on-click #(.setSelectionRange (.-target %) 0 (count @text))
          :on-focus #(js/setTimeout (fn [_] (reset! dropdown-class "open")) 100)
-         :on-blur #(js/setTimeout (fn [_] (do ;(reset! dropdown-class "")
+         :on-blur #(js/setTimeout (fn [_] (do (reset! dropdown-class "")
                                              (reset! text (match @cursor)))) 100)
          :on-change #(do (reset! text (-> % .-target .-value))
                          (reset! f-opts (filter
                                          (fn [[l]] (re-find (re-pattern (s/lower-case @text)) (s/lower-case l)))
-                                         options)))}]
+                                         options)))
+         :on-key-down #(do
+                         (case (.-which %)
+                           38 (do
+                                (.preventDefault %)
+                                (when-not (= @selected-index 0)
+                                  (swap! selected-index dec)))
+                           40 (do
+                                (.preventDefault %)
+                                (when-not (= @selected-index (dec (count (if @f-opts @f-opts options))))
+                                  (swap! selected-index inc)))
+                           9  (do (select (get (if @f-opts @f-opts options) @selected-index)) (-> % .-target .blur))
+                           13 (do (select (get (if @f-opts @f-opts options) @selected-index)) (-> % .-target .blur))
+                           27 (do (reset! dropdown-class ""))
+                           "default"))}]
        [:div.dropdown {:class @dropdown-class}
         (into [:ul.dropdown-menu
                {:id name
