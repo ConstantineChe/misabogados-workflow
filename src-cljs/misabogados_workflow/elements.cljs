@@ -48,16 +48,23 @@
           dropdown-class (r/cursor options (into [:typeahead-c] cursor))
           options (get-in @options (->> cursor (filter keyword?) vec))
           [name cursor] (prepare-input cursor form)
-          match #(some (fn [[l v]] (when (= v %) l)) options)]
+          match #(some (fn [[l v]] (when (= v %) l)) options)
+          list (map (fn [[label value]] [:li {:key value
+                                             :on-click #(do (reset! cursor value)
+                                                            (reset! text label))
+                                             :on-focus #((do (print value)
+                                                             (reset! cursor value)))} [:a label]])
+                   (if @f-opts @f-opts options))
+          toggle-list (fn [x] x)]
       (if (nil? @text) (reset! text (match @cursor)))
-      [:div.form-group {:key name}
+      [:div.form-group {:id (str name "-g") :key name}
        [:label.control-label {:for name} label]
        [:input.form-control
         {:type :text
          :value @text
          :on-click #(.setSelectionRange (.-target %) 0 (count @text))
          :on-focus #(js/setTimeout (fn [_] (reset! dropdown-class "open")) 100)
-         :on-blur #(js/setTimeout (fn [_] (do (reset! dropdown-class "")
+         :on-blur #(js/setTimeout (fn [_] (do ;(reset! dropdown-class "")
                                              (reset! text (match @cursor)))) 100)
          :on-change #(do (reset! text (-> % .-target .-value))
                          (reset! f-opts (filter
@@ -66,11 +73,10 @@
        [:div.dropdown {:class @dropdown-class}
         (into [:ul.dropdown-menu
                {:id name
+                :role :menu
                 :style {:height :auto :max-height :200px :overflow-x :hidden}}]
-              (map (fn [[label value]] [:li {:key value
-                                            :on-click #(do (reset! cursor value)
-                                                           (reset! text label))} label])
-                   (if @f-opts @f-opts options)))]])))
+              list
+              )]])))
 
 
 (def input-text (partial input :text))
