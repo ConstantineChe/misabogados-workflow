@@ -83,7 +83,7 @@
   [(pages (session/get :page))])
 
 (secretary/defroute "/lead" []
-  (session/put! :page :lead))
+  (session/put! :page :new-lead))
 
 (secretary/defroute "/lead/:id/edit" {id :id}
   (do (session/put! :page :edit-lead)

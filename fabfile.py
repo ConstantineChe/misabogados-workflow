@@ -9,7 +9,7 @@ env.hosts = "23.253.248.253:22"
 env.user = "deploy"
 env.forward_agent = True
 
-project = "misabogados_workflow"
+project = "misabogados-workflow"
 repo =  "git@bitbucket.org:constantineche/misabogados-workflow.git"
 deploy_location = "/var/deploy/"
 
@@ -57,7 +57,8 @@ def deploy(branch="master"):
     local("ssh-agent")
     local("ssh-add")
     with cd(deploy_location):
-        if not files.exists(project):
+        run("ls")
+        if not files.exists(deploy_location + project):
             run("git clone " + repo)
     with cd(deploy_location + project):
         run("git fetch")
@@ -70,9 +71,10 @@ def deploy(branch="master"):
         file_name = "%s_%s.jar" % (project, datetime.today().isoformat())
         run("cp target/uberjar/%s %s" % (project+".jar", deploy_location + instance.directory + file_name))
         with cd(deploy_location + instance.directory):
-            if not files.is_link(project+".jar"):
-                run("mv %s.jar %s_old.jar" % project)
-            run("rm %s.jar" % project)
+            if files.exists(project+".jar"):
+                if not files.is_link(project+".jar"):
+                    run("mv %s.jar %s_old.jar" % (project, project))
+                run("rm %s.jar" % project)
             run("ln -s %s %s" % (file_name, project+".jar"))
     runapp()
 
