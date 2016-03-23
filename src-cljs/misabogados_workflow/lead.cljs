@@ -33,10 +33,10 @@
                  (el/input-number "NPS" [:lead :nps])
                  (el/input-text "Adwords url" [:lead :adwords_url])
                  ["Match"
-                  (el/input-typeahead "Lawyer" [:lead :match :lawyer_id])
+                  (el/input-typeahead "Lawyer" [:lead :matches :lawyer_id])
                   ["Meeting"
-                   (el/input-text "Type" [:lead :match :meeting :type])
-                   (el/input-text "Time" [:lead :match :meeting :time])]]
+                   (el/input-text "Type" [:lead :matches :meetings :type])
+                   (el/input-text "Time" [:lead :matches :meetings :time])]]
                  ]
                 )])))
 
