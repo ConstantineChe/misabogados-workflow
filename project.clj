@@ -40,7 +40,7 @@
                  [camel-snake-kebab "0.3.2"]
                  [com.draines/postal "1.11.3"]
                  [midje "1.8.3"]
-                 [reagent-forms "0.5.17"]]
+                 [reagent-forms "0.5.22"]]
 
   :min-lein-version "2.0.0"
   :uberjar-name "misabogados-workflow.jar"

@@ -1,7 +1,9 @@
 (ns misabogados-workflow.elements
   (:require [reagent.core :as r]
             [reagent.session :as session]
-            [clojure.string :as s])
+            [clojure.string :as s]
+            [reagent-forms.datepicker
+             :refer [parse-format format-date datepicker]])
 )
 
 (defn gen-name [cursor] (->> cursor (into []) (map #(if (keyword? %) (name %) %)) (interpose "-") (apply str)))
@@ -99,6 +101,58 @@
               )]])))
 
 
+(defn input-datepicker [label cursor]
+  (fn [[form opts]]
+    (let [r-key cursor
+          time (r/cursor opts (into [:time] cursor))
+          [name cursor] (prepare-input cursor form)
+          selected-date (.parse js/Date @cursor)
+          selected-month (if (pos? (:month selected-date)) (dec (:month selected-date)) (:month selected-date))
+          today (js/Date.)
+          year (or (:year selected-date) (.getFullYear today))
+          month (or selected-month (.getMonth today))
+          day (or (:day selected-date) (.getDate today))
+          [hour minute] (if @cursor (let [time (second (s/split @cursor #"T"))]
+                              (s/split time #":")) [(.getHours today) (.getMinutes today)])
+          expanded? (r/cursor opts (into [:date-extended?] r-key))]
+      (when-not @time (reset! time (str hour ":" minute)))
+      (when-not @cursor (reset! cursor (let [datetime (.toISOString today)
+                                             time (second (s/split datetime #"T"))
+                                             [hour minute] (s/split time #":")]
+                                         (s/replace datetime (re-pattern time)
+                                                    (str hour ":" minute ":00Z")))))
+      [:div {:key r-key}
+       [:div.datepicker-wrapper
+        [:label.control-label (first label)]
+        [:div.input-group.date
+        [:input.form-control
+         {:read-only true
+          :type :text
+          :on-click #(swap! expanded? not)
+          :value (when-let [date (first (s/split @cursor #"T"))] date)}]
+        [:span.input-group-addon
+         {:on-click #(swap! expanded? not)}
+         [:i.glyphicon.glyphicon-calendar]]]
+        [datepicker year month day expanded? false #(deref cursor)
+         #(swap! cursor (fn [date]
+                          (let [{:keys [day year month]} %]
+                            (s/replace date (re-pattern (first (s/split date #"T")))
+                                       (str year "-"
+                                            (if (= 1 (count (str month))) (str 0 month) year) "-"
+                                            (if (= 1 (count (str day))) (str 0 day) day)))))) false :es-ES]]
+       [:div.form-group
+        [:label.control-label (second label)]
+        [:input.form-control {:type :text
+                              :value @time
+                              :on-change #(let [value (-> % .-target .-value)]
+                                            (when (re-matches #"^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$"
+                                                              value)
+                                                    (swap! cursor (fn [date]
+                                                                    (s/replace date (re-pattern (str hour ":" minute))
+                                                                               value))))
+                                              (reset! time value))}]]])))
+
+
 (def input-text (partial input :text))
 
 (def input-password (partial input :password))
@@ -107,7 +161,7 @@
 
 (def input-number (partial input :number))
 
-(def input-texarea (partial input :textarea))
+(def input-textarea (partial input :textarea))
 
 (defn fieldset-fn [form-data [legend & fields]]
   [:fieldset {:key legend}
