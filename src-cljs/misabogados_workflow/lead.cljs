@@ -35,7 +35,7 @@
                   (el/input-typeahead "Lawyer" [:lead :matches :lawyer_id])
                   ["Meeting"
                    (el/input-text "Type" [:lead :matches :meetings :type])
-                   (el/input-datepicker ["Date" "Time"] [:lead :matches :meetings :time])]]
+                   (el/input-datetimepicker ["Date" "Time"] [:lead :matches :meetings :time])]]
                  ]
                 )])))
 
@@ -69,7 +69,7 @@
                                                (map-indexed (fn [j meeting]
                                                               ["Meeting"
                                                                (el/input-text "Type" [:lead :matches i :meetings j :type])
-                                                               (el/input-datepicker ["Date" "Time"] [:lead :matches i :meetings j :time])])
+                                                               (el/input-datetimepicker ["Date" "Time"] [:lead :matches i :meetings j :time])])
                                                             (:meetings match))))
                                      (get-in @lead-data [:lead :matches])))
                 )])))

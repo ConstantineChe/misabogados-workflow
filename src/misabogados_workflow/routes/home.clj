@@ -24,7 +24,7 @@
   ((keyword action) steps))
 
 (defn home-page [request]
-  (render "app.html"))
+  (render "app.html" {:forms-css (-> "reagent-forms.css" clojure.java.io/resource slurp)}))
   ;; (layout/blank-page "home" [:div.container [:div "hi"
                                ;; (map (fn [item] [:div.row [:h4 (key item)]
                                                ;; [:p (val item)]]) request)]]))

@@ -101,7 +101,7 @@
               )]])))
 
 
-(defn input-datepicker [label cursor]
+(defn input-datetimepicker [label cursor]
   (fn [[form opts]]
     (let [r-key cursor
           time (r/cursor opts (into [:time] cursor))
