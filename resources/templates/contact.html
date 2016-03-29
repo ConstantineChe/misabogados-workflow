@@ -1,0 +1,33 @@
+{% extends "home.html" %}
+{% block content %}
+<div class="col-md-4 col-md-offset-4">
+  <h1>Contacto</h1>
+  <form id="contact_form" method="POST" action="/contact">
+    {% csrf-field %}
+    <div class="form-group">
+      <label class="control-label" for="client_name">Nombre:</label>
+      <input class="form-control" type="text" name="client_name" required/>
+    </div>
+    <div class="form-group">
+      <label class="control-label" for="client_phone">Telefono:</label>
+      <input class="form-control" type="text" name="client_phone" required/>
+    </div>
+    <div class="form-group">
+      <label class="control-label" for="client_email">Email:</label>
+      <input class="form-control" type="email" name="client_email" required/>
+    </div>
+    <div class="form-group">
+      <label class="control-label" for="lead_type_code">Tipo:</label><br>
+      <div class="btn-group" data-toggle="buttons">
+        <label class="btn btn-default"><input type="radio" name="lead_type_code" id="lead_type_code" value="question" required>Consulta</label>
+        <label class="btn btn-default"><input type="radio" name="lead_type_code" id="lead_type_code" value="case">Caso</label>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="control-label" for="problem">Problema:</label>
+      <textarea class="form-control" type="textarea" name="problem" rows="4" required></textarea>
+    </div>
+    <button class="btn btn-lg btn-block btn-info" data-loading-text="Cargando...">Contactar</button>
+  </form>
+</div>
+{% endblock %}
