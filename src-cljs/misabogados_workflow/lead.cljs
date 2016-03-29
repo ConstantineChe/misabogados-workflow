@@ -13,12 +13,11 @@
 
 (defn new-lead []
   (let [lead-data (r/atom {})
-        options (r/atom {})
-        _ (GET (str js/context "/leads/options") {:handler #(reset! options {:lead (keywordize-keys %)})})]
+        options (r/atom {})]
+    (GET (str js/context "/leads/options") {:handler #(reset! options {:lead (keywordize-keys %)})})
     (fn []
       [:div.container
-       (str "form data: " @lead-data) [:br]
-;       (str "options: " @options)
+       (str "form data: " @lead-data)
        (el/form "New Lead" [lead-data options]
                 ["Lead"
                  (el/input-text "Client Id" [:lead :client_id])
@@ -26,7 +25,7 @@
                  (el/input-text "Region" [:lead :region_name])
                  (el/input-text "City" [:lead :city])
                  (el/input-typeahead "Category" [:lead :category_id])
-                 (el/input-text "Problem" [:lead :problem])
+                 (el/input-textarea "Problem" [:lead :problem])
                  (el/input-dropdown "Lead Type" [:lead :lead_type_code])
                  (el/input-dropdown "Lead Source" [:lead :lead_source_code])
                  (el/input-text "Referrer" [:lead :refer])
@@ -36,7 +35,7 @@
                   (el/input-typeahead "Lawyer" [:lead :matches :lawyer_id])
                   ["Meeting"
                    (el/input-text "Type" [:lead :matches :meetings :type])
-                   (el/input-text "Time" [:lead :matches :meetings :time])]]
+                   (el/input-datetimepicker ["Date" "Time"] [:lead :matches :meetings :time])]]
                  ]
                 )])))
 
@@ -44,9 +43,9 @@
   (let [id (session/get :current-lead-id)
         fetch (fn [atom] #(reset! atom {:lead (keywordize-keys %)}))
         lead-data (r/atom {})
-        options (r/atom {})
-        _ (do (GET (str js/context "/leads/options") {:handler (fetch options)})
-              (GET (str js/context "lead/" id) {:handler (fetch lead-data)}))]
+        options (r/atom {})]
+    (GET (str js/context "/leads/options") {:handler (fetch options)})
+    (GET (str js/context "lead/" id) {:handler (fetch lead-data)})
     (fn []
       [:div.container
        (str "form data: " @lead-data) [:br]
@@ -58,7 +57,7 @@
                        (el/input-text "Region" [:lead :region_name])
                        (el/input-text "City" [:lead :city])
                        (el/input-typeahead "Category" [:lead :category_id])
-                       (el/input-text "Problem" [:lead :problem])
+                       (el/input-textarea "Problem" [:lead :problem])
                        (el/input-dropdown "Lead Type" [:lead :lead_type_code])
                        (el/input-dropdown "Lead Source" [:lead :lead_source_code])
                        (el/input-text "Referrer" [:lead :refer])
@@ -68,9 +67,9 @@
                                        (reduce conj ["Match"
                                                      (el/input-typeahead "Lawyer" [:lead :matches i :lawyer_id])]
                                                (map-indexed (fn [j meeting]
-                                                            ["Meeting"
-                                                             (el/input-text "Type" [:lead :matches i :meetings j :type])
-                                                             (el/input-text "Time" [:lead :matches i :meetings j :time])])
+                                                              ["Meeting"
+                                                               (el/input-text "Type" [:lead :matches i :meetings j :type])
+                                                               (el/input-datetimepicker ["Date" "Time"] [:lead :matches i :meetings j :time])])
                                                             (:meetings match))))
                                      (get-in @lead-data [:lead :matches])))
                 )])))
