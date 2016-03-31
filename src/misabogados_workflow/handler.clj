@@ -7,6 +7,7 @@
             [misabogados-workflow.routes.users :refer [users-routes]]
             [misabogados-workflow.routes.payments :refer [payments-routes]]
             [misabogados-workflow.routes.payment-requests :refer [payment-requests-routes]]
+            [misabogados-workflow.routes.leads :refer [leads-routes]]
             [misabogados-workflow.middleware :as middleware]
             [misabogados-workflow.db.indexes :as indexes]
             [ring.middleware.json :as json]
@@ -48,6 +49,7 @@
    users-routes
    payments-routes
    payment-requests-routes
+   leads-routes
    (route/not-found
     (:body
      (error-page {:status 404
