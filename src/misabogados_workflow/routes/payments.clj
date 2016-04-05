@@ -91,7 +91,8 @@
                                                                                               :action "start_payment_attempt"
                                                                                               :data data}}})
           {:status 200
-           :body data})
+           :body {:form-data data
+                  :form-path "https://stg.gateway.payulatam.com/ppp-web-gateway/"}})
       {:status 409
        :body {:error "Codigo de pago no es valido. Probablemente el comprobante ha sido cambiado, el enlace nuevo debe ser en su correo."}}
       )))
