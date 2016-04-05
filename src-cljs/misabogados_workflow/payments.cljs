@@ -42,9 +42,9 @@
                                                (.find "input[name='_id']")
                                                .val)}
                             :handler (fn [response]
-                                       (redirect (:form-path response) 
+                                       (redirect (get response "form-path") 
                                                  "post" 
-                                                 (:form-data response)))}))
+                                                 (get response "form-data")))}))
                  (.preventDefault e))
                ))
     ))

@@ -75,24 +75,31 @@
           {:payment-request (mc/find-one-as-map @db "payment_requests" {:code code})
            :payment-options test-payment-data}))
 
+
+(defmulti construct-form-for-payment-system (fn [payment-request date] :payu))
+(defmethod construct-form-for-payment-system :payu [payment-request date]
+  {:form-data (add-signature (merge test-payment-data {:amount (:amount payment-request)
+                                                       :referenceCode (str (:_id payment-request) "-" (.getTime date))
+                                                       :description (:service payment-request)
+                                                       :buyerEmail (:client_email payment-request)
+                                                       }))
+   :form-path "https://stg.gateway.payulatam.com/ppp-web-gateway/"})
+
 (defn start-payment-attempt [request]
   (let [params (:params request)
         date (new java.util.Date)
         id (oid (:_id params))
         payment-request (mc/find-one-as-map @db "payment_requests" {:_id id})
-        data (add-signature (merge test-payment-data {:amount (:amount payment-request)
-                                                      :referenceCode (str (:_id payment-request) "-" (.getTime date))
-                                                      :description (:service payment-request)
-                                                      :buyerEmail (:client_email payment-request)
-                                                      }))]
+        form (construct-form-for-payment-system payment-request date)
+        data (:form-data form)]
+    (clojure.pprint/pprint form)
     (if (= (:code params) (:code payment-request))
       (do
         (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date date
                                                                                               :action "start_payment_attempt"
                                                                                               :data data}}})
           {:status 200
-           :body {:form-data data
-                  :form-path "https://stg.gateway.payulatam.com/ppp-web-gateway/"}})
+           :body form})
       {:status 409
        :body {:error "Codigo de pago no es valido. Probablemente el comprobante ha sido cambiado, el enlace nuevo debe ser en su correo."}}
       )))
