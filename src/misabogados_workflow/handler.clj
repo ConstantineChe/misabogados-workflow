@@ -5,7 +5,7 @@
             [misabogados-workflow.routes.registration :refer [registration-routes]]
             [misabogados-workflow.routes.session :refer [session-routes]]
             [misabogados-workflow.routes.users :refer [users-routes]]
-            [misabogados-workflow.routes.payments :refer [payments-routes]]
+            [misabogados-workflow.routes.payments :refer [payments-routes payments-integration-routes]]
             [misabogados-workflow.routes.payment-requests :refer [payment-requests-routes]]
             [misabogados-workflow.routes.leads :refer [leads-routes]]
             [misabogados-workflow.middleware :as middleware]
@@ -43,13 +43,14 @@
 
 (def app-routes
   (routes
-   home-routes
-   registration-routes
-   session-routes
-   users-routes
-   payments-routes
-   payment-requests-routes
-   leads-routes
+   (wrap-routes #'home-routes middleware/wrap-csrf)
+   (wrap-routes #'registration-routes middleware/wrap-csrf)
+   (wrap-routes #'session-routes middleware/wrap-csrf)
+   (wrap-routes #'users-routes middleware/wrap-csrf)
+   (wrap-routes #'payments-routes middleware/wrap-csrf)
+   (wrap-routes #'payment-requests-routes middleware/wrap-csrf)
+   (wrap-routes #'leads-routes middleware/wrap-csrf)
+   payments-integration-routes
    (route/not-found
     (:body
      (error-page {:status 404

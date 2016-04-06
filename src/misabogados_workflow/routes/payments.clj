@@ -15,7 +15,8 @@
             [misabogados-workflow.access-control :as ac]
             [misabogados-workflow.middleware :as mw]
             [misabogados-workflow.util :as util]
-            [misabogados-workflow.email :as email]))
+            [misabogados-workflow.email :as email]
+            [config.core :refer [env]]))
 
 (def payu-test-payment-data {
                         :merchantId "500238"
@@ -26,7 +27,7 @@
                         ;; :amount "3"
                         :tax "0"
                         :taxReturnBase "0"
-                        :currency "MXN"
+                        :currency (:currency env)
                         ;; :signature "be2f083cb3391c84fdf5fd6176801278" 
                         :test "1"
                         :confirmationUrl "http://localhost:3000/payments/confirmation"
@@ -76,9 +77,9 @@
            :payment-options payu-test-payment-data}))
 
 
-(defmulti construct-payment-attempt-form (fn [request payment-request date] :webpay))
+(defmulti construct-payment-attempt-form (fn [request payment-request date] (:payment-system env)))
 
-(defmethod construct-payment-attempt-form :payu [request payment-request date]
+(defmethod construct-payment-attempt-form "payu" [request payment-request date]
   {:form-data (add-signature (merge payu-test-payment-data {:amount (:amount payment-request)
                                                             :referenceCode (str (:_id payment-request) "-" (.getTime date))
                                                             :description (:service payment-request)
@@ -86,17 +87,17 @@
                                                        }))
    :form-path "https://stg.gateway.payulatam.com/ppp-web-gateway/"})
 
-(defmethod construct-payment-attempt-form :webpay [request payment-request date]
+(defmethod construct-payment-attempt-form "webpay" [request payment-request date]
   {:form-data {:TBK_URL_EXITO (util/full-path request "/payments/success")
                :TBK_URL_FRACASO (util/full-path request "/payments/failure")
                :TBK_TIPO_TRANSACCION "TR_NORMAL"
                :TBK_MONTO (* 100 (:amount payment-request))
                :TBK_ORDEN_COMPRA (str (:_id payment-request) "-" (.getTime date))}
-   :form-path "http://payments.misabogados.com/webpay/tbk_bp_pago.cgi"})
+   :form-path "http://payments.misabogados.com/cljpay/tbk_bp_pago.cgi"})
 
-(defmulti confirm-payment (fn [request payment-request] :webpay))
+(defmulti confirm-payment (fn [request payment-request] (:payment-system env)))
 
-(defmethod confirm-payment :webpay [request payment-request]
+(defmethod confirm-payment "webpay" [request payment-request]
   "ACEPTADO")
 
 (defn start-payment-attempt [request]
@@ -126,18 +127,20 @@
 (defn failure [request]
   (let [params (:params request)]
     (println (str "----FAILURE " params) )
-    "FAIL"))
+    (render "payment_failure.html")))
 
 (defn success [request]
   (let [params (:params request)]
     (println (str "----SUCCESS " params) )
-    "SUCCESS"))
+    (render "payment_success.html")))
 
 (defroutes payments-routes
   (GET "/payments/pay/:code" [code :as request] (get-payment code request))
   ;; (POST "/payments/pay" [code :as request] (pay code request))
   (POST "/payments/pay" []
-        start-payment-attempt)
+        start-payment-attempt))
+
+(defroutes payments-integration-routes
   (POST "/payments/confirm" []
         confirm)
   (POST "/payments/failure" []

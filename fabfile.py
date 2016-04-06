@@ -19,7 +19,9 @@ class Instance:
         self.directory = "default/"
         self.opts = {'DATABASE_URL': 'mongodb://127.0.0.1/%s_dev' % project,
                      'PORT': '3001',
-                     'LOG_PATH': '/var/deploy/log/%s%s.log' % (self.directory, project)}
+                     'LOG_PATH': '/var/deploy/log/%s%s.log' % (self.directory, project)
+                     'PAYMENT_SYSTEM': 'webpay'
+                     'CURRENCY': 'CLP'}
 
     def production(self):
         self.directory = "production/"

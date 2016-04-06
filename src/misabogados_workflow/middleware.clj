@@ -95,7 +95,6 @@
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
       wrap-auth
-      wrap-csrf
       wrap-formats
       wrap-webjars
       wrap-flash
