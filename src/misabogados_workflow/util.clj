@@ -21,3 +21,9 @@
         sig (.toString (java.math.BigInteger. 1 raw) 16)
         padding (apply str (repeat (- size (count sig)) "0"))]
     (str padding sig)))
+
+(defn base-path [request]
+  (str (name (:scheme request)) "://" (:server-name request) ":" (:server-port request)))
+
+(defn full-path [request rel-path]
+  (str (base-path request) rel-path))

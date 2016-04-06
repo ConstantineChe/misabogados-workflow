@@ -17,7 +17,7 @@
             [misabogados-workflow.util :as util]
             [misabogados-workflow.email :as email]))
 
-(def test-payment-data {
+(def payu-test-payment-data {
                         :merchantId "500238"
                         :ApiKey "6u39nqhq8ftd0hlvnjfs66eh8c"
                         :referenceCode "TestPayU"
@@ -28,7 +28,7 @@
                         :taxReturnBase "0"
                         :currency "MXN"
                         ;; :signature "be2f083cb3391c84fdf5fd6176801278" 
-                       :test "1"
+                        :test "1"
                         :confirmationUrl "http://localhost:3000/payments/confirmation"
                         ;; :buyerEmail "test@test.com"
                         })
@@ -62,7 +62,7 @@
                                    [:h3.text-center (:service payment-request)]
                                    [:p.text-center (:service_description payment-request)]]
                                   [:div.panel-body.text-center
-                                   [:p.lead (str (:currency test-payment-data) " " (:amount payment-request))]]
+                                   [:p.lead (str (:currency payu-test-payment-data) " " (:amount payment-request))]]
                                   [:ul.list-group.list-group-flush.text-center
                                    (map (fn [elem] [:li.list-group-item [:b (str (name (key elem)) ": ")] (val elem)])
                                         (select-keys payment-request [:client :client_email :lawyer]))]
@@ -73,24 +73,38 @@
 (defn get-payment [code request]
   (render "payment.html"
           {:payment-request (mc/find-one-as-map @db "payment_requests" {:code code})
-           :payment-options test-payment-data}))
+           :payment-options payu-test-payment-data}))
 
 
-(defmulti construct-form-for-payment-system (fn [payment-request date] :payu))
-(defmethod construct-form-for-payment-system :payu [payment-request date]
-  {:form-data (add-signature (merge test-payment-data {:amount (:amount payment-request)
-                                                       :referenceCode (str (:_id payment-request) "-" (.getTime date))
-                                                       :description (:service payment-request)
-                                                       :buyerEmail (:client_email payment-request)
+(defmulti construct-payment-attempt-form (fn [request payment-request date] :webpay))
+
+(defmethod construct-payment-attempt-form :payu [request payment-request date]
+  {:form-data (add-signature (merge payu-test-payment-data {:amount (:amount payment-request)
+                                                            :referenceCode (str (:_id payment-request) "-" (.getTime date))
+                                                            :description (:service payment-request)
+                                                            :buyerEmail (:client_email payment-request)
                                                        }))
    :form-path "https://stg.gateway.payulatam.com/ppp-web-gateway/"})
+
+(defmethod construct-payment-attempt-form :webpay [request payment-request date]
+  {:form-data {:TBK_URL_EXITO (util/full-path request "/payments/success")
+               :TBK_URL_FRACASO (util/full-path request "/payments/failure")
+               :TBK_TIPO_TRANSACCION "TR_NORMAL"
+               :TBK_MONTO (* 100 (:amount payment-request))
+               :TBK_ORDEN_COMPRA (str (:_id payment-request) "-" (.getTime date))}
+   :form-path "http://payments.misabogados.com/webpay/tbk_bp_pago.cgi"})
+
+(defmulti confirm-payment (fn [request payment-request] :webpay))
+
+(defmethod confirm-payment :webpay [request payment-request]
+  "ACEPTADO")
 
 (defn start-payment-attempt [request]
   (let [params (:params request)
         date (new java.util.Date)
         id (oid (:_id params))
         payment-request (mc/find-one-as-map @db "payment_requests" {:_id id})
-        form (construct-form-for-payment-system payment-request date)
+        form (construct-payment-attempt-form request payment-request date)
         data (:form-data form)]
     (clojure.pprint/pprint form)
     (if (= (:code params) (:code payment-request))
@@ -104,17 +118,29 @@
        :body {:error "Codigo de pago no es valido. Probablemente el comprobante ha sido cambiado, el enlace nuevo debe ser en su correo."}}
       )))
 
-(defn confirmation [request]
-  (let [params (:params request)
-        ]
-    (println (str "----CONFIRMATION " params) )
-    (redirect "/")))
+(defn confirm [request]
+  (let [params (:params request)]
+
+    "ACEPTADO"))
+
+(defn failure [request]
+  (let [params (:params request)]
+    (println (str "----FAILURE " params) )
+    "FAIL"))
+
+(defn success [request]
+  (let [params (:params request)]
+    (println (str "----SUCCESS " params) )
+    "SUCCESS"))
 
 (defroutes payments-routes
-  (GET "/payments/:code" [code :as request] (get-payment code request))
+  (GET "/payments/pay/:code" [code :as request] (get-payment code request))
   ;; (POST "/payments/pay" [code :as request] (pay code request))
-
   (POST "/payments/pay" []
         start-payment-attempt)
-  (POST "/payments/confirmation" []
-        confirmation))
+  (POST "/payments/confirm" []
+        confirm)
+  (POST "/payments/failure" []
+        failure)
+  (POST "/payments/success" []
+        success))

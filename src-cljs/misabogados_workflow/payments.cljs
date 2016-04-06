@@ -21,6 +21,7 @@
   (let [form (.createElement js/document "form")]
     (aset form "action" url)
     (aset form "method" method)
+    (aset form "enctype" "multipart/form-data")
     (doall (map #(.appendChild form (create-hidden-input %)) params))
     (.submit form)))
 
@@ -161,9 +162,7 @@
                                                    (reset! form-data {})
                                                    (refresh-table)
                                                    (reset! validation-message nil))
-                                               )} "Guardar"]]]
-      ]]
-    ))
+                                               )} "Guardar"]]]]]))
 
 (defn edit-payment-request-form [data]
   (let [edit-form-data (r/atom data)]
@@ -191,9 +190,7 @@
                                                            (u/close-modal (str "payment-request-form" (:_id data)))
                                                            (refresh-table)
                                                            (reset! validation-message nil))
-                                                       )} "Guardar"]]]
-              ]]
-      )))
+                                                       )} "Guardar"]]]]])))
 
 (defn payment-data-modal []
   (let [data (r/cursor session/state [:payments :payment-log])]
@@ -228,8 +225,7 @@
           [:div (edn->hiccup @data)]]
          [:div.modal-footer
           [:button.btn.btn-default {:type :button
-                                    :on-click #(u/close-modal "lawyer-data-modal")} "Cerrar"]]]
-        ]])))
+                                    :on-click #(u/close-modal "lawyer-data-modal")} "Cerrar"]]]]])))
 
 (defn table []
   (fn []
@@ -255,7 +251,7 @@
                                            (get @table-data row-key))))]
 
             [:tr {:key row-key}
-             [:td [:a {:href (str "/payments/" (get values :code))
+             [:td [:a {:href (str "/payments/pay/" (get values :code))
                        :data-toggle "tooltip"
                        :title "Este enlace fue enviado al cliente"
                        } "Pagar"]]
@@ -301,5 +297,4 @@
                                             {(keyword (key field)) (val field)})
                                           (get @table-data row-key)))]
              [:div {:key row-key} [(edit-payment-request-form (into {:_id row-key} values))]]
-             )))
-       ])))
+             )))])))
