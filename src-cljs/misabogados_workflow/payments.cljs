@@ -35,7 +35,7 @@
                  (do (-> (js/jQuery form)
                             (.find "button")
                             (.button "loading"))
-                     (POST (str js/context "pay")
+                     (POST (str js/context "/payments/pay")
                            {:params {:code (-> (js/jQuery "form#payment_form")
                                                (.find "input[name='code']")
                                                .val)
