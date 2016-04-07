@@ -1,0 +1,37 @@
+{% extends "home.html" %}
+{% block content %}
+<div class="col-md-4 col-md-offset-4">
+  <div class="panel panel-info">
+    <div class="panel-heading">
+      <h3 class="text-center">Pago realizado con éxito</h3>
+    </div>
+    <ul class="list-group list-group-flush text-center">
+      <li class="list-group-item"><b>client:</b> {{payment-request.client}}</li>
+    </ul>
+    <div class="panel-footer text-center">
+      <a href="#" data-toggle="modal" data-target="#policy">Políticas de devolución y reembolso</a>
+    </div>
+  </div>
+</div>
+
+<div id="policy" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Políticas de devolución y reembolso</h4>
+      </div>
+      <div class="modal-body">
+        <p class="disclaimer" >Considerando que MisAbogados.com es un punto de encuentro entre Clientes y Abogados, y no participa de las operaciones que se realizan entre ellos, será el abogado el responsable por todas las obligaciones y cargas impositivas que correspondan por la venta de sus servicios, sin que pudiera imputársele a MisAbogados.com algún tipo de responsabilidad por incumplimientos en tal sentido. Por lo mismo, cualquier reclamo por el servicio contratado con el Abogado y/o cualquier solicitud de devolución y reembolso, debe ser revisada con el Abogado en cuestión. MisAbogados.com no tiene responsabilidad ni incumbencia alguna en las polítcas de devolución y reembolso de los Abogados afiliados a su sitio.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+{% endblock %}

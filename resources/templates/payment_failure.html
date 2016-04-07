@@ -1,0 +1,17 @@
+{% extends "home.html" %}
+{% block content %}
+<div class="large-8 large-offset-2 columns">
+<!-- <ul class="pricing-table">
+  <li class="price">Pago fallido, por favor intente nuevamente. <%= link_to("Volver", payment_path(@payment.payment_request[:slug])) %></li>
+</ul> -->
+  <h1 class="subheader">Numero de Orden: {{payment.code}}</h1>
+  <h1><%= title 'Transacción Rechazada' %></h1>
+  <h3>Las posibles causas de este rechazo son:</h3>
+  <ul>
+    <li>Error en el ingreso de los datos de su tarjeta de crédito o debito (fecha y/o código de seguridad). </li>
+    <li>Su tarjeta de crédito o debito no cuenta con el cupo necesario para cancelar la compra.</li>
+    <li>Tarjeta aún no habilitada en el sistema financiero.</li>
+  </ul>
+  <a href="{{link_back}}">Volver</a>
+</div>
+{% endblock %}
