@@ -51,29 +51,6 @@
 
 
 
-(defn get-payment-hiccup [code request]
-    (layout/blank-page "Pagar"
-                       (let [payment-request (dbcore/get-payment-request-by-code code)]
-                         (list [:ul
-                                ]
-                               [:form {:method "POST" :action "https://stg.gateway.payulatam.com/ppp-web-gateway"}
-                                [:input {:type :hidden
-                                         :name :code
-                                         :value code}]
-                                [:div.col-md-4.col-md-offset-4
-                                 [:div.panel.panel-info
-                                  [:div.panel-heading
-                                   [:h3.text-center (:service payment-request)]
-                                   [:p.text-center (:service_description payment-request)]]
-                                  [:div.panel-body.text-center
-                                   [:p.lead (str (:currency payu-test-payment-data) " " (:amount payment-request))]]
-                                  [:ul.list-group.list-group-flush.text-center
-                                   (map (fn [elem] [:li.list-group-item [:b (str (name (key elem)) ": ")] (val elem)])
-                                        (select-keys payment-request [:client :client_email :lawyer]))]
-                                  [:div.panel-footer
-                                   [:button.btn.btn-lg.btn-block.btn-info "Pagar"]
-                                   ]]]]))))
-
 (defn get-payment [code request]
   (render "payment.html"
           {:payment-request (mc/find-one-as-map @db "payment_requests" {:code code})
@@ -145,7 +122,7 @@
       (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date (t/now)
                                                                                             :action "payment_attempt_failed"
                                                                                             :data params}}})
-      (render "payment_failure.html")))
+      (render "payment_failure.html" (:payment-request payment-request))))
 
 (defn success [request]
     (let [params (:params request)
@@ -154,7 +131,7 @@
       (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date (t/now)
                                                                                             :action "payment_attempt_succeded"
                                                                                             :data params}}})
-      (render "payment_success.html")))
+      (render "payment_success.html" (:payment-request payment-request))))
 
 (defroutes payments-routes
   (GET "/payments/pay/:code" [code :as request] (get-payment code request))
