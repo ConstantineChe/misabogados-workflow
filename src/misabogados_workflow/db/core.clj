@@ -86,3 +86,6 @@
 
 (defn get-payment-request-by-code [code]
   (mc/find-one-as-map @db "payment_requests" {:code code}))
+
+(defn get-payment-request-by-webpay-payment-code [code]
+  (mc/find-one-as-map @db "payment_requests" {:payment_log {$elemMatch {"data.TBK_ORDEN_COMPRA" code}}}))

@@ -16,7 +16,10 @@
             [misabogados-workflow.middleware :as mw]
             [misabogados-workflow.util :as util]
             [misabogados-workflow.email :as email]
-            [config.core :refer [env]]))
+            [config.core :refer [env]]
+            [clj-time.coerce :as c]
+            [clj-time.core :as t]
+            [monger.joda-time]))
 
 (def payu-test-payment-data {
                         :merchantId "500238"
@@ -76,12 +79,16 @@
           {:payment-request (mc/find-one-as-map @db "payment_requests" {:code code})
            :payment-options payu-test-payment-data}))
 
+(defmulti get-payment-request-by-payment-code (fn [request] (:payment-system env)))
+
+(defmethod get-payment-request-by-payment-code "webpay" [request]
+  (mc/find-one-as-map @db "payment_requests" {:payment_log {$elemMatch {"data.TBK_ORDEN_COMPRA" (-> request :params :TBK_ORDEN_COMPRA)}}}))
 
 (defmulti construct-payment-attempt-form (fn [request payment-request date] (:payment-system env)))
 
 (defmethod construct-payment-attempt-form "payu" [request payment-request date]
   {:form-data (add-signature (merge payu-test-payment-data {:amount (:amount payment-request)
-                                                            :referenceCode (str (:_id payment-request) "-" (.getTime date))
+                                                            :referenceCode (str (:_id payment-request) "-" (c/to-long date))
                                                             :description (:service payment-request)
                                                             :buyerEmail (:client_email payment-request)
                                                        }))
@@ -92,17 +99,18 @@
                :TBK_URL_FRACASO (util/full-path request "/payments/failure")
                :TBK_TIPO_TRANSACCION "TR_NORMAL"
                :TBK_MONTO (* 100 (:amount payment-request))
-               :TBK_ORDEN_COMPRA (str (:_id payment-request) "-" (.getTime date))}
+               :TBK_ORDEN_COMPRA (str (:_id payment-request) "-" (c/to-long date))}
    :form-path "http://payments.misabogados.com/cljpay/tbk_bp_pago.cgi"})
 
-(defmulti confirm-payment (fn [request payment-request] (:payment-system env)))
+(defmulti confirm-payment (fn [request] (:payment-system env)))
 
-(defmethod confirm-payment "webpay" [request payment-request]
-  "ACEPTADO")
+(defmethod confirm-payment "webpay" [request]
+  (let [payment-request (get-payment-request-by-payment-code request)]
+    [payment-request "ACEPTADO" ""]))
 
 (defn start-payment-attempt [request]
   (let [params (:params request)
-        date (new java.util.Date)
+        date (t/now)
         id (oid (:_id params))
         payment-request (mc/find-one-as-map @db "payment_requests" {:_id id})
         form (construct-payment-attempt-form request payment-request date)
@@ -120,19 +128,33 @@
       )))
 
 (defn confirm [request]
-  (let [params (:params request)]
-
-    "ACEPTADO"))
+  (let [params (:params request)
+        [payment-request result message] (confirm-payment request)]
+    (println (str "----CONFIRM " params) )
+    (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date (t/now)
+                                                                                          :action "confirm_payment_attempt"
+                                                                                          :result result
+                                                                                          :message message
+                                                                                          :data params}}})
+    result))
 
 (defn failure [request]
-  (let [params (:params request)]
-    (println (str "----FAILURE " params) )
-    (render "payment_failure.html")))
+    (let [params (:params request)
+          payment-request (get-payment-request-by-payment-code request) ]
+      (println (str "----FAILURE " params))
+      (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date (t/now)
+                                                                                            :action "payment_attempt_failed"
+                                                                                            :data params}}})
+      (render "payment_failure.html")))
 
 (defn success [request]
-  (let [params (:params request)]
-    (println (str "----SUCCESS " params) )
-    (render "payment_success.html")))
+    (let [params (:params request)
+          payment-request (get-payment-request-by-payment-code request) ]
+      (println (str "----SUCCESS " params))
+      (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date (t/now)
+                                                                                            :action "payment_attempt_succeded"
+                                                                                            :data params}}})
+      (render "payment_success.html")))
 
 (defroutes payments-routes
   (GET "/payments/pay/:code" [code :as request] (get-payment code request))
