@@ -36,7 +36,10 @@
 
 (defn create-lead [form-data actions]
   (POST (str js/context "/lead") {:params {:lead form-data
-                                           :actions  (keys (filter #(val %) actions))}
+                                           :actions (keys (filter #(val %) actions))}
+                                  :handler #(do (session/put! :notification [:div.alert.alert-sucsess "Lead created with id "
+                                                                             [:a {:href (str "#/lead/" (:id %) "/edit")} (:id %)]])
+                                                (aset js/window "location" "/#dashboard"))
                                   :error-handler #(js/alert %)}))
 
 (defn get-client [id client]
@@ -73,7 +76,7 @@
 (defn edit-client [client-data options id]
   (r/create-class
    {:render (fn []
-              (if id (if-not @client-data (get-client id client-data)))
+              (when (and id (not= id (-> @client-data :edit-client :_id))) (get-client id client-data))
               [:div.modal.fade {:role :dialog :id "lead-client_id-edit"}
                [:div.modal-dialog.modal-lg
                 [:div.modal-content
@@ -105,7 +108,8 @@
   (let [lead-data (r/atom {})
         options (r/atom {})
         util (r/atom {})
-        actions (r/atom {})]
+        actions (r/atom {})
+        selected-client (r/atom nil)]
     (GET (str js/context "/leads/options") {:handler #(reset! options {:lead (keywordize-keys %)})})
     (fn []
       [:div.container
@@ -114,7 +118,7 @@
        (el/form "New Lead" [lead-data options util]
                 ["Lead"
                  (el/input-entity "Client Id" [:lead :client_id]
-                                  (edit-client (r/atom nil)
+                                  (edit-client selected-client
                                                (r/cursor options [:lead :client_id])
                                                (get-in @lead-data [:lead :client_id]))
                                   (create-client (r/atom {}) (r/cursor options [:lead :client_id])
@@ -161,7 +165,9 @@
         fetch (fn [atom] #(reset! atom {:lead (keywordize-keys %)}))
         lead-data (r/atom {})
         options (r/atom {})
-        actions (r/atom {})]
+        actions (r/atom {})
+        util (r/atom {})
+        selected-client (r/atom nil)]
     (GET (str js/context "/leads/options") {:handler (fetch options)})
     (GET (str js/context "lead/" id) {:handler (fetch lead-data)})
     (fn []
@@ -169,10 +175,10 @@
 ;       (str "form data: " @lead-data) [:br]
 ;       (str "options: " (dissoc @options :lead)) [:br]
 ;       (str "actions: " @actions)
-       (el/form "Edit Lead" [lead-data options]
+       (el/form "Edit Lead" [lead-data options util]
                 (reduce conj ["Lead"
                               (el/input-entity "Client Id" [:lead :client_id]
-                                               (edit-client (r/atom nil)
+                                               (edit-client selected-client
                                                             (r/cursor options [:lead :client_id])
                                                             (get-in @lead-data [:lead :client_id]))
                                                (create-client (r/atom {}) (r/cursor options [:lead :client_id])
