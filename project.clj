@@ -73,7 +73,7 @@
   {:uberjar {:omit-source true
              :env {:production true
                    :log-path "log/misabogados.log"
-                   :database-url "mongodb://127.0.0.1/misabogados_workflow"                   }
+                   :database-url "mongodb://127.0.0.1/misabogados_workflow"}
              :prep-tasks ["compile" ["cljsbuild" "once"]]
              :cljsbuild
              {:builds

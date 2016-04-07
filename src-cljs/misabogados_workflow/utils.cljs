@@ -13,7 +13,7 @@
 (defn show-modal [id]
   (->
    (js/jQuery (str "#" id))
-   (.modal "show")))
+   (.modal #js {:keyboard true})))
 
 (defn close-modal [id]
   (->

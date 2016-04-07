@@ -7,11 +7,14 @@
             [ring.util.response :refer [redirect response]]
             [ring.middleware.session :as s]
             [misabogados-workflow.db.core :as db]
+            [monger.collection :as mc]
+            [monger.operators :refer :all]
             [buddy.auth :refer [authenticated?]]
             [misabogados-workflow.layout.core :as layout]
             [misabogados-workflow.access-control :as ac]
             [misabogados-workflow.middleware :as mw]
-            [buddy.auth.accessrules :refer [restrict]]))
+            [buddy.auth.accessrules :refer [restrict]]
+            [clojure.walk :refer [keywordize-keys]]))
 
 (defn access-error-handler [request value]
   {:status 403
@@ -23,7 +26,6 @@
 
 (defn update-user [id {:keys [params]}]
   (db/update-user id (clojure.walk/keywordize-keys (:data params)))
-  (clojure.pprint/pprint (clojure.walk/keywordize-keys (:data params)))
   (response {:req params :id id})  )
 
 (defn get-user [{:keys [params]}] (response (db/get-user (:id params))))
@@ -32,6 +34,15 @@
   (GET "/users" [] (restrict get-users
                              {:handler {:or [ac/admin-access]}
                               :on-error access-error-handler}))
+  (GET "/users/client/:id" [] #(response (mc/find-one-as-map @db/db "clients"  {:_id (-> % keywordize-keys :params :id db/oid)})))
+  (POST "/users/client" [] (restrict #(response (do (mc/insert-and-return @db/db "clients" (-> % :params :data))))
+                                            {:handler {:or [ac/admin-access ac/operator-access]}
+                                             :on-error access-error-handler}))
+  (PUT "/users/client" [] #(do (prn (:params %)) (response (do (mc/update-by-id @db/db "clients"
+                                                                              (-> % keywordize-keys :params :id db/oid)
+                                                                              {$set (-> % keywordize-keys :params :data)})
+                                                               (mc/find-one-as-map @db/db "clients"
+                                                                                   {:_id (-> % keywordize-keys :params :id db/oid)})))))
   (PUT "/users/:id" [id :as request] (restrict (fn [request] (update-user id request))
                                                {:handler {:or [ac/admin-access]}
                                                 :on-error access-error-handler})))

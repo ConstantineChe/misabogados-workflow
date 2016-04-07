@@ -84,7 +84,7 @@
         identity (:identity request)]
     (response {:status "ok" :leads (doall (db/get-leads role identity))})))
 
-(defroutes leads-routes 
+(defroutes leads-routes
   (GET "/lead/:id/edit" {{id :id} :params} (edit-lead id))
   (GET "/leads/create" [] new-lead)
   (PUT "/lead/:id" [id :as request] (update-lead-ajax id request))
@@ -102,4 +102,7 @@
   (GET "/leads/options" [] (response {:lead_type_code (map #((juxt :name :code) %) (mc/find-maps @db/db "lead_types"))
                                       :lead_source_code (map #((juxt :name :code) %) (mc/find-maps @db/db "lead_sources"))
                                       :category_id (map #((juxt :name :_id) %) (mc/find-maps @db/db "categories"))
-                                      :matches {:lawyer_id (map #((juxt :name :_id) %) (mc/find-maps @db/db "lawyers"))}})))
+                                      :client_id (map #((juxt (fn [x] (str (:name x) " (" (:email x) ")")) :_id) %)
+                                                      (mc/find-maps @db/db "clients"))
+                                      :matches {:lawyer_id (map #((juxt (fn [x] (str (:name x) " (" (:email x) ")")) :_id) %)
+                                                                (mc/find-maps @db/db "lawyers"))}})))

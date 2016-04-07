@@ -10,39 +10,151 @@
               [secretary.core :as secretary :include-macros true]
               [json-html.core :refer [edn->hiccup]]))
 
+(defn create-client! [data id-cursor options]
+  (POST (str js/context "/users/client") {:params {:data (:new-client data)}
+                                          :handler #(let [client (keywordize-keys %)]
+                                                      (swap! options conj
+                                                             [(str (:name client) " (" (:email client) ")") (:_id client)])
+                                                      (reset! id-cursor (:_id (keywordize-keys %))))
+                                          :error-handler #(js/alert %)}))
 
+(defn edit-client! [data options id]
+  (PUT (str js/context "/users/client") {:params {:id id
+                                                  :data (dissoc (:edit-client @data) :_id)}
+                                         :handler #(let [client (keywordize-keys %)]
+                                                     (swap! options
+                                                            (fn [x]
+                                                              (for [[label id] x]
+                                                                (if (= id (:_id client))
+                                                                  [(str (:name client) " (" (:email client) ")") id]
+                                                                  [label id])))))
+                                         :error-handler #(js/alert %)}))
 (defn update-lead [id form-data actions]
-  (PUT (str js/context "/lead/" id) {:params {:lead (dissoc form-data :_id) 
+  (PUT (str js/context "/lead/" id) {:params {:lead (dissoc form-data :_id)
                                               :actions (keys (filter #(val %) actions))}
                                      :error-handler #(js/alert (str %))}))
 
+(defn create-lead [form-data actions]
+  (POST (str js/context "/lead") {:params {:lead form-data
+                                           :actions  (keys (filter #(val %) actions))}
+                                  :error-handler #(js/alert %)}))
+
+(defn get-client [id client]
+  (if id (GET (str js/context "/users/client/" id) {:handler #(reset! client {:edit-client (keywordize-keys %)})}) client))
+
+(defn create-client [client-data options id-cursor]
+  (r/create-class
+   {:render (fn []
+              [:div.modal.fade {:role :dialog :id "lead-client_id-create"}
+               [:div.modal-dialog.modal-lg
+                [:div.modal-content
+                 [:div.modal-header
+                  [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
+                   [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]]
+                 [:div.modal-body
+                  (el/form "New client" [client-data]
+                           ["Client"
+                            (el/input-text "Clients name" [:new-client :name])
+                            (el/input-email "Clients email" [:new-client :email])
+                            (el/input-text "clients tel" [:new-client :phone])])]
+                 [:div.modal-footer
+                  [:button.btn.btn-default {:type :button
+                                            :data-dismiss :modal
+                                            :aria-label "Close"} "Close"]
+                  [:button.btn.btn-primary {:type :button
+                                            :data-dismiss :modal
+                                            :aria-label "Create"
+                                            :on-click #(create-client! @client-data id-cursor options)} "Create"]]]]])
+    :component-did-mount (fn [this] (let [modal (-> this r/dom-node js/jQuery)]
+                                     (.attr modal "tabindex" "-1")
+                                     (.on  modal "hide.bs.modal"
+                                           #(js/setTimeout (fn [] (reset! client-data nil)) 100))))}))
+
+(defn edit-client [client-data options id]
+  (r/create-class
+   {:render (fn []
+              (if id (if-not @client-data (get-client id client-data)))
+              [:div.modal.fade {:role :dialog :id "lead-client_id-edit"}
+               [:div.modal-dialog.modal-lg
+                [:div.modal-content
+                 [:div.modal-header
+                  [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
+                   [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]]
+                 [:div.modal-body
+                  (el/form "Edit client" [client-data]
+                           ["Client"
+                            (el/input-text "Clients name" [:edit-client :name])
+                            (el/input-email "Clients email" [:edit-client :email])
+                            (el/input-text "clients tel" [:edit-client :phone])])]
+                 [:div.modal-footer
+                  [:button.btn.btn-default {:type :button
+                                            :data-dismiss :modal
+                                            :aria-label "Close"} "Close"]
+                  [:button.btn.btn-primary {:type :button
+                                            :data-dismiss :modal
+                                            :aria-label "Update"
+                                            :on-click #(edit-client! client-data options id)} "Update"]]]]])
+    :component-did-mount (fn [this] (let [modal (-> this r/dom-node js/jQuery)]
+                                     (.attr modal "tabindex" "-1")
+                                     (.on  modal "hide.bs.modal"
+                                           #(js/setTimeout (fn [] (reset! client-data nil)) 100))))})
+  )
+
+
 (defn new-lead []
   (let [lead-data (r/atom {})
-        options (r/atom {})]
+        options (r/atom {})
+        util (r/atom {})
+        actions (r/atom {})]
     (GET (str js/context "/leads/options") {:handler #(reset! options {:lead (keywordize-keys %)})})
     (fn []
       [:div.container
-       (str "form data: " @lead-data)
-       (el/form "New Lead" [lead-data options]
+;       (str "form data: " @lead-data) [:br]
+;       (str "clients: " (:client_id (:lead @options)))
+       (el/form "New Lead" [lead-data options util]
                 ["Lead"
-                 (el/input-text "Client Id" [:lead :client_id])
-                 (el/input-text "Client Email" [:lead :client_email])
+                 (el/input-entity "Client Id" [:lead :client_id]
+                                  (edit-client (r/atom nil)
+                                               (r/cursor options [:lead :client_id])
+                                               (get-in @lead-data [:lead :client_id]))
+                                  (create-client (r/atom {}) (r/cursor options [:lead :client_id])
+                                                 (r/cursor lead-data [:lead :client_id])))
                  (el/input-text "Region" [:lead :region_name])
                  (el/input-text "City" [:lead :city])
                  (el/input-typeahead "Category" [:lead :category_id])
-                 (el/input-textarea "Problem" [:lead :problem])
                  (el/input-dropdown "Lead Type" [:lead :lead_type_code])
                  (el/input-dropdown "Lead Source" [:lead :lead_source_code])
                  (el/input-text "Referrer" [:lead :refer])
                  (el/input-number "NPS" [:lead :nps])
                  (el/input-text "Adwords url" [:lead :adwords_url])
+                 (el/input-textarea "Problem" [:lead :problem])
                  ["Match"
                   (el/input-typeahead "Lawyer" [:lead :matches :lawyer_id])
                   ["Meeting"
                    (el/input-text "Type" [:lead :matches :meetings :type])
                    (el/input-datetimepicker ["Date" "Time"] [:lead :matches :meetings :time])]]
                  ]
-                )])))
+                ) [:fieldset
+        [:legend "Actions"]
+
+        (doall (map (fn [[name label]]
+                 (let [cursor (r/cursor actions [name])]
+                   [:div.form-group {:key name} [:label
+                                                 [:input {:type :checkbox
+                                                          :value @cursor
+                                                          :on-change #(reset! cursor (-> % .-target .-checked))}]
+                                                 label]]))
+               {:derivation_email "Mail enviar a derivación (a Dani)"
+                :meeting_email "Mail consejos para reunión (al cliente)"
+                :phone_coordination_email "Mail coordinación telefónica (al cliente y al abogado)"
+                :thanks_email "Mail de agradecimiento (al cliente)"
+                :extension_email "Mail de Extensión (al cliente)"
+                :trello_email "Nuevo asunto en trello"}))]
+       [:button.btn.btn-primary {:type :button
+                                 :on-click #(if true ;;(validate-lead-form @lead-data)
+                                              (do (create-lead (:lead @lead-data) @actions)
+                                                  ;; (reset! validation-message nil))
+                                                  ))} "Guardar"]])))
 
 (defn edit-lead []
   (let [id (session/get :current-lead-id)
@@ -54,22 +166,26 @@
     (GET (str js/context "lead/" id) {:handler (fetch lead-data)})
     (fn []
       [:div.container
-       (str "form data: " @lead-data) [:br]
-       (str "options: " (dissoc @options :lead)) [:br]
-       (str "actions: " @actions)
+;       (str "form data: " @lead-data) [:br]
+;       (str "options: " (dissoc @options :lead)) [:br]
+;       (str "actions: " @actions)
        (el/form "Edit Lead" [lead-data options]
                 (reduce conj ["Lead"
-                       (el/input-text "Client Id" [:lead :client_income_id])
-                       (el/input-text "Client Email" [:lead :client_email])
+                              (el/input-entity "Client Id" [:lead :client_id]
+                                               (edit-client (r/atom nil)
+                                                            (r/cursor options [:lead :client_id])
+                                                            (get-in @lead-data [:lead :client_id]))
+                                               (create-client (r/atom {}) (r/cursor options [:lead :client_id])
+                                                 (r/cursor lead-data [:lead :client_id])))
                        (el/input-text "Region" [:lead :region_name])
                        (el/input-text "City" [:lead :city])
                        (el/input-typeahead "Category" [:lead :category_id])
-                       (el/input-textarea "Problem" [:lead :problem])
                        (el/input-dropdown "Lead Type" [:lead :lead_type_code])
                        (el/input-dropdown "Lead Source" [:lead :lead_source_code])
                        (el/input-text "Referrer" [:lead :refer])
                        (el/input-number "NPS" [:lead :nps])
-                       (el/input-text "Adwords url" [:lead :adwords_url])]
+                       (el/input-text "Adwords url" [:lead :adwords_url])
+                       (el/input-textarea "Problem" [:lead :problem])]
                         (map-indexed (fn [i match]
                                        (reduce conj ["Match"
                                                      (el/input-typeahead "Lawyer" [:lead :matches i :lawyer_id])]
@@ -79,22 +195,22 @@
                                                                (el/input-datetimepicker ["Date" "Time"] [:lead :matches i :meetings j :time])])
                                                             (:meetings match))))
                                      (get-in @lead-data [:lead :matches]))))
-       [:fieldset 
-        [:legend "Actions"] 
-        
-        (map (fn [[name label]] 
-               (let [cursor (r/cursor actions [name])] 
-                 [:div.form-group [:label 
-                                     [:input {:type :checkbox
-                                              :value @cursor
-                                              :on-change #(reset! cursor (-> % .-target .-checked))}] 
-                                     label]]))
-             {:derivation_email "Mail enviar a derivación (a Dani)"
-              :meeting_email "Mail consejos para reunión (al cliente)"
-              :phone_coordination_email "Mail coordinación telefónica (al cliente y al abogado)"
-              :thanks_email "Mail de agradecimiento (al cliente)"
-              :extension_email "Mail de Extensión (al cliente)"
-              :trello_email "Nuevo asunto en trello"})]
+       [:fieldset
+        [:legend "Actions"]
+
+        (doall (map (fn [[name label]]
+                 (let [cursor (r/cursor actions [name])]
+                   [:div.form-group {:key name} [:label
+                                                 [:input {:type :checkbox
+                                                          :value @cursor
+                                                          :on-change #(reset! cursor (-> % .-target .-checked))}]
+                                                 label]]))
+               {:derivation_email "Mail enviar a derivación (a Dani)"
+                :meeting_email "Mail consejos para reunión (al cliente)"
+                :phone_coordination_email "Mail coordinación telefónica (al cliente y al abogado)"
+                :thanks_email "Mail de agradecimiento (al cliente)"
+                :extension_email "Mail de Extensión (al cliente)"
+                :trello_email "Nuevo asunto en trello"}))]
        [:button.btn.btn-primary {:type :button
                                  :on-click #(if true ;;(validate-lead-form @lead-data)
                                               (do (update-lead (-> @lead-data :lead :_id) (:lead @lead-data) @actions)

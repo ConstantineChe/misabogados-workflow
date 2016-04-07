@@ -49,3 +49,7 @@ h1 {
 #create-lead-button {
     margin: 10 0 40 0;
 }
+
+.form-group.col-xs-6 {
+    margin-right: 15px;
+}
