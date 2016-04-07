@@ -6,7 +6,10 @@
       <h3 class="text-center">Pago realizado con éxito</h3>
     </div>
     <ul class="list-group list-group-flush text-center">
-      <li class="list-group-item"><b>client:</b> {{payment-request.client}}</li>
+      <li class="list-group-item"><b>Monto:</b> {{payment-request.amount}}</li>
+      <li class="list-group-item"><b>Cliente:</b> {{payment-request.client}}</li>
+      <li class="list-group-item"><b>Correo del cliente:</b> {{payment-request.client_email}}</li>
+      <li class="list-group-item"><b>Abogado:</b> {{payment-request.lawyer}}</li>
     </ul>
     <div class="panel-footer text-center">
       <a href="#" data-toggle="modal" data-target="#policy">Políticas de devolución y reembolso</a>
