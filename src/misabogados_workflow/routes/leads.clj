@@ -14,6 +14,8 @@
             [misabogados-workflow.util :as util]
             [monger.collection :as mc]
             [monger.joda-time]
+            [clojure.walk :as walk]
+            [clj-time.local :as l]
             [misabogados-workflow.flow :refer [get-rendered-form dataset PManual PAutomatic]]
             [misabogados-workflow.flow-definition :refer [steps]])
   (:import [misabogados-workflow.model.Lead]
@@ -44,6 +46,14 @@
                  value (get-in %1 key)]
              (if value (assoc-in %1 key (ObjectId. value)))) lead (id-fields lead)))
 
+(defn wrap-datetime [params]
+  (walk/postwalk
+   #(if (and (string? %)
+             (re-matches #"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}).+" %))
+      (try (l/to-local-date-time %)
+           (catch Exception e  %)) %)
+   params))
+
 (defn create-lead-ajax [request]
   (let [params (assoc (-> request :params :lead) :matches [(-> request :params :lead :matches)])
         params (assoc-in params [:matches 0 :meetings] [(get-in params [:matches 0 :meetings])])
@@ -56,7 +66,7 @@
         params (:params request)
         allowed? (allowed-to-edit id request)
         lead (objectify-ids (:lead params))]
-    (prn params)
+    (prn lead)
     (if (true? allowed?)
       (do (mc/update-by-id @db/db "leads" id {$set
                                               (assoc lead
