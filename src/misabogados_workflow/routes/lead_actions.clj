@@ -16,7 +16,7 @@
     (case name
 ;; def derivation(lead_id)
 ;;     lead = Lead.find(lead_id)
-;;     subject = "Nueva derivación: #{lead.user.name} - #{lead.matches.last.workflow_lawyer.name}"
+;;     subject = "Nueva derivaciÃ³n: #{lead.user.name} - #{lead.matches.last.workflow_lawyer.name}"
 ;;     merge_vars = {
 ;;       "client_name" => lead.user.name,
 ;;       "client_phone" => lead.user.phone,
@@ -33,14 +33,14 @@
                          :message {:to [{:email "dani@misabogados.com"
                                          :name "Dani"}]
                                    :from_email "no-reply@misabogados.com"
-                                   :subject (str "Nueva derivación: " (:name client) " - " (:name lawyer))
+                                   :subject (str "Nueva derivaciÃ³n: " (:name client) " - " (:name lawyer))
                                    :global_merge_vars [{:name "client_name" :content (:name client)}
                                                        {:name "client_phone" :content (:phone client)}
                                                        {:name "client_email" :content (:email client)}
                                                        {:name "problem" :content (:problem lead)}]}}
 ;;   def meeting_scheduled(lead_id)
 ;;     lead = Lead.find(lead_id)
-;;     subject = "Consejos para tu reunión con el abogado #{lead.matches.last.workflow_lawyer.name}"
+;;     subject = "Consejos para tu reuniÃ³n con el abogado #{lead.matches.last.workflow_lawyer.name}"
 ;;     merge_vars ={
 ;;       "FNAME" => lead.user.name
 ;;     }
@@ -53,13 +53,13 @@
                       :message {:to [{:email (:email client)
                                       :name (:name client)}]
                                 :from_email "no-reply@misabogados.com"
-                                :subject (str "Consejos para tu reunión con el abogado" (:name lawyer))
+                                :subject (str "Consejos para tu reuniÃ³n con el abogado" (:name lawyer))
                                 :global_merge_vars [{:name "FNAME" :content (:name client)
                                                      }]}}
-      
+
 ;;   def phone_coordination(lead_id)
 ;;     lead = Lead.find(lead_id)
-;;     subject = "#{lead.user.name} - confirmación llamada telefónica con #{lead.matches.last.workflow_lawyer.name}"
+;;     subject = "#{lead.user.name} - confirmaciÃ³n llamada telefÃ³nica con #{lead.matches.last.workflow_lawyer.name}"
 ;;     merge_vars = {
 ;;       "client_name" => lead.user.name,
 ;;       "lawyer_name" => lead.matches.last.workflow_lawyer.name,
@@ -81,8 +81,8 @@
                                                 {:email (:email lawyer)
                                                  :name (:name lawyer)}]
                                            :from_email "no-reply@misabogados.com"
-                                           :subject (str (:name client) " - confirmación llamada telefónica con " (:name lawyer))
-                                           :global_merge_vars [(let [meeting (-> lead :matches last :meetings last)] 
+                                           :subject (str (:name client) " - confirmaciÃ³n llamada telefÃ³nica con " (:name lawyer))
+                                           :global_merge_vars [(let [meeting (-> lead :matches last :meetings last)]
                                                                  {:name "client_name" :content (:name client)}
                                                                  {:name "lawyer_name" :content (:name lawyer)}
                                                                  {:name "meeting_time" :content (:time meeting)}
@@ -101,7 +101,7 @@
 ;;     body = mandrill_template("agradecimiento", merge_vars)
 
 ;;     # send_mail(lead.user.email, subject, body)
-;;     mail(to: lead.user.email, subject: subject, body: body, content_type: "text/html", from: 
+;;     mail(to: lead.user.email, subject: subject, body: body, content_type: "text/html", from:
 ;;   end
       :thanks_email {:template_name "agradecimiento"
                       :template_content []
@@ -113,7 +113,7 @@
                                                      }]}}
 ;;   def extension(lead_id)
 ;;     lead = Lead.find(lead_id)
-;;     subject = "#{lead.user.name}, estamos aquí para lo que necesites"
+;;     subject = "#{lead.user.name}, estamos aquÃ­ para lo que necesites"
 ;;     merge_vars = {
 ;;       "FNAME" => lead.user.name,
 ;;       "ABOGADO" => lead.matches.last.workflow_lawyer.name
@@ -127,7 +127,7 @@
                         :message {:to [{:email (:email client)
                                         :name (:name client)}]
                                   :from_email "gonzalo@misabogados.com"
-                                  :subject (str (:name client) ", estamos aquí para lo que necesites")
+                                  :subject (str (:name client) ", estamos aquÃ­ para lo que necesites")
                                   :global_merge_vars [{:name "FNAME" :content (:name client)}
                                                       {:name "ABOGADO" :content (:name lawyer)
                                                      }]}}
@@ -140,10 +140,9 @@
 ;;     body << "#{lead.user.email}<br/>"
 ;;     body << edit_workflow_lead_url(lead_id)
 ;;     send_mail("eugenehardbread+c7pedaxdgpho8qnomc2b@boards.trello.com", subject, body)
-;;   end    
+;;   end
       :trello_email ""))
   )
 
 (defn do-lead-actions [actions lead]
   (map #(messages/send-template client (email-params % lead)) actions))
-

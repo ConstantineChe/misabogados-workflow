@@ -16,7 +16,8 @@
             [misabogados-workflow.config :refer [defaults]]
             [ring.middleware.json :as json]
             [cheshire.generate :refer [add-encoder]]
-            [clojure.walk :as walk])
+            [clojure.walk :as walk]
+            [clj-time.local :as l])
   (:import [javax.servlet ServletContext]))
 
 (defn wrap-context [handler]
@@ -67,6 +68,17 @@
       ;; since they're not compatible with this middleware
       ((if (:websocket? request) handler wrapped) request))))
 
+(defn wrap-datetime [handler]
+  (fn [request]
+    (let [params (walk/postwalk
+                  #(if (and (string? %)
+                            (re-matches #"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}).+" %))
+                     (try (l/to-local-date-time %)
+                          (catch Exception e  %)) %)
+                  (:params request))]
+      (prn params)
+      (handler (assoc request :params params)))))
+
 (defn on-error [request response]
   (error-page
     {:status 403
@@ -101,6 +113,7 @@
       wrap-webjars
       wrap-flash
       (wrap-session {:cookie-attrs {:http-only true}})
+      wrap-datetime
       (wrap-defaults
         (-> site-defaults
             (assoc-in [:security :anti-forgery] false)
