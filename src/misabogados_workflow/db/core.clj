@@ -40,7 +40,7 @@
   (cond (= :admin role)
         (mc/aggregate @db "leads"
                       [;;{"$match" {:matches {"$exists" true}}}
-                       {"$unwind" "$matches"}
+                       {"$unwind" {:path "$matches", :preserveNullAndEmptyArrays true}}
                        {"$lookup" {:from "categories"
                                    :localField :category_id
                                    :foreignField :_id
@@ -58,9 +58,9 @@
                                    :foreignField :_id
                                    :as :client}}
                        ;;{"$limit" 20}
-                       {"$sort" {:_id -1}}
+                       {"$sort" {:_id -1}} 
                        ])
-        (= :operator role)
+        (= :operator role) 
         (mc/find-maps @db "leads" {:step {$nin ["archive"]}})
         (= :lawyer role)
         {}
