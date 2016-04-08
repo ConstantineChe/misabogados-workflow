@@ -6,7 +6,8 @@
             [ring.util.response :refer [redirect response]]
             [monger.collection :as mc]
             [misabogados-workflow.db.core :as db]
-            [clojure.pprint :refer [pprint]]))
+            [clojure.pprint :refer [pprint]]
+            [misabogados-workflow.email :as email]))
 
 (defn home-page [request]
   (render "app.html" {:forms-css (-> "reagent-forms.css" io/resource slurp)}))
@@ -15,8 +16,10 @@
                                                ;; [:p (val item)]]) request)]]))
 
 (defn create-lead-from-contact [{:keys [params]}]
-  (mc/insert @db/db "leads" (select-keys params [:client_name :client_phone :client_email :lead_type_code :problem]))
-  (redirect "/"))
+  (let [fields (select-keys params [:client_name :client_phone :client_email :lead_type_code :problem])]
+    (mc/insert @db/db "leads" fields)
+    (future (email/contact-email fields))
+    (redirect "/")))
 
 (defn save-document [doc]
   (pprint doc)
