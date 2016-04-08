@@ -103,7 +103,7 @@
 ;;     # send_mail(lead.user.email, subject, body)
 ;;     mail(to: lead.user.email, subject: subject, body: body, content_type: "text/html", from:
 ;;   end
-      :thanks_email {:template_name "agredecimiento"
+      :thanks_email {:template_name "agradecimiento"
                       :template_content []
                       :message {:to [{:email (:email client)
                                       :name (:name client)}]
@@ -119,7 +119,6 @@
 ;;       "ABOGADO" => lead.matches.last.workflow_lawyer.name
 ;;     }
 ;;     body = mandrill_template("mail-de-extensi-n", merge_vars)
-
 ;;     send_mail(lead.user.email, subject, body)
 ;;   end
       :extension_email {:template_name "mail-de-extensi-n"
@@ -145,4 +144,5 @@
   )
 
 (defn do-lead-actions [actions lead]
-  (map #(messages/send-template client (email-params % lead)) actions))
+  (doall (map #(future (do
+                          (messages/send-template client (email-params % lead)))) actions)))

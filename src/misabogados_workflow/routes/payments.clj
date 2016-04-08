@@ -122,6 +122,7 @@
       (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date (t/now)
                                                                                             :action "payment_attempt_failed"
                                                                                             :data params}}})
+      (clojure.pprint/pprint payment-request) 
       (render "payment_failure.html" (:payment-request payment-request))))
 
 (defn success [request]
