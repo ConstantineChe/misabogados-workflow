@@ -62,13 +62,13 @@
                                   13 (do (select (get (if @f-opts (vec @f-opts) options) @selected-index)) (-> % .-target .blur))
                                   27 (do (reset! dropdown-class ""))
                            "default"))}]]
-      (if (nil? @text) (reset! text (match @cursor)))
-      (if (nil? @selected-index) (reset! selected-index -1))
+      (when (nil? @text) (reset! text (match @cursor)))
+      (when (nil? @selected-index) (reset! selected-index -1))
       (when (seq? @opt-cursor) (dorun (map (fn [[l v]] (if (= v @cursor) (reset! text l))) @opt-cursor))
             (swap! opt-cursor vec))
-      (if (> 3 (count @text)) (reset! f-opts (filter
-                                              (fn [[l]] (re-find (re-pattern (s/lower-case @text)) (s/lower-case l)))
-                                              options)))
+      (when (and (not @f-opts) (>(count @text) 3)) (reset! f-opts (filter
+                                                        (fn [[l]] (re-find (re-pattern (s/lower-case @text)) (s/lower-case l)))
+                                                        options)))
       [:div.form-group.col-xs-6 {:id (str name "-g") :key name}
        [:label.control-label {:for name} label]
        (if addons [:div.input-group input addons]

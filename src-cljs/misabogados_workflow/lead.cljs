@@ -10,13 +10,18 @@
               [secretary.core :as secretary :include-macros true]
               [json-html.core :refer [edn->hiccup]]))
 
-(defn create-client! [data id-cursor options]
+(defn create-client! [data id-cursor options text]
   (POST (str js/context "/users/client") {:params {:data (:new-client data)}
-                                          :handler #(let [client (keywordize-keys %)]
+                                          :handler #(let [client (keywordize-keys %)
+                                                          label (str (:name client) " (" (:email client) ")")]
+                                                      (reset! text label)
                                                       (swap! options conj
-                                                             [(str (:name client) " (" (:email client) ")") (:_id client)])
+                                                             [label (:_id client)])
                                                       (reset! id-cursor (:_id (keywordize-keys %))))
-                                          :error-handler #(js/alert %)}))
+                                          :error-handler #(case (:status %)
+                                                           403 (js/alert "Access denied")
+                                                           500 (js/alert "Internal server error")
+                                                           (js/alert (str %)))}))
 
 (defn edit-client! [data options id]
   (PUT (str js/context "/users/client") {:params {:id id
@@ -28,7 +33,10 @@
                                                                 (if (= id (:_id client))
                                                                   [(str (:name client) " (" (:email client) ")") id]
                                                                   [label id])))))
-                                         :error-handler #(js/alert %)}))
+                                         :error-handler #(case (:status %)
+                                                           403 (js/alert "Access denied")
+                                                           500 (js/alert "Internal server error")
+                                                           (js/alert (str %)))}))
 (defn update-lead [id form-data actions]
   (PUT (str js/context "/lead/" id) {:params {:lead (dissoc form-data :_id)
                                               :actions (keys (filter #(val %) actions))}
@@ -43,12 +51,15 @@
                                   :handler #(do (session/put! :notification [:div.alert.alert-sucsess "Lead created with id "
                                                                              [:a {:href (str "#/lead/" (:id %) "/edit")} (:id %)]])
                                                 (aset js/window "location" "/#dashboard"))
-                                  :error-handler #(js/alert %)}))
+                                  :error-handler #(case (:status %)
+                                                           403 (js/alert "Access denied")
+                                                           500 (js/alert "Internal server error")
+                                                           (js/alert (str %)))}))
 
 (defn get-client [id client]
   (if id (GET (str js/context "/users/client/" id) {:handler #(reset! client {:edit-client (keywordize-keys %)})}) client))
 
-(defn create-client [client-data options id-cursor]
+(defn create-client [client-data options id-cursor text]
   (r/create-class
    {:render (fn []
               [:div.modal.fade {:role :dialog :id "lead-client_id-create"}
@@ -70,7 +81,7 @@
                   [:button.btn.btn-primary {:type :button
                                             :data-dismiss :modal
                                             :aria-label "Create"
-                                            :on-click #(create-client! @client-data id-cursor options)} "Create"]]]]])
+                                            :on-click #(create-client! @client-data id-cursor options text)} "Create"]]]]])
     :component-did-mount (fn [this] (let [modal (-> this r/dom-node js/jQuery)]
                                      (.attr modal "tabindex" "-1")
                                      (.on  modal "hide.bs.modal"
@@ -125,7 +136,8 @@
                                                (r/cursor options [:lead :client_id])
                                                (get-in @lead-data [:lead :client_id]))
                                   (create-client (r/atom {}) (r/cursor options [:lead :client_id])
-                                                 (r/cursor lead-data [:lead :client_id])))
+                                                 (r/cursor lead-data [:lead :client_id])
+                                                 (r/cursor util (into [:typeahead-t] [:lead :client_id]))))
                  (el/input-text "Region" [:lead :region_name])
                  (el/input-text "City" [:lead :city])
                  (el/input-typeahead "Category" [:lead :category_id])
@@ -185,7 +197,8 @@
                                                             (r/cursor options [:lead :client_id])
                                                             (get-in @lead-data [:lead :client_id]))
                                                (create-client (r/atom {}) (r/cursor options [:lead :client_id])
-                                                 (r/cursor lead-data [:lead :client_id])))
+                                                              (r/cursor lead-data [:lead :client_id])
+                                                              (r/cursor util (into [:typeahead-t] [:lead :client_id]))))
                        (el/input-text "Region" [:lead :region_name])
                        (el/input-text "City" [:lead :city])
                        (el/input-typeahead "Category" [:lead :category_id])
@@ -202,8 +215,10 @@
                                                               ["Meeting"
                                                                (el/input-text "Type" [:lead :matches i :meetings j :type])
                                                                (el/input-datetimepicker ["Date" "Time"] [:lead :matches i :meetings j :time])])
-                                                            (:meetings match))))
-                                     (get-in @lead-data [:lead :matches]))))
+                                                            (if-let [meeting (:meetings match)]
+                                                              meeting [{}]))))
+                                     (if-let [match (get-in @lead-data [:lead :matches])]
+                                       match [{}]))))
        [:fieldset
         [:legend "Actions"]
 

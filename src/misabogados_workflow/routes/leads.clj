@@ -13,6 +13,7 @@
             [monger.operators :refer :all]
             [misabogados-workflow.util :as util]
             [monger.collection :as mc]
+            [monger.joda-time]
             [misabogados-workflow.flow :refer [get-rendered-form dataset PManual PAutomatic]]
             [misabogados-workflow.flow-definition :refer [steps]])
   (:import [misabogados-workflow.model.Lead]
@@ -55,6 +56,7 @@
         params (:params request)
         allowed? (allowed-to-edit id request)
         lead (objectify-ids (:lead params))]
+    (prn params)
     (if (true? allowed?)
       (do (mc/update-by-id @db/db "leads" id {$set
                                               (assoc lead
