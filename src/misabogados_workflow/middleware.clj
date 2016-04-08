@@ -70,8 +70,12 @@
 
 (defn wrap-datetime [handler]
   (fn [request]
-    (handler (walk/postwalk #(if (re-matches #"\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+(?:[+-][0-2]\d:[0-5]\d|Z)"
-                                           %) (f/parse (f/formatters :basic-date-time) %) %)))))
+    (let [params (walk/postwalk
+                  #(if (string? %)
+                     (try (f/parse (f/formatters :basic-date-time) %)
+                                                 (catch Exception e %))  %)
+                  (:params request))]
+      (handler request))))
 
 (defn on-error [request response]
   (error-page

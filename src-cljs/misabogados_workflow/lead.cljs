@@ -32,7 +32,10 @@
 (defn update-lead [id form-data actions]
   (PUT (str js/context "/lead/" id) {:params {:lead (dissoc form-data :_id)
                                               :actions (keys (filter #(val %) actions))}
-                                     :error-handler #(js/alert (str %))}))
+                                     :error-handler #(case (:status %)
+                                                       403 (js/alert "Access denied")
+                                                       500 (js/alert "Internal server error")
+                                                       (js/alert (str %)))}))
 
 (defn create-lead [form-data actions]
   (POST (str js/context "/lead") {:params {:lead form-data
