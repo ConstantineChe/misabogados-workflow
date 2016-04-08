@@ -53,6 +53,10 @@
                                    :localField :matches.lawyer_id
                                    :foreignField :_id
                                    :as :lawyer}}
+                       {"$lookup" {:from "clients"
+                                   :localField :client_id
+                                   :foreignField :_id
+                                   :as :client}}
                        ;;{"$limit" 20}
                        {"$sort" {:_id -1}}
                        ])

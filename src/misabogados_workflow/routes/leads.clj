@@ -17,7 +17,8 @@
             [misabogados-workflow.flow-definition :refer [steps]])
   (:import [misabogados-workflow.model.Lead]
            [misabogados-workflow.model.User]
-           [misabogados-workflow.model.BasicInfo]))
+           [misabogados-workflow.model.BasicInfo]
+           org.bson.types.ObjectId))
 
 (defn get-step [action]
   ((keyword action) steps))
@@ -33,15 +34,34 @@
     true
     {:message "Not allowed"}))
 
+(defn id-fields [lead]
+  (into [:client_id :category_id]
+        (map (fn [x] [:matches x :lawyer_id]) (range (count (:matches lead))))))
+
+(defn objectify-ids [lead]
+  (reduce #(let [key  (if (sequential? %2) %2 [%2])
+                 value (get-in %1 key)]
+             (println (str %1 " key " key))
+             (if value (assoc-in %1 key (ObjectId. value)))) lead (id-fields lead)))
+
+(defn create-lead-ajax [request]
+  (prn (:params request))
+  (let [params (assoc (-> request :params :lead) :matches [(-> request :params :lead :matches)])
+        params (assoc-in params [:matches 0 :meetings] [(get-in params [:matches 0 :meetings])])
+        params (objectify-ids params)
+        lead (do (prn params) (mc/insert-and-return @db/db "leads" (assoc params
+                                                                :date_created (new java.util.Date))))]
+    (response {:staus "ok" :id (:_id lead)})))
+
 (defn update-lead-ajax [id request]
   (let [id (oid id)
         params (:params request)
-        allowed? (allowed-to-edit id request)]
+        allowed? (allowed-to-edit id request)
+        lead (objectify-ids (:lead params))]
     (if (true? allowed?)
       (do (mc/update-by-id @db/db "leads" id {$set
-                                           (assoc (dissoc params :lead)
-                                                  :date_updated (new java.util.Date)
-                                                  :code (util/generate-hash (:params request)))})
+                                              (assoc lead
+                                                  :date_updated (new java.util.Date))})
           (actions/do-lead-actions (:actions params) (db/get-lead id))
           (response {:lead {:update id} :status "ok" :role (-> request :session :role)}))
       {:status 403
@@ -96,11 +116,14 @@
                                            role))))
   (PUT "/lead/:id/action/:action" [id action :as request]
        (if (contains? steps (keyword action)) (do-action id action request)))
+  (POST "/lead" [] create-lead-ajax)
   (POST "/leads" [] create-lead)
   (GET "/leads" [] get-leads)
   (GET "/lead/:id" [id :as request] (response (db/get-lead id)))
-  (GET "/leads/options" [] (response {:lead_type_code (map #((juxt :name :code) %) (mc/find-maps @db/db "lead_types"))
-                                      :lead_source_code (map #((juxt :name :code) %) (mc/find-maps @db/db "lead_sources"))
+  (GET "/leads/options" [] (response {:lead_type_code (into [["" ""]]
+                                                            (map #((juxt :name :code) %) (mc/find-maps @db/db "lead_types")))
+                                      :lead_source_code (into [["" ""]]
+                                                              (map #((juxt :name :code) %) (mc/find-maps @db/db "lead_sources")))
                                       :category_id (map #((juxt :name :_id) %) (mc/find-maps @db/db "categories"))
                                       :client_id (map #((juxt (fn [x] (str (:name x) " (" (:email x) ")")) :_id) %)
                                                       (mc/find-maps @db/db "clients"))

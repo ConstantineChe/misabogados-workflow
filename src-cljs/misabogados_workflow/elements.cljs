@@ -57,7 +57,6 @@
                                        (when-not (= @selected-index (dec (count (if @f-opts @f-opts options))))
                                          (swap! selected-index inc)))
                                   9  (do (.preventDefault %)
-                                         (prn @f-opts)
                                          (select (get (if @f-opts (vec @f-opts) options) @selected-index)) (-> % .-target .blur))
                                   13 (do (select (get (if @f-opts (vec @f-opts) options) @selected-index)) (-> % .-target .blur))
                                   27 (do (reset! dropdown-class ""))

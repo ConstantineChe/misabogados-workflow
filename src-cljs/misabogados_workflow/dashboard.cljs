@@ -22,7 +22,6 @@
      (if-not (empty? @table-data)
        [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
         [:th "ID"]
-        [:th "User name"]
         [:th "Pedning action"]
         [:th "Tipo"]
         [:th "Nombre de usuario"]
@@ -39,20 +38,18 @@
         [:tbody
          (doall (for [lead @table-data
                       :let [id (get lead "_id")
-                            name (get-in lead ["user" "name"])
                             pending-action (util/remove-kebab (get lead "step"))
                             actions (get-actions lead)]]
                   [:tr {:key id}
                    [:td id]
-                   [:td name]
                    [:td pending-action]
                    [:td (get-in lead ["lead_type" 0 "name"])]
-                   [:td "Nombre de usuario"]
+                   [:td (get-in lead ["client" 0 "name"])]
                    [:td (get lead "client_email")]
                    [:td (get-in lead ["category" 0 "name"])]
-                   [:td "Telefono"]
+                   [:td (get-in lead ["client" 0 "phone"])]
                    [:td (get lead "problem")]
-                   [:td (get lead "region_id")]
+                   [:td (get lead "region_name")]
                    [:td (get lead "city")]
                    [:td (get lead "lead_source_code")]
                    [:td (get-in lead ["lawyer" 0 "name"])]
@@ -69,6 +66,9 @@
     (fn []
       [:div.container
        [:h3 "Dashboard"]
+       (when-let [notification (session/get :notification)]
+       (js/setTimeout #(session/put! :notification nil) 5000)
+                  notification)
        [:a {:class "btn btn-primary"
             :href "/#lead"} "New Lead"]
        [table]])))

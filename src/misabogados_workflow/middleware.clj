@@ -15,7 +15,8 @@
             [misabogados-workflow.layout :refer [*identity*]]
             [misabogados-workflow.config :refer [defaults]]
             [ring.middleware.json :as json]
-            [cheshire.generate :refer [add-encoder]])
+            [cheshire.generate :refer [add-encoder]]
+            [clojure.walk :as walk])
   (:import [javax.servlet ServletContext]))
 
 (defn wrap-context [handler]
@@ -47,6 +48,7 @@
         (error-page {:status 500
                      :title "Something very bad has happened!"
                      :message "We've dispatched a team of highly trained gnomes to take care of the problem."})))))
+
 
 (defn wrap-csrf [handler]
   (wrap-anti-forgery
