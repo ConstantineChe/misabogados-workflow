@@ -103,7 +103,7 @@
 ;;     # send_mail(lead.user.email, subject, body)
 ;;     mail(to: lead.user.email, subject: subject, body: body, content_type: "text/html", from: 
 ;;   end
-      :thanks_email {:template_name "agredecimiento"
+      :thanks_email {:template_name "agradecimiento"
                       :template_content []
                       :message {:to [{:email (:email client)
                                       :name (:name client)}]

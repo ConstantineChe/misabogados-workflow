@@ -20,7 +20,7 @@
         client-fields (clojure.set/rename-keys (select-keys params [:client_name :client_phone :client_email]) 
                                    {:client_name :name :client_phone :phone :client_email :email})
         client (mc/insert-and-return @db/db "clients" client-fields)
-        lead-fields (into {:client_id (:_id client)} (select-keys params [:lead_type_code :problem]))]    
+        lead-fields (into {:client_id (:_id client) :lead_source_code "page"} (select-keys params [:lead_type_code :problem]))]    
     (mc/insert @db/db "leads" lead-fields)
     (future (email/contact-email params))
     (redirect "/")))
