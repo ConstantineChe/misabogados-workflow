@@ -43,7 +43,8 @@
                 :on-change #(do (reset! text (-> % .-target .-value))
                                 (when-not (< (count @text) min-chars)
                                   (reset! f-opts (filter
-                                                  (fn [[l]] (re-find (re-pattern (s/lower-case @text)) (s/lower-case l)))
+                                                  (fn [[l]] (re-find (re-pattern (s/lower-case @text))
+                                                                    (s/lower-case l)))
                                                   options))
                                   (reset! selected-index -1)))
                 :on-key-down #(do
@@ -65,6 +66,9 @@
       (if (nil? @selected-index) (reset! selected-index -1))
       (when (seq? @opt-cursor) (dorun (map (fn [[l v]] (if (= v @cursor) (reset! text l))) @opt-cursor))
             (swap! opt-cursor vec))
+      (if (> 3 (count @text)) (reset! f-opts (filter
+                                              (fn [[l]] (re-find (re-pattern (s/lower-case @text)) (s/lower-case l)))
+                                              options)))
       [:div.form-group.col-xs-6 {:id (str name "-g") :key name}
        [:label.control-label {:for name} label]
        (if addons [:div.input-group input addons]

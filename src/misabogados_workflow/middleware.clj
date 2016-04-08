@@ -16,7 +16,8 @@
             [misabogados-workflow.config :refer [defaults]]
             [ring.middleware.json :as json]
             [cheshire.generate :refer [add-encoder]]
-            [clojure.walk :as walk])
+            [clojure.walk :as walk]
+            [clj-time.format :as f])
   (:import [javax.servlet ServletContext]))
 
 (defn wrap-context [handler]
@@ -67,6 +68,11 @@
       ;; since they're not compatible with this middleware
       ((if (:websocket? request) handler wrapped) request))))
 
+(defn wrap-datetime [handler]
+  (fn [request]
+    (handler (walk/postwalk #(if (re-matches #"\d{4}-[01]\d-[0-3]\dT[0-2]\d:[0-5]\d:[0-5]\d\.\d+(?:[+-][0-2]\d:[0-5]\d|Z)"
+                                           %) (f/parse (f/formatters :basic-date-time) %) %)))))
+
 (defn on-error [request response]
   (error-page
     {:status 403
@@ -97,6 +103,7 @@
 (defn wrap-base [handler]
   (-> ((:middleware defaults) handler)
       wrap-auth
+      wrap-datetime
       wrap-formats
       wrap-webjars
       wrap-flash
