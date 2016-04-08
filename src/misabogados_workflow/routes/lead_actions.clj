@@ -145,5 +145,4 @@
 
 (defn do-lead-actions [actions lead]
   (doall (map #(future (do
-                          (prn "HERE")
                           (messages/send-template client (email-params % lead)))) actions)))
