@@ -44,7 +44,7 @@
 (defn objectify-ids [lead]
   (reduce #(let [key  (if (sequential? %2) %2 [%2])
                  value (get-in %1 key)]
-             (if value (assoc-in %1 key (ObjectId. value)))) lead (id-fields lead)))
+             (if value (assoc-in %1 key (ObjectId. value)) %1)) lead (id-fields lead)))
 
 (defn wrap-datetime [params]
   (walk/postwalk
@@ -66,6 +66,8 @@
         params (:params request)
         allowed? (allowed-to-edit id request)
         lead (objectify-ids (:lead params))]
+    (prn "params request" (:params request))
+    (prn "params upd " params)
     (prn lead)
     (if (true? allowed?)
       (do (mc/update-by-id @db/db "leads" id {$set
