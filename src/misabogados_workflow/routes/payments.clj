@@ -76,7 +76,7 @@
                :TBK_URL_FRACASO (util/full-path request "/payments/failure")
                :TBK_TIPO_TRANSACCION "TR_NORMAL"
                :TBK_MONTO (* 100 (:amount payment-request))
-               :TBK_ORDEN_COMPRA (str (:_id payment-request) "-" (c/to-long date))}
+               :TBK_ORDEN_COMPRA (util/generate-hash (:_id payment-request))}
    :form-path "http://payments.misabogados.com/cljpay/tbk_bp_pago.cgi"})
 
 (defmulti confirm-payment (fn [request] (:payment-system env)))
@@ -122,17 +122,18 @@
       (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date (t/now)
                                                                                             :action "payment_attempt_failed"
                                                                                             :data params}}})
-      (clojure.pprint/pprint payment-request) 
       (render "payment_failure.html" (:payment-request payment-request))))
 
 (defn success [request]
     (let [params (:params request)
           payment-request (get-payment-request-by-payment-code request) ]
-      (println (str "----SUCCESS " params))
+      (println (str "----SUCCESS " params ", pr: " payment-request))
       (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date (t/now)
                                                                                             :action "payment_attempt_succeded"
                                                                                             :data params}}})
-      (render "payment_success.html" (:payment-request payment-request))))
+      (render "payment_success.html" {:payment-request (assoc payment-request
+                                                              :l (mc/find-one-as-map @db "users" {:_id (:lawyer payment-request)})) 
+                                                              })))
 
 (defroutes payments-routes
   (GET "/payments/pay/:code" [code :as request] (get-payment code request))
