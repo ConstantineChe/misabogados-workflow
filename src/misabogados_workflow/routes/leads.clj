@@ -72,7 +72,7 @@
     (if (true? allowed?)
       (do (mc/update-by-id @db/db "leads" id {$set
                                               (assoc lead
-                                                  :date_updated (new java.util.Date))})
+                                                     :date_updated (new java.util.Date))})
           (actions/do-lead-actions (:actions params) (db/get-lead (str id)))
           (response {:lead {:update id} :status "ok" :role (-> request :session :role)}))
       {:status 403
