@@ -135,14 +135,9 @@
           month (or selected-month (.getMonth today))
           day (or (:day selected-date) (.getDate today))
           [hour minute] (if @cursor (let [time (second (s/split @cursor #"T"))]
-                              (s/split time #":")) [(.getHours today) (.getMinutes today)])
+                              (s/split time #":")))
           expanded? (r/cursor opts (into [:date-extended?] r-key))]
-      (when-not @time (reset! time (str hour ":" minute)))
-      (when-not @cursor (reset! cursor (let [datetime (.toISOString today)
-                                             time (second (s/split datetime #"T"))
-                                             [hour minute] (s/split time #":")]
-                                         (s/replace datetime (re-pattern time)
-                                                    (str hour ":" minute ":00Z")))))
+      (when (and (not @time) @cursor) (reset! time (str hour ":" minute)))
       [:div {:key r-key}
        [:div.datepicker-wrapper.col-xs-3
         [:label.control-label (first label)]
@@ -155,23 +150,24 @@
         [:span.input-group-addon
          {:on-click #(swap! expanded? not)}
          [:i.glyphicon.glyphicon-calendar]]]
-        [datepicker year month day expanded? false #(deref cursor)
-         #(swap! cursor (fn [date]
-                          (let [{:keys [day year month]} %]
-                            (s/replace date (re-pattern (first (s/split date #"T")))
-                                       (str year "-"
-                                            (if (= 1 (count (str month))) (str 0 month) year) "-"
-                                            (if (= 1 (count (str day))) (str 0 day) day)))))) false :es-ES]]
+        [datepicker year month day expanded? true #(deref cursor)
+         #(if @cursor (swap! cursor (fn [date]
+                                       (let [{:keys [day year month]} %]
+                                         (s/replace date (re-pattern (first (s/split date #"T")))
+                                                    (str year "-"
+                                                         (if (= 1 (count (str month))) (str 0 month) year) "-"
+                                                         (if (= 1 (count (str day))) (str 0 day) day))))))
+              (reset! cursor (let [{:keys [day year month]} %] (.toISOString (js/Date. year day month))))) false :es-ES]]
        [:div.form-group.col-xs-3
         [:label.control-label (second label)]
         [:input.form-control {:type :text
                               :value @time
                               :on-change #(let [value (-> % .-target .-value)]
-                                            (when (re-matches #"^([0-9]|0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$"
+                                            (when (re-matches #"^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$"
                                                               value)
-                                                    (swap! cursor (fn [date]
-                                                                    (s/replace date (re-pattern (str hour ":" minute))
-                                                                               value))))
+                                              (swap! cursor (fn [date]
+                                                              (s/replace date (re-pattern (str hour ":" minute))
+                                                                         value))))
                                               (reset! time value))}]]])))
 
 

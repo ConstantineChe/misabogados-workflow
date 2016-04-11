@@ -36,20 +36,29 @@
                                          :error-handler #(case (:status %)
                                                            403 (js/alert "Access denied")
                                                            500 (js/alert "Internal server error")
+                                                           404 (js/alert "Client not found")
                                                            (js/alert (str %)))}))
 (defn update-lead [id form-data actions]
   (PUT (str js/context "/lead/" id) {:params {:lead (dissoc form-data :_id)
                                               :actions (keys (filter #(val %) actions))}
+                                     :handler #(do (session/put! :notification
+                                                                 [:div.alert.alert-sucsess "Lead with id "
+                                                                  [:a {:href (str "#/lead/" id "/edit")} id]
+                                                                  " was updated."])
+                                                   (aset js/window "location" "/#dashboard"))
                                      :error-handler #(case (:status %)
                                                        403 (js/alert "Access denied")
+                                                       404 (js/alert "Lead not found")
                                                        500 (js/alert "Internal server error")
                                                        (js/alert (str %)))}))
 
 (defn create-lead [form-data actions]
   (POST (str js/context "/lead") {:params {:lead form-data
                                            :actions (keys (filter #(val %) actions))}
-                                  :handler #(do (session/put! :notification [:div.alert.alert-sucsess "Lead created with id "
-                                                                             [:a {:href (str "#/lead/" (:id %) "/edit")} (:id %)]])
+                                  :handler #(let [id (get % "id")]
+                                              (session/put! :notification
+                                                            [:div.alert.alert-sucsess "Lead created with id "
+                                                             [:a {:href (str "#/lead/" id "/edit")} id]])
                                                 (aset js/window "location" "/#dashboard"))
                                   :error-handler #(case (:status %)
                                                            403 (js/alert "Access denied")
@@ -127,7 +136,7 @@
     (GET (str js/context "/leads/options") {:handler #(reset! options {:lead (keywordize-keys %)})})
     (fn []
       [:div.container
-;       (str "form data: " @lead-data) [:br]
+       (str "form data: " @lead-data) [:br]
 ;       (str "clients: " (:client_id (:lead @options)))
        (el/form "New Lead" [lead-data options util]
                 ["Lead"
@@ -187,7 +196,7 @@
     (GET (str js/context "lead/" id) {:handler (fetch lead-data)})
     (fn []
       [:div.container
-;       (str "form data: " @lead-data) [:br]
+       (str "form data: " @lead-data) [:br]
 ;       (str "options: " (dissoc @options :lead)) [:br]
 ;       (str "actions: " @actions)
        (el/form "Edit Lead" [lead-data options util]
@@ -237,7 +246,7 @@
                 :trello_email "Nuevo asunto en trello"}))]
        [:button.btn.btn-primary {:type :button
                                  :on-click #(if true ;;(validate-lead-form @lead-data)
-                                              (do (update-lead (-> @lead-data :lead :_id) (:lead @lead-data) @actions)
+                                              (do (update-lead (session/get :current-lead-id) (:lead @lead-data) @actions)
                                                   ;; (reset! validation-message nil))
                                                   ))} "Guardar"]])))
 
