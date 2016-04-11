@@ -7,12 +7,12 @@
 
 (defn generate-hash [something]
   (let [hash-bytes
-        (doto (java.security.MessageDigest/getInstance "SHA-256")
+        (doto (java.security.MessageDigest/getInstance "MD5")
           (.reset)
           (.update (.getBytes (str something (new java.util.Date)))))]
     (.toString
      (new java.math.BigInteger 1 (.digest hash-bytes))
-     16)))
+     32)))
 
 (defn md5 [s]
   (let [algorithm (java.security.MessageDigest/getInstance "MD5")
