@@ -33,7 +33,7 @@
                          :message {:to [{:email "dani@misabogados.com"
                                          :name "Dani"}]
                                    :from_email "no-reply@misabogados.com"
-                                   :subject (str "Nueva derivaciÃ³n: " (:name client) " - " (:name lawyer))
+                                   :subject (str "Nueva derivación: " (:name client) " - " (:name lawyer))
                                    :global_merge_vars [{:name "client_name" :content (:name client)}
                                                        {:name "client_phone" :content (:phone client)}
                                                        {:name "client_email" :content (:email client)}
@@ -53,7 +53,7 @@
                       :message {:to [{:email (:email client)
                                       :name (:name client)}]
                                 :from_email "no-reply@misabogados.com"
-                                :subject (str "Consejos para tu reuniÃ³n con el abogado" (:name lawyer))
+                                :subject (str "Consejos para tu reunión con el abogado" (:name lawyer))
                                 :global_merge_vars [{:name "FNAME" :content (:name client)
                                                      }]}}
 
@@ -81,16 +81,16 @@
                                                 {:email (:email lawyer)
                                                  :name (:name lawyer)}]
                                            :from_email "no-reply@misabogados.com"
-                                           :subject (str (:name client) " - confirmaciÃ³n llamada telefÃ³nica con " (:name lawyer))
-                                           :global_merge_vars [(let [meeting (-> lead :matches last :meetings last)]
-                                                                 {:name "client_name" :content (:name client)}
+                                           :subject (str (:name client) " - confirmación llamada telefónica con " (:name lawyer))
+                                           :global_merge_vars (let [meeting (-> lead :matches last :meetings last)]
+                                                                [{:name "client_name" :content (:name client)}
                                                                  {:name "lawyer_name" :content (:name lawyer)}
                                                                  {:name "meeting_time" :content (:time meeting)}
                                                                  {:name "client_phone" :content (:phone client)}
                                                                  {:name "client_email" :content (:email client)}
                                                                  {:name "lawyer_phone" :content (:phone lawyer)}
                                                                  {:name "lawyer_email" :content (:email lawyer)}
-                                                                 {:name "lawyer_address" :content (:address lawyer)})]}}
+                                                                 {:name "lawyer_address" :content (:address lawyer)}])}}
 
 ;;   def thanks(lead_id)
 ;;     lead = Lead.find(lead_id)
@@ -126,7 +126,7 @@
                         :message {:to [{:email (:email client)
                                         :name (:name client)}]
                                   :from_email "gonzalo@misabogados.com"
-                                  :subject (str (:name client) ", estamos aquÃ­ para lo que necesites")
+                                  :subject (str (:name client) ", estamos aquí para lo que necesites")
                                   :global_merge_vars [{:name "FNAME" :content (:name client)}
                                                       {:name "ABOGADO" :content (:name lawyer)
                                                      }]}}
