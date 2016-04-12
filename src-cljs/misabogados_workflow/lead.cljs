@@ -223,11 +223,13 @@
                                                (map-indexed (fn [j meeting]
                                                               ["Meeting"
                                                                (el/input-text "Type" [:lead :matches i :meetings j :type])
-                                                               (el/input-datetimepicker ["Date" "Time"] [:lead :matches i :meetings j :time])])
+                                                               (el/input-datetimepicker ["Date" "Time"]
+                                                                                        [:lead :matches i :meetings j :time])])
                                                             (if-let [meeting (:meetings match)]
-                                                              meeting [{}]))))
+                                                              meeting (reset! (r/cursor lead-data [:lead :matches i :meetings])
+                                                                              [{}])))))
                                      (if-let [match (get-in @lead-data [:lead :matches])]
-                                       match [{}]))))
+                                       match (reset! (r/cursor lead-data [:lead :matches]) [{}])))))
        [:fieldset
         [:legend "Actions"]
 
