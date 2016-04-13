@@ -16,6 +16,7 @@
             [monger.joda-time]
             [clojure.walk :as walk]
             [clj-time.local :as l]
+            [misabogados-workflow.schema :as s]
             [misabogados-workflow.flow :refer [get-rendered-form dataset PManual PAutomatic]]
             [misabogados-workflow.flow-definition :refer [steps]])
   (:import [misabogados-workflow.model.Lead]
@@ -140,3 +141,5 @@
   (GET "/leads" [] get-leads)
   (GET "/lead/:id" [id :as request] (response (db/get-lead id)))
   (GET "/leads/options" [] (get-options)))
+
+(prn s/schema)

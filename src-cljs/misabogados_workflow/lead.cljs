@@ -8,7 +8,8 @@
               [bouncer.validators :as v]
               [clojure.walk :refer [keywordize-keys]]
               [secretary.core :as secretary :include-macros true]
-              [json-html.core :refer [edn->hiccup]]))
+              [json-html.core :refer [edn->hiccup]]
+              [misabogados-workflow.schema :as s]))
 
 (defn create-client! [data id-cursor options text]
   (POST (str js/context "/users/client") {:params {:data (:new-client data)}
@@ -252,15 +253,28 @@
                                                   ;; (reset! validation-message nil))
                                                   ))} "Guardar"]])))
 
+
+(defn schema []
+  (let [atoms [(r/atom {}) (r/atom {}) (r/atom {})]]
+    (fn []
+      [:div (el/form "Plain form" atoms ["form" (el/input-text "test1" [:test])])
+        (el/form "schema form" atoms (el/generate-form s/schema))
+       ])))
+
+
 (def pages
   {:new-lead #'new-lead
-   :edit-lead #'edit-lead})
+   :edit-lead #'edit-lead
+   :schema #'schema})
 
 (defn page []
   [(pages (session/get :page))])
 
 (secretary/defroute "/lead" []
   (session/put! :page :new-lead))
+
+(secretary/defroute "/schema" []
+  (session/put! :page :schema))
 
 (secretary/defroute "/lead/:id/edit" {id :id}
   (do (session/put! :page :edit-lead)
