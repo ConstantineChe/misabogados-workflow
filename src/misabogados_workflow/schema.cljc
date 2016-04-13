@@ -7,7 +7,8 @@
 
 
 (def schema
-  [:schema "Schema"
+  [:schema "Schema1"
+   [:field-outer "outer field" {:type :text}]
    [:fieldset "Fieldset"
       [:field-inner1 ["Inner date" "Inner time"] {:type :date-time}]
       [:field-inner2 "Inner 2" {:type :text}]]

@@ -201,7 +201,7 @@
 ;       (str "options: " (dissoc @options :lead)) [:br]
 ;       (str "actions: " @actions)
        (el/form "Edit Lead" [lead-data options util]
-                (reduce conj ["Lead"
+                (into ["Lead"
                               (el/input-entity "Client Id" [:lead :client_id]
                                                (edit-client selected-client
                                                             (r/cursor options [:lead :client_id])
@@ -253,11 +253,20 @@
                                                   ;; (reset! validation-message nil))
                                                   ))} "Guardar"]])))
 
-
+(def schema-l
+  [:schema "Schema1"
+   [:field-outer "outer field" {:type :text}]
+   ["Fieldsets"
+    [:fieldset "Fieldset"
+      [:field-inner1 ["Inner date" "Inner time"] {:type :date-time}]
+     [:field-inner2 "Inner 2" {:type :text}]]
+    [:fieldset "Fieldset"
+     [:field-inner1 ["Inner date" "Inner time"] {:type :date-time}]
+     [:field-inner2 "Inner 2" {:type :text}]]]])
 
 (defn schema []
-  (let [atoms [(r/atom {}) (r/atom {}) (r/atom {})]
-        schema (r/atom s/schema)]
+  (let [atoms [(el/prepare-atom schema-l (r/atom {})) (r/atom {}) (r/atom {})]
+        schema (r/atom schema-l)]
     (fn []
       [:div (str "data" @(first atoms))
        (el/form "schema form" atoms (el/render-form @schema))

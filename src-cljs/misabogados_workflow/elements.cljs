@@ -236,9 +236,37 @@
     (doall (for [fieldset fieldsets]
               (fieldset-fn form-data fieldset)))]])
 
-(defn render-form [schema & path]
+
+
+(defmulti render-form
+  (fn [schema & path]
+    (let [[key label & content] schema]
+      (cond (string? key) :list
+            (map? (first content)) :field
+            :default :fieldset))))
+
+(defmethod render-form :list [form-items path]
+  (let [[key & form-items] form-items]
+    (into [key] (map-indexed (fn [i item] (render-form item (conj path i))) form-items))))
+
+(defmethod render-form :field [schema path]
+  (let [[key label & content] schema]
+    ((get input-types (-> content first :type)) label (conj path key))))
+
+(defmethod render-form :fieldset [schema & path]
   (let [[key label & content] schema
         path (if path (conj (first path) key) [key])]
-    (if-not (map? (first content))
-      (into [label] (map #(render-form % path) content))
-      ((get input-types (-> content first :type)) label path))))
+          (into [label] (map #(render-form % path) content))))
+
+(defn get-struct
+  ([key value]
+   (if (string? key)
+     (vec (map-indexed #(get-struct %1 %2) value))
+     (if (map? (second value))
+       {key nil}
+       {key (get-struct key value)}))
+   ([value]
+    (map #(get-struct (first value) %) (next value)))))
+
+(defn prepare-atom [schema atom]
+  (reset! atom (map get-struct schema)))
