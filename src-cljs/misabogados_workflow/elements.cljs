@@ -7,17 +7,6 @@
              :refer [parse-format format-date datepicker]])
 )
 
-(def input-types
-  {:text input-text
-   :email input-email
-   :password input-password
-   :number input-number
-   :dropdown input-dropdown
-   :textarea input-textarea
-   :typeahead input-textarea
-   :date-time input-datetimepicker
-   :entity input-entity})
-
 (defn gen-name [cursor] (->> cursor (into []) (map #(if (keyword? %) (name %) %)) (interpose "-") (apply str)))
 
 (defn prepare-input [cursor form]
@@ -148,7 +137,7 @@
           [hour minute] (if @cursor (let [time (second (s/split @cursor #"T"))]
                               (s/split time #":")))
           expanded? (r/cursor opts (into [:date-extended?] r-key))]
-      (when (and (not @time) @cursor) (reset! time (str hour ":") minute))
+      (when (and (not @time) @cursor) (reset! time (str hour ":" minute)))
       [:div {:key r-key}
        [:div.datepicker-wrapper.col-xs-3
         [:label.control-label (first label)]
@@ -216,6 +205,18 @@
 
 (def input-number (partial input :number))
 
+(def input-types
+  {:text input-text
+   :email input-email
+   :password input-password
+   :number input-number
+   :dropdown input-dropdown
+   :textarea input-textarea
+   :typeahead input-textarea
+   :date-time input-datetimepicker
+   :entity input-entity})
+
+
 
 (defn fieldset-fn [form-data [legend & fields]]
   (list
@@ -235,9 +236,9 @@
     (doall (for [fieldset fieldsets]
               (fieldset-fn form-data fieldset)))]])
 
-(defn generate-form [schema & path]
+(defn render-form [schema & path]
   (let [[key label & content] schema
         path (if path (conj (first path) key) [key])]
     (if-not (map? (first content))
-      (into [label] (map #(generate-form % path) content))
-      (input-text label path))))
+      (into [label] (map #(render-form % path) content))
+      ((get input-types (-> content first :type)) label path))))

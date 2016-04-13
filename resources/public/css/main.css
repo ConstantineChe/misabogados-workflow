@@ -50,6 +50,6 @@ h1 {
     margin: 10 0 40 0;
 }
 
-.form-group.col-xs-6 {
+.form-group.col-xs-6, .form-group.col-xs-3 {
     margin-right: 15px;
 }

@@ -254,11 +254,15 @@
                                                   ))} "Guardar"]])))
 
 
+
 (defn schema []
-  (let [atoms [(r/atom {}) (r/atom {}) (r/atom {})]]
+  (let [atoms [(r/atom {}) (r/atom {}) (r/atom {})]
+        schema (r/atom s/schema)]
     (fn []
-      [:div (el/form "Plain form" atoms ["form" (el/input-text "test1" [:test])])
-        (el/form "schema form" atoms (el/generate-form s/schema))
+      [:div (str "data" @(first atoms))
+       (el/form "schema form" atoms (el/render-form @schema))
+       [:button.btn.btn-primary {:on-click #(swap! schema conj [:fieldset "newfs" [:field-new "new field" {:type :email}]])}
+        "new fs"]
        ])))
 
 
