@@ -141,5 +141,3 @@
   (GET "/leads" [] get-leads)
   (GET "/lead/:id" [id :as request] (response (db/get-lead id)))
   (GET "/leads/options" [] (get-options)))
-
-(prn s/schema)
