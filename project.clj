@@ -42,7 +42,8 @@
                  [midje "1.8.3"]
                  [reagent-forms "0.5.22"]
                  [gws/clj-mandrill "0.4.2"]
-                 [clj-time "0.11.0"]]
+                 [clj-time "0.11.0"]
+                 [inflections "0.12.1"]]
 
   :min-lein-version "2.0.0"
   :uberjar-name "misabogados-workflow.jar"

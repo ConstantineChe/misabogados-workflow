@@ -15,3 +15,5 @@ profiles.clj
 .cljs_rhino_repl
 *_local.py
 *.pyc
+.idea
+*.iml
