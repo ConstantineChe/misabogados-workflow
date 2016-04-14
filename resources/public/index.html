@@ -92,7 +92,7 @@
         <div class="container">
           <h1>LA FORMA INTELIGENTE DE CONTRATAR ABOGADOS</h1>
           <p>Recomendamos  abogados confiables, en tu rango de precios y con facilidades de pago.</p>
-          <p><button type="button" class="btn  btn-success  btn-lg">Comienza ahora <span class="glyphicon  glyphicon-menu-right"></span></button></p>
+          <p><button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#contactForm">Comienza ahora <span class="glyphicon  glyphicon-menu-right"></span></button></p>
 
           <!-- Featured in -->
           <h5>Destacados en:</h5>
@@ -470,7 +470,7 @@
     <div class="jumbotron  cta  cta-second">
       <div class="container">
         <h1>LA FORMA INTELIGENTE DE CONTRATAR ABOGADOS</h1>
-        <p><button type="button" class="btn  btn-success  btn-lg">Comienza ahora <span class="glyphicon  glyphicon-menu-right"></span></button></p>
+        <p><button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#contactForm">Comienza ahora <span class="glyphicon  glyphicon-menu-right"></span></button></p>
 
         <!-- Supported by -->
         <h5>Apoyado por:</h5>
@@ -571,7 +571,7 @@
               <h4>MÁS</h4>
               <ul>
                 <li><a href="#">Términos y condiciones</a></li>
-                <li><a href="a">Garantía MisAbogados.com</a></li>
+                <li><a href="#">Garantía MisAbogados.com</a></li>
               </ul>
 
               <img src="/img/footer/webpay_gris.png" class="webpay-img  img-responsive" alt="Puedes pagas con Webpay" />
@@ -602,6 +602,59 @@
         </div>
       </div>
     </div>
+
+
+
+
+
+
+    <!-- Contact Form -->
+    <div class="modal fade" id="contactForm" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel">
+      <div class="modal-dialog  contact-form" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="contactModalLabel">A un paso de comenzar</h4>
+          </div>
+          <div class="modal-body">
+            <h5>Déjanos tus datos para responderte dentro de los próximos minutos. <span class="bold">100% Confidencial.</span></h5>
+            <form id="contact_form" method="POST" action="/contact">
+              <input id="__anti-forgery-token" name="__anti-forgery-token" type="hidden" value="OS1C7RBV26f1kKpos3E8tvsmgHIhPxLQZ+z48JIRp2wo2ZrkIpyv85vSjJ4nOSGu9ndu8h75PpSvBTNd" />
+              <div class="form-group">
+                <label class="control-label" for="client_name">Nombre:</label>
+                <input class="form-control" type="text" name="client_name" required/>
+              </div>
+              <div class="form-group">
+                <label class="control-label" for="client_phone">Telefono:</label>
+                <div class="input-group">
+                  <div class="input-group-addon">+56</div>
+                  <input class="form-control" type="text" name="client_phone" required/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label" for="client_email">Email:</label>
+                <input class="form-control" type="email" name="client_email" required/>
+              </div>
+              <div class="form-group">
+                <label class="control-label" for="lead_type_code">Tipo:</label><br>
+                <div class="btn-group" data-toggle="buttons">
+                  <label class="btn btn-default"><input type="radio" name="lead_type_code" id="lead_type_code" value="question" required>Consulta</label>
+                  <label class="btn btn-default"><input type="radio" name="lead_type_code" id="lead_type_code" value="case">Caso</label>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label" for="problem">Problema:</label>
+                <textarea class="form-control" type="textarea" name="problem" rows="4" required></textarea>
+              </div>
+              <button class="btn  btn-lg  btn-block  btn-success" data-loading-text="Cargando...">Conéctame con un Abogado</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+
 
 
 

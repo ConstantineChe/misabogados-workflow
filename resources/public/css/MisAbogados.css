@@ -234,6 +234,29 @@ p {
 
 
 
+/* Contact Form
+---------------------------------------------*/
+.contact-form h4 {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 2em;
+}
+
+.contact-form h5 {
+  text-align: center;
+  font-size: 1.25em;
+  margin-bottom: 30px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.contact-form textarea {
+  resize: vertical;
+}
+
+
 /* Footer
 ---------------------------------------------*/
 
@@ -701,7 +724,7 @@ p {
 }
 
   .contact-panel-form textarea {
-    resize: none;
+    resize: vertical;
     font-size: 16px;
   }
 
