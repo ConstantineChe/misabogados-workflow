@@ -19,8 +19,8 @@
          (defn ~(symbol (str name# "-get")) [] (println "GET " ~name#)))))
 
 ;; Functions that define fields
-(defn embeds-many [name & fields] 
-  {:name name 
+(defn embeds-many [name & fields]
+  {:name name
    :type :embedded-collection
    :field-definitions (into [] fields)})
 
@@ -32,7 +32,7 @@
                         :type :entity-refenence})
 (defn simple-dict-field [name] {:name name
                                 :type :dictionary-reference})
-(defn embeds-one [name & fields] {:name name 
+(defn embeds-one [name & fields] {:name name
                                   :type :embedded-entity
                                   :field-definitions (into [] fields)})
 (defn datetime-field [name] {:name name
@@ -66,7 +66,7 @@
                            (datetime-field :time))))
 
 ;; This is what entity definitions should be expanded to. This data structures holds all information abount entity and it's fields in format easily digestable programmatically.
-(def category-schema-expanded 
+(def category-schema-expanded
   {:name :category
    :type :entity
    :collection-name "categories"
@@ -90,7 +90,7 @@
                        {:name :description
                         :type :markdown-field}]})
 
-(def lead-schema-expanded 
+(def lead-schema-expanded
   {:name :lead
    :type :entity
    :collection-name "leads"
@@ -122,9 +122,9 @@
                 :type "case"
                 :client_id 12
                 :match {:lawyer_id 23
-                        :meetings [{:type "meeting" 
+                        :meetings [{:type "meeting"
                                     :time "2016-01-03"}
-                                   {:type "call" 
+                                   {:type "call"
                                     :time "2016-01-06"}]}})
 
 ;; This is the desired result of default rendering of the form. It uses schema-expanded (expanded from defentity macro) and data (later to be fetched from db)
@@ -147,8 +147,3 @@
 ;;                     (el/input-text "Type" [:lead :match :meetings 0 :type])
 ;;                     (el/input-datetimepicker ["Date" "Time"]
 ;;                                              [:lead :match :meetings 0 :time])]]]])]))
-
-
-
-
-
