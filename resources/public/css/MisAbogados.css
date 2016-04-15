@@ -71,7 +71,7 @@ p {
 }
 
 /* Redefines navbar breakpoint */
-@media (max-width: 992px) {
+@media (max-width: 1010px) {
   .navbar-header {
     float: none;
   }
@@ -203,12 +203,34 @@ p {
   padding-left: 20px;
 }
 
+.navbar-button a {
+  margin-top: 2px;
+  color: #FFFFFF !important;
+  font-weight: bold;
+}
+
+.navbar-button a:hover {
+  color: #b2b2b2 !important;
+}
+
+.dropdown-menu {
+  background-color: #2b2b2b;
+}
+
+.dropdown-menu li a {
+  white-space: normal;
+}
+
+.dropdown-menu li a:hover {
+  background-color: #454545 !important;
+}
+
 .navbar-button button {
   margin-left: 15px;
   margin-bottom: 25px;
 }
 
-@media (min-width: 992px) {
+@media (min-width: 1011px) {
 
   .navbar ul {
     padding-left: 0px;
@@ -225,28 +247,6 @@ p {
       background: -webkit-linear-gradient(top, #2b2b2b, #262626); /* For Safari 5.1 to 6.0 */
       background: -o-linear-gradient(top, #2b2b2b, #262626); /* For Opera 11.1 to 12.0 */
       background: -moz-linear-gradient(top, #2b2b2b, #262626); /* For Firefox 3.6 to 15 */
-  }
-
-  .navbar-button a {
-    margin-top: 2px;
-    color: #FFFFFF !important;
-    font-weight: bold;
-  }
-
-  .navbar-button a:hover {
-    color: #b2b2b2 !important;
-  }
-
-  .dropdown-menu {
-    background-color: #2b2b2b;
-  }
-
-  .dropdown-menu li a {
-    white-space: normal;
-  }
-
-  .dropdown-menu li a:hover {
-    background-color: #454545 !important;
   }
 
   .navbar-button button {
