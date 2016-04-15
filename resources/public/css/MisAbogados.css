@@ -766,3 +766,44 @@ p {
     margin-top: 10px;
     margin-bottom: 15px;
   }
+
+
+
+
+
+
+/*--------------------------------------------
+ * Static Page Sections                  *
+---------------------------------------------*/
+
+
+
+/* Shared classes
+---------------------------------------------*/
+
+.static-content{
+  padding-top: 60px;
+  max-width: 820px;
+  padding-bottom: 60px;
+}
+
+.static-content h1 {
+  text-transform: uppercase;
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+.static-content h3 {
+  margin-top: 40px;
+}
+
+
+
+/* Terms & Conditions
+---------------------------------------------*/
+
+.version {
+  color: #6f6f6f;
+  font-size: 1.15em;
+  font-weight: normal;
+}
