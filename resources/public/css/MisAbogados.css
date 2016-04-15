@@ -801,6 +801,12 @@ p {
   margin-bottom: 1em;
 }
 
+.static-content ol {
+  margin-top: -10px;
+  margin-bottom: 20px;
+  font-size: 1.25em;
+}
+
 
 
 /* Terms & Conditions
@@ -810,4 +816,17 @@ p {
   color: #6f6f6f;
   font-size: 1.15em;
   font-weight: normal;
+}
+
+
+
+/* Garantía
+---------------------------------------------*/
+
+.header-img {
+  margin-bottom: 40px;
+}
+
+.guarantee-cta {
+  margin-top: 60px;
 }
