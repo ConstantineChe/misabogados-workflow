@@ -203,6 +203,11 @@ p {
   padding-left: 20px;
 }
 
+.navbar-button button {
+  margin-left: 15px;
+  margin-bottom: 25px;
+}
+
 @media (min-width: 992px) {
 
   .navbar ul {
@@ -212,7 +217,7 @@ p {
   }
 
   .navbar-button {
-    width: 20%;
+    width: 16.66666666666667%;
     border-left: solid 1px #363636;
     font-size: 16px;
     text-align: center;
@@ -223,7 +228,20 @@ p {
   }
 
   .navbar-button a {
-    color: #FFFFFF;
+    margin-top: 2px;
+    color: #FFFFFF !important;
+    font-weight: bold;
+  }
+
+  .navbar-button button {
+    margin-left: 0px;
+    margin-bottom: 0px;
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .navbar-button button span {
+    margin-top: -1px;
     font-weight: bold;
   }
 
