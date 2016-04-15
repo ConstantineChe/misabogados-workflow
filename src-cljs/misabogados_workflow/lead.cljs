@@ -8,8 +8,7 @@
               [bouncer.validators :as v]
               [clojure.walk :refer [keywordize-keys]]
               [secretary.core :as secretary :include-macros true]
-              [json-html.core :refer [edn->hiccup]]
-              [misabogados-workflow.schema :as s]))
+              [json-html.core :refer [edn->hiccup]]))
 
 (defn create-client! [data id-cursor options text]
   (POST (str js/context "/users/client") {:params {:data (:new-client data)}
@@ -253,24 +252,53 @@
                                                   ;; (reset! validation-message nil))
                                                   ))} "Guardar"]])))
 
-(def schema-l
-  [:schema "Schema1"
-   [:field-outer "outer field" {:type :text}]
-   ["Fieldsets"
-    [:fieldset "Fieldset"
-      [:field-inner1 ["Inner date" "Inner time"] {:type :date-time}]
-     [:field-inner2 "Inner 2" {:type :text}]]
-    [:fieldset "Fieldset"
-     [:field-inner1 ["Inner date" "Inner time"] {:type :date-time}]
-     [:field-inner2 "Inner 2" {:type :text}]]]])
+(def schema-expanded
+  {:lead
+   {:render-type :entity
+    :collection-name "leads"
+    :field-definitions
+    {:client
+     {:render-type :text}
+     :match
+     {:render-type :entity
+      :field-definitions
+      {:lawyer
+       {:render-type :text}
+       :meetings
+       {:render-type :collection
+        :label "Meetings"
+        :entity-label "Meeting"
+        :field-definitions
+        {:time
+         {:render-type :text}
+         :meeting_type
+         {:render-type :text}}}}}
+     :lead_type
+     {:render-type :text
+      :label "Lead Type"}
+     :problem
+     {:render-type :text}}}}
+  :feed
+  {:render-type :entity
+   :field-definitions {:test {:render-type :text
+                         :label "Lead Type"}}})
+
+
+(def data-l {:lead {:client "cl", :match
+                    {:lawyer nil, :meetings [{:time "11", :meeting_type nil}
+                                             {:time "testt1," :meeting_type "test1"}]},
+                    :lead_type nil, :problem nil}}
+)
 
 (defn schema []
-  (let [atoms [(el/prepare-atom schema-l (r/atom {})) (r/atom {}) (r/atom {})]
-        schema (r/atom schema-l)]
+  (let [atoms [(r/atom data-l) (r/atom {}) (r/atom {})]
+        schema (r/atom schema-expanded)
+        fieldsets (r/cursor schema [3])]
     (fn []
-      [:div (str "data" @(first atoms))
-       (el/form "schema form" atoms (el/render-form @schema))
-       [:button.btn.btn-primary {:on-click #(swap! schema conj [:fieldset "newfs" [:field-new "new field" {:type :email}]])}
+      [:div (str "data " @(first atoms)) [:br]
+      ; (str "schema " @schema)
+       (apply el/form "schema form" atoms (map (fn [schema] (el/render-form schema @(first atoms) [])) @schema))
+       [:button.btn.btn-primary {:on-click #(swap! fieldsets conj [:fieldset "newfs" [:field-new "new field" {:type :email}]])}
         "new fs"]
        ])))
 

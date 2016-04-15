@@ -239,34 +239,44 @@
 
 
 (defmulti render-form
-  (fn [schema & path]
-    (let [[key label & content] schema]
-      (cond (string? key) :list
-            (map? (first content)) :field
-            :default :fieldset))))
+  (fn [[key schema] data path]
+    (:render-type schema)))
 
-(defmethod render-form :list [form-items path]
-  (let [[key & form-items] form-items]
-    (into [key] (map-indexed (fn [i item] (render-form item (conj path i))) form-items))))
+(defmethod render-form :collection [[key schema] data path]
+  (let [{label :label content :field-definitions} schema
+        label (if label label (name key))
+        collection {:render-type :entity
+                    :label (:entity-label schema)
+                    :field-definitions content}]
+    (into [label]
+          (for [i (range (count (get-in data (conj path key))))]
+            (render-form [i collection] data (conj path key) key) ))))
 
-(defmethod render-form :field [schema path]
-  (let [[key label & content] schema]
-    ((get input-types (-> content first :type)) label (conj path key))))
+(defmethod render-form :entity [[key schema] data path]
+  (let [{label :label content :field-definitions} schema
+        label (if label label (name key))]
+    (into [label]
+           (map #(render-form % data (conj path key)) content))))
 
-(defmethod render-form :fieldset [schema & path]
-  (let [[key label & content] schema
-        path (if path (conj (first path) key) [key])]
-          (into [label] (map #(render-form % path) content))))
+(defmethod render-form :default [[key schema] data path]
+  (let [{type :render-type label :label} schema]
+    ((type input-types) (if label label (name key)) (conj path key))))
 
-(defn get-struct
-  ([key value]
-   (if (string? key)
-     (vec (map-indexed #(get-struct %1 %2) value))
-     (if (map? (second value))
-       {key nil}
-       {key (get-struct key value)}))
-   ([value]
-    (map #(get-struct (first value) %) (next value)))))
+
+(defmulti get-struct (fn [[key schema]] (:render-type schema)))
+
+(defmethod get-struct :collection [[key schema]]
+  (let [{content :field-definitions} schema]
+    {key [(apply merge  (map get-struct content))]}))
+
+(defmethod get-struct :entity [[key schema]]
+  (let [{content :field-definitions} schema
+        struct (map get-struct content)]
+    {key (if (vector? struct) struct (apply merge struct))}))
+
+(defmethod get-struct :default [[key schema]]
+  {key nil})
 
 (defn prepare-atom [schema atom]
-  (reset! atom (map get-struct schema)))
+  (reset! atom (apply merge (map get-struct schema)))
+  atom)
