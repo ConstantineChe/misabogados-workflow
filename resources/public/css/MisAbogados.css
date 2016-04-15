@@ -37,6 +37,10 @@ p {
   padding-bottom: 75px;
 }
 
+.jumbotron h1 {
+  font-size: 3.6em;
+}
+
 .glyphicon {
   vertical-align: middle;
   margin-top: -3px;
@@ -597,6 +601,10 @@ p {
   .testimonies-list blockquote {
     font-size: 14px;
   }
+}
+
+.testimony-video {
+  margin-top: 10%;
 }
 
 
