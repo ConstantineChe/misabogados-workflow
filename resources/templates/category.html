@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+{% include "navbar.html" %}
+
+<!-- Main CTA -->
+<div class="jumbotron  categoria-heading">
+  <div class="darken-bg">
+    <div class="container">
+      <h1>Registro de Marcas</h1>
+      <p>"Haz el Registro de Marca con la asesoría de MisAbogados.com"</p>
+      <p><button type="button" class="btn  btn-success  btn-lg">Comienza ahora <span class="glyphicon  glyphicon-menu-right"></span></button></p>
+    </div>
+  </div>
+</div>
+
+
+<!-- Categoria Content -->
+<div class="categoria-body">
+  <div class="container">
+    <div class="row">
+
+      <!-- FAQ -->
+      <div class="col-lg-8  col-md-8  col-sm-12  col-xs-12">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+          <div class="panel  panel-default  faq">
+            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+              <div class="panel-heading  faq-heading" role="tab" id="headingOne">
+                <h4 class="panel-title">
+                  Collapsible Group Item #1
+                </h4>
+              </div>
+            </a>
+            <a href="#collapseOne"><span class="glyphicon  glyphicon-link  anchor-icon"></span></a>
+            <div id="collapseOne" class="panel-collapse  collapse" role="tabpanel" aria-labelledby="headingOne">
+              <div class="panel-body">
+                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+              </div>
+            </div>
+          </div>
+          <div class="panel  panel-default  faq">
+            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+              <div class="panel-heading  faq-heading" role="tab" id="headingTwo">
+                <h4 class="panel-title">
+                  Collapsible Group Item #2
+                </h4>
+              </div>
+            </a>
+            <a href="#collapseTwo"><span class="glyphicon  glyphicon-link  anchor-icon"></span></a>
+            <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+              <div class="panel-body">
+                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+              </div>
+            </div>
+          </div>
+          <div class="panel  panel-default  faq">
+            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+              <div class="panel-heading  faq-heading" role="tab" id="headingThree">
+                <h4 class="panel-title">
+                  Collapsible Group Item #3
+                </h4>
+              </div>
+            </a>
+            <a href="#collapseThree"><span class="glyphicon  glyphicon-link  anchor-icon"></span></a>
+            <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+              <div class="panel-body">
+                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="panel panel-default accordion-cta">
+          <div class="panel-heading">
+            <h4 class="panel-title">¿No encontraste lo que buscabas?</h4>
+            <button type="button" class="btn btn-primary">Contáctanos para recomendarte un Abogado</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Contact Form -->
+      <div class="col-lg-4  col-md-4  col-sm-12  col-xs-12">
+        <div class="panel  panel-default  contact-panel">
+          <div class="panel-heading">
+            <h3>Estamos para ayudarte</h3>
+            <img src="/img/categoria/nohemi.jpg" class="img-circle  img-responsive  team-photo" alt="Nohemi" />
+            <blockquote class="blockquote-reverse  team-quote">
+              <p>"Nadie debiese tener una duda o problema legal sin resolver"</p>
+              <b>Nohemí Díaz</b>
+            </blockquote>
+
+            <form>
+              <div class="form-group  contact-panel-form">
+                <textarea class="form-control" rows="8" id="message" placeholder="¿Qué estás buscando? ¿Qué necesitas? Descríbenos tu problema aquí."></textarea>
+              </div>
+              <button type="submit" class="btn  btn-success  btn-lg  contact-panel-form-btn">Comienza ahora <span class="glyphicon  glyphicon-menu-right"></span></button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+  $(document).ready(function () {
+  if(location.hash != null && location.hash != ""){
+  $('.collapse').removeClass('in');
+  $(location.hash + '.collapse').collapse('show');
+  }
+  });
+</script>
+
+
+{% include "footer.html" %}
+
+{% endblock %}
+

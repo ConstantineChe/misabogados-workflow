@@ -16,10 +16,7 @@
                                :collection-name (plural (underscore ~name#))
                                :field-definitions [~@fields]
                                })
-         (defn ~(symbol (str name# "-get")) [] (println "GET " ~name#))))
-
-)
-
+         (defn ~(symbol (str name# "-get")) [] (println "GET " ~name#)))))
 
 
 ;; Functions that define fields
@@ -111,8 +108,7 @@
                                                                  {:name :meeting_type
                                                                   :type :dictionary-reference}]}]}
                        {:name :lead_type
-                        :type :text-field
-                        :label "Name"}
+                        :type :text-field}
                        {:name :problem
                         :type :text-field}]})
 

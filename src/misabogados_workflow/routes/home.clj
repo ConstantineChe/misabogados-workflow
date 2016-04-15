@@ -32,6 +32,7 @@
 
 (defroutes home-routes
   (GET "/home" [] (render "home_page.html" {:title "Home"}))
+  (GET "/categorias/:slug" [] (render "category.html"))
   (GET "/" [] home-page)
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
   (GET "/contact" [] (render "contact.html"))
