@@ -32,7 +32,9 @@
 
 (defroutes home-routes
   (GET "/home" [] (render "home_page.html" {:title "Home"}))
-  (GET "/categorias/:slug" [] (render "category.html"))
+  (GET "/garantia" [] (render "guarantee.html" {:title "Garantia"}))
+  (GET "/terminos-y-condiciones" [] (render "terms_and_conditions.html" {:title "Garantia"}))
+  (GET "/categorias/:slug" [slug :as params] (render "category.html" {:category (mc/find-one-as-map @db/db "categories" {:slug slug})}))
   (GET "/" [] home-page)
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
   (GET "/contact" [] (render "contact.html"))
