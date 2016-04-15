@@ -797,6 +797,10 @@ p {
   margin-top: 40px;
 }
 
+.static-content p {
+  margin-bottom: 1em;
+}
+
 
 
 /* Terms & Conditions
