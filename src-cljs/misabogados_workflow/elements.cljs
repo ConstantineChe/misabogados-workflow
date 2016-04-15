@@ -220,9 +220,7 @@
 (defn fieldset-fn [form-data [legend & fields] path]
   (let [[data _ util] form-data
         new-path (conj path (keyword legend))
-        hidden (if-not (nil? (get-in @util (conj new-path :hidden)))
-                 (r/cursor util (into new-path [:hidden]))
-                 (r/cursor util (conj new-path :hidden)))]
+        hidden (r/cursor util (conj new-path :hidden))]
     (when (nil? @hidden) (reset! hidden false))
     (list
      [:span.clearfix {:key (str "cf" legend)}]
@@ -230,10 +228,11 @@
       [:legend legend (if @hidden
                         [:button.btn.btn-default {:on-click #(swap! hidden not)} "show"]
                         [:button.btn.btn-default {:on-click #(swap! hidden not)} "hide"])]
-      (if-not @hidden [:div
+      (if-not @hidden
+        [:div
          (doall (for [field fields]
                   (if (sequential? field)
-                    (fieldset-fn form-data field new-path)
+                    (fieldset-fn form-data field (conj new-path (.indexOf (to-array fields) field)))
                     (field form-data))))])])))
 
 (defn form [legend form-data & fieldsets]
