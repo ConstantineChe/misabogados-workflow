@@ -37,6 +37,8 @@
                         ;; :buyerEmail "test@test.com"
                         })
 
+;; Api key: MZS7GwxB7mxdyVCfb7R7Vig6c8Api login:cjhH8yIfa9gOC8FPublic key:PK6437ce6m5Ohcgl76647q68chMerchant Id:562342
+
 (defn- add-signature [data]
   (let [signature-string (clojure.string/join "~" [(:ApiKey data)
                                                    (:merchantId data)
