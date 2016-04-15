@@ -43,8 +43,7 @@
                 :on-change #(do (reset! text (-> % .-target .-value))
                                 (when-not (< (count @text) min-chars)
                                   (reset! f-opts (filter
-                                                  (fn [[l]] (re-find (re-pattern (s/lower-case @text))
-                                                                    (s/lower-case l)))
+                                                  (fn [[l]] (s/includes? (s/lower-case l) (s/lower-case @text)))
                                                   options))
                                   (reset! selected-index -1)))
                 :on-key-down #(do
@@ -67,7 +66,7 @@
       (when (seq? @opt-cursor) (dorun (map (fn [[l v]] (if (= v @cursor) (reset! text l))) @opt-cursor))
             (swap! opt-cursor vec))
       (when (and (not @f-opts) (>(count @text) 3)) (reset! f-opts (filter
-                                                        (fn [[l]] (re-find (re-pattern (s/lower-case @text)) (s/lower-case l)))
+                                                                   (fn [[l]] (s/includes? (s/lower-case l) (s/lower-case @text)))
                                                         options)))
       [:div.form-group.col-xs-6 {:id (str name "-g") :key name}
        [:label.control-label {:for name} label]
@@ -218,23 +217,31 @@
 
 
 
-(defn fieldset-fn [form-data [legend & fields]]
-  (list
-   [:span.clearfix {:key (str "cf" legend)}]
-   [:fieldset {:key legend}
-     [:legend legend]
-     [:div
-      (doall (for [field fields]
-               (if (sequential? field)
-                 (fieldset-fn form-data field)
-                 (field form-data))))]]))
+(defn fieldset-fn [form-data [legend & fields] path]
+  (let [[data _ util] form-data
+        new-path (conj path (keyword legend))
+        hidden (if-not (nil? (get-in @util (conj new-path :hidden)))
+                 (r/cursor util (into new-path [:hidden]))
+                 (r/cursor util (conj new-path :hidden)))]
+    (when (nil? @hidden) (reset! hidden false))
+    (list
+     [:span.clearfix {:key (str "cf" legend)}]
+     [:fieldset {:key legend}
+      [:legend legend (if @hidden
+                        [:button.btn.btn-default {:on-click #(swap! hidden not)} "show"]
+                        [:button.btn.btn-default {:on-click #(swap! hidden not)} "hide"])]
+      (if-not @hidden [:div
+         (doall (for [field fields]
+                  (if (sequential? field)
+                    (fieldset-fn form-data field new-path)
+                    (field form-data))))])])))
 
 (defn form [legend form-data & fieldsets]
   [:div.form-horizontal
    [:legend legend]
    [:div
     (doall (for [fieldset fieldsets]
-              (fieldset-fn form-data fieldset)))]])
+             (fieldset-fn form-data fieldset [:visiblity])))]])
 
 
 
