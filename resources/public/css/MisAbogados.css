@@ -38,7 +38,13 @@ p {
 }
 
 .jumbotron h1 {
-  font-size: 3.6em;
+  font-size: 2.25em;
+}
+
+@media (min-width: 1010px) {
+  .jumbotron h1 {
+    font-size: 3.6em;
+  }
 }
 
 .glyphicon {
@@ -486,11 +492,21 @@ p {
   }
 }
 
-.thumbnail {
+.categories-list .thumbnail {
   position: relative;
   overflow: hidden;
   height: 160px;
   background-color: rgba(0, 0, 0, 0.05);;
+}
+
+.caption h5 {
+  font-size: .85em;
+}
+
+@media (min-width: 992px) {
+  .caption h5 {
+    font-size: 1em;
+  }
 }
 
 .caption-overlay {
