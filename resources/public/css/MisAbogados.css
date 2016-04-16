@@ -486,13 +486,49 @@ p {
   }
 }
 
-.categories-list .thumbnail {
+.thumbnail {
+  position: relative;
+  overflow: hidden;
   height: 160px;
   background-color: rgba(0, 0, 0, 0.05);;
 }
 
-.categories-list .thumbnail:hover {
-  background-color: rgba(0, 0, 0, 0.25);
+.caption-overlay {
+  background-color: rgba(0, 0, 0, 0.55);
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  padding: 2%;
+  opacity: 0;
+  z-index: 2;
+  text-align: center;
+  color: #FFFFFF !important;
+}
+
+.caption-overlay h5 {
+  font-size: 1.25em;
+  font-weight: bold;
+  margin-top: 30px;
+}
+
+.caption-overlay button {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: 90%;
+  bottom: 15px;
+}
+
+.caption-overlay button span {
+  margin-right: 0px;
+}
+
+.caption-overlay:hover {
+  opacity: 100;
 }
 
 .categories-list img {
