@@ -37,6 +37,16 @@ p {
   padding-bottom: 75px;
 }
 
+.jumbotron h1 {
+  font-size: 2.25em;
+}
+
+@media (min-width: 1010px) {
+  .jumbotron h1 {
+    font-size: 3.6em;
+  }
+}
+
 .glyphicon {
   vertical-align: middle;
   margin-top: -3px;
@@ -365,6 +375,13 @@ p {
   text-transform: uppercase;
 }
 
+@media (max-width: 992px) {
+  .footer-contact div {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+}
+
 .footer-contact i {
   font-size: 18px;
   padding-right: 5px;
@@ -417,6 +434,12 @@ p {
   font-size: 1em;
   margin-top: 15px;
   margin-bottom: 100px;
+}
+
+@media (max-width: 992px) {
+  .cta button {
+    margin-bottom: 50px;
+  }
 }
 
 .cta h5 {
@@ -483,12 +506,58 @@ p {
 }
 
 .categories-list .thumbnail {
+  position: relative;
+  overflow: hidden;
   height: 160px;
   background-color: rgba(0, 0, 0, 0.05);;
 }
 
-.categories-list .thumbnail:hover {
-  background-color: rgba(0, 0, 0, 0.25);
+.caption h5 {
+  font-size: .85em;
+}
+
+@media (min-width: 992px) {
+  .caption h5 {
+    font-size: 1em;
+  }
+}
+
+.caption-overlay {
+  background-color: rgba(0, 0, 0, 0.55);
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  padding: 2%;
+  opacity: 0;
+  z-index: 2;
+  text-align: center;
+  color: #FFFFFF !important;
+}
+
+.caption-overlay h5 {
+  font-size: 1.25em;
+  font-weight: bold;
+  margin-top: 30px;
+}
+
+.caption-overlay button {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: 85%;
+  bottom: 15px;
+}
+
+.caption-overlay button span {
+  margin-right: 0px;
+}
+
+.caption-overlay:hover {
+  opacity: 100;
 }
 
 .categories-list img {
@@ -515,9 +584,13 @@ p {
   font-size: 18px;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 768px) {
   .lawyer-list {
     margin-top: 75px;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 20px;
   }
 }
 
@@ -555,6 +628,8 @@ p {
   }
 }
 
+
+
 /* Testimonies Section
 ---------------------------------------------*/
 
@@ -573,7 +648,8 @@ p {
 }
 
 .testimonies-list img {
-  max-height: 150px;
+  max-height: 125px;
+  float: right;
 }
 
 .testimonies-list h4 {
@@ -590,6 +666,11 @@ p {
 }
 
 @media (max-width: 787px) {
+
+  .testimonies-list {
+    padding-left: 20px;
+  }
+
   .testimonies-list h4 {
     font-size: 16px;
   }
@@ -599,6 +680,17 @@ p {
   }
 }
 
+.testimony-video {
+  margin-top: 10%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 992px) {
+  .testimony-video {
+    margin-top: 5%;
+  }
+}
 
 
 /* Garantia Section
@@ -610,8 +702,16 @@ p {
 }
 
 .garantia-section img {
-  padding-top: 40px;
+  padding-top: 30px;
   max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 991px) {
+  .garantia-section h1 {
+    margin-top: 50px;
+  }
 }
 
 .garantia-section li {
