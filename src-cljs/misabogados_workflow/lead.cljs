@@ -78,7 +78,7 @@
                   [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
                    [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]]
                  [:div.modal-body
-                  (el/form "New client" [client-data]
+                  (el/form "New client" [client-data (r/atom {}) (r/atom {})]
                            ["Client"
                             (el/input-text "Clients name" [:new-client :name])
                             (el/input-email "Clients email" [:new-client :email])
@@ -107,7 +107,7 @@
                   [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
                    [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]]
                  [:div.modal-body
-                  (el/form "Edit client" [client-data]
+                  (el/form "Edit client" [client-data (r/atom {}) (r/atom {})]
                            ["Client"
                             (el/input-text "Clients name" [:edit-client :name])
                             (el/input-email "Clients email" [:edit-client :email])
@@ -277,11 +277,7 @@
      {:render-type :text
       :label "Lead Type"}
      :problem
-     {:render-type :text}}}}
-  :feed
-  {:render-type :entity
-   :field-definitions {:test {:render-type :text
-                         :label "Lead Type"}}})
+     {:render-type :text}}}})
 
 
 (def data-l {:lead {:client "cl", :match
@@ -293,13 +289,14 @@
 (defn schema []
   (let [atoms [(r/atom data-l) (r/atom {}) (r/atom {})]
         schema (r/atom schema-expanded)
-        fieldsets (r/cursor schema [3])]
+        meetings (r/cursor (first atoms) [:lead :match :meetings])]
     (fn []
       [:div (str "data " @(first atoms)) [:br]
+       (str @(last atoms))
       ; (str "schema " @schema)
        (apply el/form "schema form" atoms (map (fn [schema] (el/render-form schema @(first atoms) [])) @schema))
-       [:button.btn.btn-primary {:on-click #(swap! fieldsets conj [:fieldset "newfs" [:field-new "new field" {:type :email}]])}
-        "new fs"]
+       [:button.btn.btn-primary {:on-click #(swap! meetings conj {})}
+        "New Meeting"]
        ])))
 
 
