@@ -375,6 +375,13 @@ p {
   text-transform: uppercase;
 }
 
+@media (max-width: 992px) {
+  .footer-contact div {
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+}
+
 .footer-contact i {
   font-size: 18px;
   padding-right: 5px;
@@ -427,6 +434,12 @@ p {
   font-size: 1em;
   margin-top: 15px;
   margin-bottom: 100px;
+}
+
+@media (max-width: 992px) {
+  .cta button {
+    margin-bottom: 50px;
+  }
 }
 
 .cta h5 {
@@ -571,9 +584,13 @@ p {
   font-size: 18px;
 }
 
-@media (max-width: 991px) {
+@media (max-width: 768px) {
   .lawyer-list {
     margin-top: 75px;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 20px;
   }
 }
 
@@ -611,6 +628,8 @@ p {
   }
 }
 
+
+
 /* Testimonies Section
 ---------------------------------------------*/
 
@@ -629,7 +648,8 @@ p {
 }
 
 .testimonies-list img {
-  max-height: 150px;
+  max-height: 125px;
+  float: right;
 }
 
 .testimonies-list h4 {
@@ -646,6 +666,11 @@ p {
 }
 
 @media (max-width: 787px) {
+
+  .testimonies-list {
+    padding-left: 20px;
+  }
+
   .testimonies-list h4 {
     font-size: 16px;
   }
@@ -657,8 +682,15 @@ p {
 
 .testimony-video {
   margin-top: 10%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
+@media (max-width: 992px) {
+  .testimony-video {
+    margin-top: 5%;
+  }
+}
 
 
 /* Garantia Section
@@ -670,8 +702,16 @@ p {
 }
 
 .garantia-section img {
-  padding-top: 40px;
+  padding-top: 30px;
   max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 991px) {
+  .garantia-section h1 {
+    margin-top: 50px;
+  }
 }
 
 .garantia-section li {
