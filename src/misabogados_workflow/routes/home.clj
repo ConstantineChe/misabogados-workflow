@@ -8,7 +8,8 @@
             [misabogados-workflow.db.core :as db]
             [clojure.pprint :refer [pprint]]
             [misabogados-workflow.layout :refer [render]]
-            [misabogados-workflow.email :as email]))
+            [misabogados-workflow.email :as email]
+            [clj-recaptcha.client-v2 :as c]))
 
 (defn home-page [request]
   (render "app.html" {:forms-css (-> "reagent-forms.css" io/resource slurp)}))
@@ -17,14 +18,19 @@
                                                ;; [:p (val item)]]) request)]]))
 
 (defn create-lead-from-contact [{:keys [params]}]
-  (let [
-        client-fields (clojure.set/rename-keys (select-keys params [:client_name :client_phone :client_email])
-                                   {:client_name :name :client_phone :phone :client_email :email})
-        client (mc/insert-and-return @db/db "clients" client-fields)
-        lead-fields (into {:client_id (:_id client) :lead_source_code "page"} (select-keys params [:lead_type_code :problem]))]
-    (mc/insert @db/db "leads" lead-fields)
-    (future (email/contact-email params))
-    (redirect "/")))
+  (clojure.pprint/pprint params)
+  (let [recaptcha-response (c/verify "6Lc92P4SAAAAAMydKZy-wL7PAUTJghmVU7sXfehY" (:g-recaptcha-response params))]
+    (if (:valid? recaptcha-response)
+      (let [
+            client-fields (clojure.set/rename-keys (select-keys params [:client_name :client_phone :client_email])
+                                                   {:client_name :name :client_phone :phone :client_email :email})
+            client (mc/insert-and-return @db/db "clients" client-fields)
+            lead-fields (into {:client_id (:_id client) :lead_source_code "page"} (select-keys params [:lead_type_code :problem]))
+            ]
+        (mc/insert @db/db "leads" lead-fields)
+        (future (email/contact-email params))
+        (redirect "/"))
+      (render "contact.html" (assoc params :messages {:errors {:g-recaptcha-response "Captcha es requerido"}}) ))))
 
 (defn save-document [doc]
   (pprint doc)
