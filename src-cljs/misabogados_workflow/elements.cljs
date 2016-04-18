@@ -9,6 +9,9 @@
 
 (defn gen-name [cursor] (->> cursor (into []) (map #(if (keyword? %) (name %) %)) (interpose "-") (apply str)))
 
+(defn drop-nth [coll n]
+   (keep-indexed #(if (not= %1 n) %2) coll))
+
 (defn prepare-input [cursor form]
   ((juxt gen-name #(r/cursor form (into [] %))) cursor))
 
@@ -196,6 +199,22 @@
        [create]
        ])))
 
+(defn btn-new-fieldset [cursor label]
+  (fn [[form]]
+    (let [[name cursor] (prepare-input cursor form)]
+      [:button.btn.btn-secondary
+       {:key (str "add-" label)
+        :on-click #(swap! cursor conj {})}
+       label])))
+
+(defn btn-remove-fieldset [cursor index label]
+  (fn [[form]]
+    (let [[name cursor] (prepare-input cursor form)]
+      [:button.btn.btn-secondary
+       {:key (str label index)
+        :on-click #(swap! cursor drop-nth index)}
+       label])))
+
 (def input-text (partial input :text))
 
 (def input-password (partial input :password))
@@ -217,30 +236,41 @@
 
 
 
-(defn fieldset-fn [form-data [legend & fields] path]
+(defn fieldset-fn [form-data [legend & fields] path hidden?]
   (let [[data _ util] form-data
         new-path (conj path (keyword legend))
-        hidden (r/cursor util (conj new-path :hidden))]
-    (when (nil? @hidden) (reset! hidden false))
+        hidden (r/cursor util (conj new-path :hidden))
+        fieldset-list (group-by first (filter (fn [fld] (some #(and (and (vector? fld) (vector? %))
+                                                     (= (first fld) (first %))) fields))
+                                              fields))]
+    (when (nil? @hidden) (reset! hidden hidden?))
     (list
-     [:span.clearfix {:key (str "cf" legend)}]
+     [:span.clearfix {:key (str legend "-cf")}]
      [:fieldset {:key legend}
       [:legend legend (if @hidden
-                        [:button.btn.btn-default {:on-click #(swap! hidden not)} "show"]
-                        [:button.btn.btn-default {:on-click #(swap! hidden not)} "hide"])]
+                        [:button.btn.btn-default {:on-click #(do (swap! hidden not) nil)} "show"]
+                        [:button.btn.btn-default {:on-click #(do (swap! hidden not) nil)} "hide"])]
       (if-not @hidden
         [:div
-         (doall (for [field fields]
+         (doall (for [field fields
+                      :let [hidden? (if (and (sequential? field)
+                                             (= field (last (get fieldset-list (first field))))) false true)]]
                   (if (sequential? field)
-                    (fieldset-fn form-data field (conj new-path (.indexOf (to-array fields) field)))
+                    (if (< 1 (count (get fieldset-list (first field))))
+                      (fieldset-fn form-data field
+                                   (conj new-path (.indexOf
+                                                   (to-array (get fieldset-list (first field)))
+                                                   field)) hidden?)
+                      (fieldset-fn form-data field new-path false))
                     (field form-data))))])])))
+
 
 (defn form [legend form-data & fieldsets]
   [:div.form-horizontal
    [:legend legend]
    [:div
     (doall (for [fieldset fieldsets]
-             (fieldset-fn form-data fieldset [:visiblity])))]])
+             (fieldset-fn form-data fieldset [:visiblity] false)))]])
 
 
 
@@ -255,14 +285,18 @@
                     :label (:entity-label schema)
                     :field-definitions content}]
     (into [label]
-          (for [i (range (count (get-in data (conj path key))))]
-            (render-form [i collection] data (conj path key) key) ))))
+          (conj (vec (for [i (range (count (get-in data (conj path key))))]
+                       (render-form [i collection] data (conj path key) key) ))
+                (btn-new-fieldset (conj path key) (str "New " (:entity-label schema)))))))
 
 (defmethod render-form :entity [[key schema] data path]
   (let [{label :label content :field-definitions} schema
-        label (if label label (name key))]
+        label (if label label (name key))
+        content (map #(render-form % data (conj path key)) content)]
     (into [label]
-           (map #(render-form % data (conj path key)) content))))
+          (if (number? key)
+            (conj (vec content) (btn-remove-fieldset path key (str "Remove " label)))
+            content))))
 
 (defmethod render-form :default [[key schema] data path]
   (let [{type :render-type label :label} schema]
