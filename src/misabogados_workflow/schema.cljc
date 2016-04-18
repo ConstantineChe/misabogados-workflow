@@ -7,7 +7,9 @@
    [inflections.core :refer :all]))
 
 (defmacro defentity
-  "Defines an entity. The data provided here is enough to tell what is the possible structure of stored entity and where it is stored. It is also enough to generate scaffold form to edit this entity"
+  "Defines an entity. The data provided here is enough to tell what is the
+possible structure of stored entity and where it is stored.
+It is also enough to generate scaffold form to edit this entity"
   [name & fields]
 
   (let [name# (str name)]
