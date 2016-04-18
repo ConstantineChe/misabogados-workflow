@@ -6,38 +6,43 @@
    [clojure.zip :as z]
    [inflections.core :refer :all]))
 
+
 (defmacro defentity
   "Defines an entity. The data provided here is enough to tell what is the possible structure of stored entity and where it is stored. It is also enough to generate scaffold form to edit this entity"
   [name & fields]
-
   (let [name# (str name)]
-    `(do (def ~(symbol name#) {:name (keyword ~name#)
-                               :type :entity
-                               :collection-name (plural (underscore ~name#))
-                               :field-definitions [~@fields]
-                               })
+    `(do (def ~(symbol name#) (entity ~(keyword name#) 
+                                      ~fields))
          (defn ~(symbol (str name# "-get")) [] (println "GET " ~name#)))))
 
+(defn entity
+  "Defines an entity. The data provided here is enough to tell what is the possible structure of stored entity and where it is stored. It is also enough to generate scaffold form to edit this entity"
+  [name & fields]
+  (entity-schema (keyword name) 
+                 {:type :entity
+                  :collection-name (plural (underscore name))}
+                 fields)
+  
+  )
+
+(defn entity-schema [name mixin fields] {name (conj mixin {:field-definitions (reduce conj fields)})})
 
 ;; Functions that define fields
-(defn embeds-many [name & fields]
-  {:name name
-   :type :embedded-collection
-   :field-definitions (into [] fields)})
+(defn embeds-many [name & fields] (entity-schema name {:type :embadded-collection} fields))
 
-(defn text-field [name] {:name name
-                         :type :text-field})
-(defn has-many [entity] {:name (:name entity)
-                         :type :collection-refenence})
-(defn has-one [entity] {:name (:name entity)
-                        :type :entity-refenence})
-(defn simple-dict-field [name] {:name name
-                                :type :dictionary-reference})
-(defn embeds-one [name & fields] {:name name
-                                  :type :embedded-entity
-                                  :field-definitions (into [] fields)})
-(defn datetime-field [name] {:name name
-                             :type :datetime-field})
+(defn text-field [name] {name {
+                               :type :text-field}})
+(defn has-many [entity] {(key (first entity)) 
+                         {
+                                         :type :collection-refenence}})
+(defn has-one [entity] {(key (first entity)) 
+                        {
+                                        :type :entity-refenence}})
+(defn simple-dict-field [name] {name {
+                                      :type :dictionary-reference}})
+(defn embeds-one [name & fields] (entity-schema name {:type :embadded-entity} fields))
+(defn datetime-field [name] {name {
+                               :type :datetime-field}})
 
 ;; Definitions of entities. This is what we actually have to write in order to define entities in the system
 (declare category lawyer lead client)
@@ -54,7 +59,8 @@
 
 (defentity client
   (text-field :name)
-  (text-field :phone))
+  (text-field :phone)
+  (text-field :email))
 
 (defentity lead
   (has-one client)

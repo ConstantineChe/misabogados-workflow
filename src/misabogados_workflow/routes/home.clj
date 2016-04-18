@@ -9,7 +9,7 @@
             [clojure.pprint :refer [pprint]]
             [misabogados-workflow.layout :refer [render]]
             [misabogados-workflow.email :as email]
-            [clj-recaptcha.client-v2 :as c]))
+            ))
 
 (defn home-page [request]
   (render "app.html" {:forms-css (-> "reagent-forms.css" io/resource slurp)}))
@@ -18,8 +18,7 @@
                                                ;; [:p (val item)]]) request)]]))
 
 (defn create-lead-from-contact [{:keys [params]}]
-  (clojure.pprint/pprint params)
-  (let [recaptcha-response (c/verify "6Lc92P4SAAAAAMydKZy-wL7PAUTJghmVU7sXfehY" (:g-recaptcha-response params))]
+  (let [recaptcha-response (u/check-recaptcha params)]
     (if (:valid? recaptcha-response)
       (let [
             client-fields (clojure.set/rename-keys (select-keys params [:client_name :client_phone :client_email])
