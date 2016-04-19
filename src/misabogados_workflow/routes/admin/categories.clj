@@ -32,7 +32,6 @@
   (response (mc/find-one-as-map @db/db "categories" {:_id (oid id)}))
   )
 
-
 (defroutes categories-admin
   (GET "/admin/categories" [] (restrict get-categories
                                         {:handler ac/admin-access

@@ -1,24 +1,24 @@
 (ns misabogados-workflow.schema
   (:require
-   #?(:cljs [misabogados-workflow.elements :as el])
-   #?(:cljs [reagent.core :as r])
    [clojure.walk :as w]
-   [clojure.zip :as z]
-   [inflections.core :refer :all]))
+ ;  #?(:clj [inflections.core :as i])
+)
+  #?(:cljs (:require-macros [misabogados-workflow.schema :refer [defexpand]]))
+   )
 
 (defmacro defentity
-  "Defines an entity. The data provided here is enough to tell what is the
-possible structure of stored entity and where it is stored.
-It is also enough to generate scaffold form to edit this entity"
-  [name & fields]
+      "Defines an entity. The data provided here is enough to tell what is the
+  possible structure of stored entity and where it is stored.
+  It is also enough to generate scaffold form to edit this entity"
+      [name & fields]
 
-  (let [name# (str name)]
-    `(do (def ~(symbol name#) {:name (keyword ~name#)
-                               :type :entity
-                               :collection-name (plural (underscore ~name#))
-                               :field-definitions [~@fields]
-                               })
-         (defn ~(symbol (str name# "-get")) [] (println "GET " ~name#)))))
+      (let [name# (str name)]
+        `(do (def ~(symbol name#) {:name (keyword ~name#)
+                                   :type :entity
+                                   :collection-name ~name# ;(i/plural (i/underscore ~name#))
+                                   :field-definitions [~@fields]
+                                   })
+             (defn ~(symbol (str name# "-get")) [] (println "GET " ~name#)))))
 
 
 ;; Functions that define fields
@@ -69,31 +69,23 @@ It is also enough to generate scaffold form to edit this entity"
                            (datetime-field :time))))
 
 ;; This is what entity definitions should be expanded to. This data structures holds all information abount entity and it's fields in format easily digestable programmatically.
-(def category-schema-expanded
-  {:category
+
+(defmacro defexpand [name schema]
+  `(def ~(symbol (str name "-expanded")) ~schema))
+
+(defexpand category-macro
+  (array-map
+   :category
    {:render-type :entity
     :collection-name "categories"
     :field-definitions
-    {:faq-item
-     {:render-type :collection
-      :entity-label "FAQ item"
-      :field-definitions
-      {:question
-       {:render-type :text}
-       :contents
-       {:render-type :markdown}}}
-     :post
-     {:type :collection
-      :entity-label "Post"
-      :field-definitions
-      {:title
-       {:type :text-field}
-       :link
-       {:type :url-field}}}
+    (array-map
      :name
      {:render-type :text
       :label "Name"}
      :quote
+     {:render-type :text}
+     :slug
      {:render-type :text}
      :persons
      {:render-type :checkbox}
@@ -101,10 +93,69 @@ It is also enough to generate scaffold form to edit this entity"
      {:render-type :checkbox}
      :showed_by_default
      {:render-type :checkbox}
+     :meta_description
+     {:render-type :markdown}
+     :faq_items
+     {:render-type :collection
+      :entity-label "FAQ item"
+      :field-definitions
+      (array-map
+       :name
+       {:render-type :text}
+       :text
+       {:render-type :markdown})}
+     :posts
+     {:render-type :collection
+      :entity-label "Post"
+      :field-definitions
+      (array-map
+       :name
+       {:render-type :text}
+       :url
+       {:render-type :text})})
+     }))
+
+(def category-schema-expanded
+  (array-map
+   :category
+   {:render-type :entity
+    :collection-name "categories"
+    :field-definitions
+    (array-map
+     :name
+     {:render-type :text
+      :label "Name"}
+     :quote
+     {:render-type :text}
      :slug
      {:render-type :text}
-     :description
-     {:render-type :markdown}}}})
+     :persons
+     {:render-type :checkbox}
+     :enterprises
+     {:render-type :checkbox}
+     :showed_by_default
+     {:render-type :checkbox}
+     :meta_description
+     {:render-type :markdown}
+     :faq_items
+     {:render-type :collection
+      :entity-label "FAQ item"
+      :field-definitions
+      (array-map
+       :name
+       {:render-type :text}
+       :text
+       {:render-type :markdown})}
+     :posts
+     {:render-type :collection
+      :entity-label "Post"
+      :field-definitions
+      (array-map
+       :name
+       {:render-type :text}
+       :url
+       {:render-type :text})})
+     }))
 
 (def lead-schema-expanded
   {:name :lead

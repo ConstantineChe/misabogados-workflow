@@ -6,9 +6,9 @@
               [misabogados-workflow.elements :as el]
               [bouncer.core :as b]
               [bouncer.validators :as v]
+              [misabogados-workflow.schema :as s]
               [clojure.walk :refer [keywordize-keys]]
               [secretary.core :as secretary :include-macros true]))
-
 
 (defn categories-table
   "Create table from categories list."
@@ -47,6 +47,12 @@
                                                            (js/alert (str %)))})
     (fn []
       [:div.container
+       [:legend "Admin Dashboard"]
+       [:div.btn-group
+        [:a {:href "#/admin"} [:button.btn {:class (if (= (session/get :page) :admin)
+                                                               "btn-primary" "btn-default")} "Manage users"]]
+        [:a {:href "#/admin/categories"} [:button.btn {:class (if (= (session/get :page) :admin/categories)
+                                                                "btn-primary" "btn-default")} "Manage categories"]]]
        [:h1 "Categories"]
        [:button.btn.btn-primary "New category"]
        (categories-table @categories)])))
@@ -56,18 +62,18 @@
   "Edit category page component."
   []
   (let [id (session/get :current-category-id)
-        category (r/atom nil)]
-    (GET (str js/context "/admin/categories/" id) {:handler #(reset! category (keywordize-keys %))
+        category (r/atom nil)
+        util (r/atom nil)
+        options (r/atom nil)]
+    (GET (str js/context "/admin/categories/" id) {:handler #(reset! category {:category (keywordize-keys %)})
                                                    :error-handler #(case (:status %)
                                                            403 (js/alert "Access denied")
                                                            500 (js/alert "Internal server error")
                                                            (js/alert (str %)))})
     (fn []
       [:div.container
-       [:h1 "Edit categoty"]
        id [:br]
-       @category]))
-  )
+       (el/create-form "Edit category" s/category-schema-expanded [category options util])])))
 
 
 (def pages

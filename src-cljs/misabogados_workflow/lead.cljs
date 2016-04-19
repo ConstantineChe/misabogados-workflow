@@ -8,7 +8,10 @@
               [bouncer.validators :as v]
               [clojure.walk :refer [keywordize-keys]]
               [secretary.core :as secretary :include-macros true]
-              [json-html.core :refer [edn->hiccup]]))
+              [json-html.core :refer [edn->hiccup]]
+              [misabogados-workflow.schema :as s])
+    (:require-macros [misabogados-workflow.schema :refer [defexpand]])
+    )
 
 (defn create-client! [data id-cursor options text]
   (POST (str js/context "/users/client") {:params {:data (:new-client data)}
@@ -287,17 +290,17 @@
 )
 
 (defn schema []
-  (let [atoms [(r/atom data-l) (r/atom {}) (r/atom {})]
+  (let [atoms [(r/atom {}) (r/atom {}) (r/atom {})]
         meetings (r/cursor (first atoms) [:lead :match :meetings])]
     (fn []
       [:div (str "data " @(first atoms)) [:br]
        (str @(last atoms))
       ; (str "schema " @schema)
-       (apply el/form "apply schema form" atoms (map (fn [schema] (el/render-form schema @(first atoms) [])) schema-expanded))
+       (apply el/form "apply schema form" atoms (map (fn [schema] (el/render-form schema @(first atoms) []))
+                                                     s/category-macro-expanded))
        [:button.btn.btn-primary {:on-click #(swap! meetings conj {})}
         "New Meeting"]
        ])))
-
 
 (def pages
   {:new-lead #'new-lead

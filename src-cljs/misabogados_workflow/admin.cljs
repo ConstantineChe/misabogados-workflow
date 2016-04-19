@@ -36,7 +36,12 @@
     (fn []
       [:div.container
        (if (:role (session/get :user))
-         [:legend (clojure.string/capitalize (:role (session/get :user)))  " Dashboard"])
+         [:legend "Admin Dashboard"])
+       [:div.btn-group
+        [:a {:href "#/admin"} [:button.btn {:class (if (= (session/get :page) :admin)
+                                                               "btn-primary" "btn-default")} "Manage users"]]
+        [:a {:href "#/admin/categories"} [:button.btn {:class (if (= (session/get :page) :admin/categories)
+                                                                "btn-primary" "btn-default")} "Manage categories"]]]
        (if-not (nil? @error) [:p.error (str @error)])
        (if-not (empty? @table-data)
          [:div.container

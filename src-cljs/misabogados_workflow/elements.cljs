@@ -210,10 +210,12 @@
 (defn btn-remove-fieldset [cursor index label]
   (fn [[form]]
     (let [[name cursor] (prepare-input cursor form)]
-      [:button.btn.btn-secondary
-       {:key (str label index)
-        :on-click #(swap! cursor drop-nth index)}
-       label])))
+      (list
+       [:span.clearfix {:key :remove-cf}]
+       [:button.btn.btn-secondary
+        {:key (str label index)
+         :on-click #(swap! cursor drop-nth index)}
+        label]))))
 
 (def input-text (partial input :text))
 
@@ -232,6 +234,8 @@
    :textarea input-textarea
    :typeahead input-textarea
    :date-time input-datetimepicker
+   :checkbox input-checkbox
+   :markdown input-textarea
    :entity input-entity})
 
 
@@ -260,7 +264,7 @@
                       (fieldset-fn form-data field
                                    (conj new-path (.indexOf
                                                    (to-array (get fieldset-list (first field)))
-                                                   field)) hidden?)
+                                                   field)) false) ;;hidden?
                       (fieldset-fn form-data field new-path false))
                     (field form-data))))])])))
 
@@ -276,6 +280,7 @@
 
 (defmulti render-form
   (fn [[key schema] data path]
+;    (prn key ":" schema)
     (:render-type schema)))
 
 (defmethod render-form :collection [[key schema] data path]
@@ -320,3 +325,10 @@
 (defn prepare-atom [schema atom]
   (reset! atom (apply merge (map get-struct schema)))
   atom)
+
+
+(defn create-form
+  "Create form from schema."
+  [legend schema atoms]
+  (apply form legend atoms (map #(render-form % @(first atoms) []) schema))
+  )
