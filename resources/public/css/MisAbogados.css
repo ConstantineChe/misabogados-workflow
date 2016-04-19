@@ -225,6 +225,7 @@ p {
 .navbar-ctl {
   height: 50px;
   float: right;
+  padding-right: 5px;
 }
 
   .navbar-ctl li {
@@ -365,7 +366,7 @@ p {
 @media (min-width: 768px) {
   .navbar-toggle {
     margin-right: 5px;
-    margin-left: 20px;
+    margin-left: 15px;
   }
 }
 
