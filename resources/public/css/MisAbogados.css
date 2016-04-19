@@ -222,22 +222,57 @@ p {
 
 }
 
-.navbar-cta {
+.navbar-ctl {
   height: 50px;
-  padding-top: 13px;
   float: right;
-  margin-right: 20px;
 }
 
-.navbar-cta a {
-  color: #FFFFFF;
-  font-size: 18px;
-  font-weight: bold;
+  .navbar-ctl li {
+    float: left;
+    margin-right: 20px;
+    padding-top: 15px;
+  }
+
+  .navbar-ctl a {
+    color: #FFFFFF !important;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .navbar-ctl a:hover {
+    color: #b2b2b2 !important;
+  }
+
+  .navbar-ctl ul {
+    padding-left: 0px !important;
+    min-width: 150px;
+  }
+
+@media (min-width: 768px) {
+  .country-selector {
+    padding-top: 12px !important;
+  }
 }
 
-.navbar ul {
-  padding-left: 20px;
-}
+  .dropdown-toggle img {
+    height: 25px;
+  }
+
+  .country-selector li {
+    width: 100%;
+    padding-top: 0px;
+  }
+
+  .country-selector li img {
+    margin-right: 10px;
+    height: 20px;
+  }
+
+  .country-selector li a {
+    padding: 10px 20px !important;
+    font-size: 14px;
+  }
 
 .navbar-button a {
   margin-top: 2px;
@@ -251,6 +286,7 @@ p {
 
 .dropdown-menu {
   background-color: #2b2b2b;
+  color: #FFFFFF;
 }
 
 .dropdown-menu li a {
@@ -320,6 +356,18 @@ p {
 
 .navbar-toggle {
   margin-right: 5px;
+  margin-left: 5px;
+}
+
+@media (max-width: 1010px) {
+  .navbar-collapse ul {
+    padding-left: 20px;
+  }
+
+  .navbar-nav li a {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
 }
 
 
