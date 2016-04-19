@@ -74,6 +74,7 @@ p {
 
 
 
+
 /* Helpers
 ---------------------------------------------*/
 
@@ -382,6 +383,7 @@ p {
 }
 
 
+
 /* Contact Form
 ---------------------------------------------*/
 .contact-form h4 {
@@ -400,9 +402,14 @@ p {
   font-weight: bold;
 }
 
+.btn-default.active {
+  background-color: #c0c0c0 !important;
+}
+
 .contact-form textarea {
   resize: vertical;
 }
+
 
 
 /* Footer
