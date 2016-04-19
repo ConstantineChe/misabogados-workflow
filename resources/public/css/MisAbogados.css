@@ -49,7 +49,10 @@ p {
 
 .glyphicon {
   vertical-align: middle;
-  margin-top: -3px;
+  margin-top: -5px;
+}
+
+.glyphicon-left {
   margin-right: 5px;
 }
 
@@ -68,6 +71,7 @@ p {
     visibility: hidden;
   }
 }
+
 
 
 /* Helpers
@@ -123,6 +127,12 @@ p {
   background-color: rgba(0, 0, 34, 0.498039);
   padding-top: 30px;
   padding-bottom: 30px;
+}
+
+/* Adds helper class for removing button background */
+.btn-no-fill {
+  background-color: rgba(0, 0, 0, 0);
+  color: #FFFFFF;
 }
 
 /* For implementing a 5 colum layout */
