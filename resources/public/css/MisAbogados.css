@@ -10,7 +10,7 @@
 body {
   /* Move down content because we have a fixed navbar that is 50px tall */
   font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
-  padding-top: 80px;
+  padding-top: 75px;
 }
 
 @media (max-width: 1010px) {
@@ -49,7 +49,10 @@ p {
 
 .glyphicon {
   vertical-align: middle;
-  margin-top: -3px;
+  margin-top: -5px;
+}
+
+.glyphicon-left {
   margin-right: 5px;
 }
 
@@ -68,6 +71,8 @@ p {
     visibility: hidden;
   }
 }
+
+
 
 
 /* Helpers
@@ -123,6 +128,12 @@ p {
   background-color: rgba(0, 0, 34, 0.498039);
   padding-top: 30px;
   padding-bottom: 30px;
+}
+
+/* Adds helper class for removing button background */
+.btn-no-fill {
+  background-color: rgba(0, 0, 0, 0);
+  color: #FFFFFF;
 }
 
 /* For implementing a 5 colum layout */
@@ -190,28 +201,84 @@ p {
 }
 
 .navbar-brand {
-  padding-top: 10px;
+  height: 50px;
+  margin-left: 5px !important;
+  padding: 9px 0px;
 }
 
 .navbar-logo {
-  height: 25px;
+  height: 33px;
 }
 
-.navbar-cta {
+@media (min-width: 1011px) {
+  .navbar-brand {
+    height: 50px;
+    margin-left: 0px !important;
+    padding: 9px 0px;
+  }
+
+  .navbar-logo {
+    height: 33px;
+  }
+
+}
+
+.navbar-ctl {
   height: 50px;
-  padding-top: 13px;
   float: right;
+  padding-right: 5px;
 }
 
-.navbar-cta a {
-  color: #FFFFFF;
-  font-size: 18px;
-  font-weight: bold;
+  .navbar-ctl li {
+    float: left;
+    margin-right: 20px;
+    padding-top: 15px;
+  }
+
+  .navbar-ctl li:last-of-type {
+    margin-right: 0px;
+  }
+
+  .navbar-ctl a {
+    color: #FFFFFF !important;
+    font-size: 18px;
+    font-weight: bold;
+    text-decoration: none;
+  }
+
+  .navbar-ctl a:hover {
+    color: #b2b2b2 !important;
+  }
+
+  .navbar-ctl ul {
+    padding-left: 0px !important;
+    min-width: 150px;
+  }
+
+@media (min-width: 768px) {
+  .country-selector {
+    padding-top: 12px !important;
+  }
 }
 
-.navbar ul {
-  padding-left: 20px;
-}
+  .dropdown-toggle img {
+    height: 25px;
+  }
+
+  .country-selector li {
+    width: 100%;
+    padding-top: 0px;
+  }
+
+  .country-selector li img {
+    margin-right: 10px;
+    height: 20px;
+  }
+
+  .country-selector li a {
+    padding: 10px 20px !important;
+    font-size: 14px;
+  }
 
 .navbar-button a {
   margin-top: 2px;
@@ -225,6 +292,7 @@ p {
 
 .dropdown-menu {
   background-color: #2b2b2b;
+  color: #FFFFFF;
 }
 
 .dropdown-menu li a {
@@ -242,6 +310,16 @@ p {
 
 @media (min-width: 1011px) {
 
+  .button-bar {
+    height: 40px;
+  }
+
+  .navbar-button a {
+    margin-top: 0px;
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+  }
+
   .navbar ul {
     padding-left: 0px;
     border-top: solid 1px #363636;
@@ -253,6 +331,7 @@ p {
     border-left: solid 1px #363636;
     font-size: 16px;
     text-align: center;
+    vertical-align: middle;
     background: linear-gradient(top, #2b2b2b, #262626); /* Standard syntax */
       background: -webkit-linear-gradient(top, #2b2b2b, #262626); /* For Safari 5.1 to 6.0 */
       background: -o-linear-gradient(top, #2b2b2b, #262626); /* For Opera 11.1 to 12.0 */
@@ -260,10 +339,15 @@ p {
   }
 
   .navbar-button button {
+    margin-top: 5px;
     margin-left: 0px;
     margin-bottom: 0px;
     font-size: 16px;
     font-weight: bold;
+    max-height: 30px;
+    max-width: 175px;
+    padding-top: 3px;
+    padding-bottom: 3px;
   }
 
   .navbar-button button span {
@@ -273,6 +357,28 @@ p {
 
   .navbar-button:last-of-type {
     border-right: solid 1px #363636;
+  }
+}
+
+.navbar-toggle {
+  margin-right: 5px;
+}
+
+@media (min-width: 768px) {
+  .navbar-toggle {
+    margin-right: 5px;
+    margin-left: 15px;
+  }
+}
+
+@media (max-width: 1010px) {
+  .navbar-collapse ul {
+    padding-left: 20px;
+  }
+
+  .navbar-nav li a {
+    padding-top: 6px;
+    padding-bottom: 6px;
   }
 }
 
@@ -289,16 +395,21 @@ p {
 .contact-form h5 {
   text-align: center;
   font-size: 1.25em;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
 }
 
 .bold {
   font-weight: bold;
 }
 
+.btn-default.active {
+  background-color: #c0c0c0 !important;
+}
+
 .contact-form textarea {
   resize: vertical;
 }
+
 
 
 /* Footer
@@ -364,7 +475,7 @@ p {
 }
 
 .footer-contact {
-  background-color: #4A8FE2;
+  background-color: #2877D7;
   font-size: 14px;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -478,7 +589,7 @@ p {
 }
 
 .categories-section h1 {
-  color: #4A8FE2;
+  color: #2877D7;
   text-align: center;
   margin-bottom: 30px;
 }
@@ -576,7 +687,7 @@ p {
 ---------------------------------------------*/
 
 .lawyers-section {
-  background-color: #4A8FE2;
+  background-color: #2877D7;
   color: #FFFFFF;
 }
 
@@ -661,8 +772,9 @@ p {
 .testimonies-list blockquote {
   font-size: 16px;
   font-style: italic;
-  padding: 0px 20px;
+  padding: 0px;
   margin-bottom: 0px;
+  border-left: none;
 }
 
 @media (max-width: 787px) {
@@ -697,7 +809,7 @@ p {
 ---------------------------------------------*/
 
 .garantia-section {
-  background-color: #4A8FE2;
+  background-color: #2877D7;
   color: #FFFFFF;
 }
 

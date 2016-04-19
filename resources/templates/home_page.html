@@ -260,7 +260,7 @@
           <li>Abogados certificados y garantizados.</li>
           <li>Especialistas en todas las áreas legales.</li>
         </ul>
-        <button type="button" class="btn btn-default btn-lg">Ver más <span class="glyphicon  glyphicon-menu-right"></span></button>
+        <button type="button" class="btn  btn-default  btn-lg  btn-no-fill">Ver más <span class="glyphicon  glyphicon-menu-right"></span></button>
       </div>
 
       <!-- Featured Lawyers -->
@@ -422,7 +422,7 @@
           <li>Garantizamos el trabajo abogados.</li>
           <li>Contrata seguro, nosotros te respaldamos.</li>
         </ul>
-        <button type="button" class="btn  btn-default  btn-lg">Ver más <span class="glyphicon  glyphicon-menu-right"></span></button>
+        <button type="button" class="btn  btn-default  btn-lg  btn-no-fill">Ver más <span class="glyphicon  glyphicon-menu-right"></span></button>
       </div>
 
     </div>
@@ -472,28 +472,26 @@
 <div class="modal fade" id="contactForm" tabindex="-1" role="dialog" aria-labelledby="contactModalLabel">
   <div class="modal-dialog  contact-form" role="document">
     <div class="modal-content">
-      <div class="modal-header">
+      <div class="modal-body">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title" id="contactModalLabel">A un paso de comenzar</h4>
-      </div>
-      <div class="modal-body">
         <h5>Déjanos tus datos para responderte dentro de los próximos minutos. <span class="bold">100% Confidencial.</span></h5>
         <form id="contact_form" method="POST" action="/contact">
           <input id="__anti-forgery-token" name="__anti-forgery-token" type="hidden" value="OS1C7RBV26f1kKpos3E8tvsmgHIhPxLQZ+z48JIRp2wo2ZrkIpyv85vSjJ4nOSGu9ndu8h75PpSvBTNd" />
           <div class="form-group">
             <label class="control-label" for="client_name">Nombre:</label>
-            <input class="form-control" type="text" name="client_name" required/>
+            <input class="form-control" type="text" name="client_name" placeholder="Nombre" required/>
           </div>
           <div class="form-group">
             <label class="control-label" for="client_phone">Telefono:</label>
             <div class="input-group">
               <div class="input-group-addon">+56</div>
-              <input class="form-control" type="text" name="client_phone" required/>
+              <input class="form-control" type="text" name="client_phone" placeholder="Telefono" required/>
             </div>
           </div>
           <div class="form-group">
             <label class="control-label" for="client_email">Email:</label>
-            <input class="form-control" type="email" name="client_email" required/>
+            <input class="form-control" type="email" name="client_email" placeholder="Email" required/>
           </div>
           <div class="form-group">
             <label class="control-label" for="lead_type_code">Tipo:</label><br>
@@ -504,7 +502,7 @@
           </div>
           <div class="form-group">
             <label class="control-label" for="problem">Problema:</label>
-            <textarea class="form-control" type="textarea" name="problem" rows="4" required></textarea>
+            <textarea class="form-control" type="textarea" name="problem" rows="4" placeholder="¿Qué estás buscando? ¿Qué necesitas? Descríbenos tu problema aquí." required></textarea>
           </div>
           <button class="btn  btn-lg  btn-block  btn-success" data-loading-text="Cargando...">Conéctame con un Abogado</button>
         </form>
