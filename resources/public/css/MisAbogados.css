@@ -190,17 +190,33 @@ p {
 }
 
 .navbar-brand {
-  padding-top: 10px;
+  height: 50px;
+  margin-left: 5px !important;
+  padding: 9px 0px;
 }
 
 .navbar-logo {
-  height: 25px;
+  height: 33px;
+}
+
+@media (min-width: 1011px) {
+  .navbar-brand {
+    height: 50px;
+    margin-left: 0px !important;
+    padding: 9px 0px;
+  }
+
+  .navbar-logo {
+    height: 33px;
+  }
+
 }
 
 .navbar-cta {
   height: 50px;
   padding-top: 13px;
   float: right;
+  margin-right: 20px;
 }
 
 .navbar-cta a {
@@ -276,6 +292,9 @@ p {
   }
 }
 
+.navbar-toggle {
+  margin-right: 5px;
+}
 
 
 /* Contact Form
