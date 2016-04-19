@@ -70,28 +70,41 @@ It is also enough to generate scaffold form to edit this entity"
 
 ;; This is what entity definitions should be expanded to. This data structures holds all information abount entity and it's fields in format easily digestable programmatically.
 (def category-schema-expanded
-  {:name :category
-   :type :entity
-   :collection-name "categories"
-   :field-definitions [{:name :faq-item
-                        :type :embedded-collection
-                        :field-definitions [{:name :question
-                                             :type :text-field}
-                                            {:name :contents
-                                             :type :markdown-field}]}
-                       {:name :post
-                        :type :embedded-collection
-                        :field-definitions [{:name :title
-                                             :type :text-field}
-                                            {:name :link
-                                             :type :url-field}]}
-                       {:name :name
-                        :type :text-field
-                        :label "Name"}
-                       {:name :slug
-                        :type :text-field}
-                       {:name :description
-                        :type :markdown-field}]})
+  {:category
+   {:render-type :entity
+    :collection-name "categories"
+    :field-definitions
+    {:faq-item
+     {:render-type :collection
+      :entity-label "FAQ item"
+      :field-definitions
+      {:question
+       {:render-type :text}
+       :contents
+       {:render-type :markdown}}}
+     :post
+     {:type :collection
+      :entity-label "Post"
+      :field-definitions
+      {:title
+       {:type :text-field}
+       :link
+       {:type :url-field}}}
+     :name
+     {:render-type :text
+      :label "Name"}
+     :quote
+     {:render-type :text}
+     :persons
+     {:render-type :checkbox}
+     :enterprises
+     {:render-type :checkbox}
+     :showed_by_default
+     {:render-type :checkbox}
+     :slug
+     {:render-type :text}
+     :description
+     {:render-type :markdown}}}})
 
 (def lead-schema-expanded
   {:name :lead
