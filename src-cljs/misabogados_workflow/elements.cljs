@@ -27,13 +27,13 @@
         select (fn [[l v]] (do (reset! cursor v)
                               (reset! text l)
                               (reset! dropdown-class "")))
-        list (map-indexed (fn [i [label value :as option]]
+        dropdown-items (map-indexed (fn [i [label value :as option]]
                             [:li {:key i
                                   :on-mouse-over #(reset! selected-index i)
                                   :class (if (= i @selected-index) "active" "")
                                   :on-click #(select option)
-                                  :on-focus #((do (print value)
-                                                  (reset! cursor value)))} [:a label]])
+                                  :on-focus #(reset! cursor value)}
+                             [:a label]])
                           (if @f-opts @f-opts options))
         input [:input.form-control
                {:type :text
@@ -85,7 +85,7 @@
                  {:id name
                   :role :menu
                   :style {:height :auto :max-height :200px :overflow-x :hidden}}]
-                list
+                dropdown-items
                 ))]]))
 
 (defn input [type label cursor]
