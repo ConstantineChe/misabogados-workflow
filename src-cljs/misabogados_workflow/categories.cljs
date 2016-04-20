@@ -80,14 +80,14 @@
     (get-categories)
     (fn []
       [:div.container-fluid
-       [:legend "Admin Dashboard"]
+       [:h1 "Admin Dashboard"]
        [:div.btn-group
-        [:a {:href "#/admin"} [:button.btn {:class (if (= (session/get :page) :admin)
+        [:a {:href "#admin"} [:button.btn {:class (if (= (session/get :page) :admin)
                                                                "btn-primary" "btn-default")} "Manage users"]]
-        [:a {:href "#/admin/categories"} [:button.btn {:class (if (= (session/get :page) :admin/categories)
+        [:a {:href "#admin/categories"} [:button.btn {:class (if (= (session/get :page) :admin/categories)
                                                                 "btn-primary" "btn-default")} "Manage categories"]]]
        [:legend "Categories"]
-       [:a {:href "/#admin/categories/new"} [:button.btn.btn-primary "New category"]]
+       [:a {:href "#admin/categories/new"} [:button.btn.btn-primary "New category"]]
        (categories-table @categories)])))
 
 
@@ -111,7 +111,7 @@
           {:on-click #(save-category id @category)}
          "Save"]
         [:button.btn.btn-default
-         {:on-click #(aset js/window "location" "#/admin/categories")}
+         {:on-click #(aset js/window "location" "#admin/categories")}
          "Cancel"]]])))
 
 (defn new-category
@@ -130,7 +130,7 @@
           {:on-click #(create-category @category)}
          "Create"]
         [:button.btn.btn-default
-         {:on-click #(aset js/window "location" "#/admin/categories")}
+         {:on-click #(aset js/window "location" "#admin/categories")}
          "Cancel"]]]))
   )
 
