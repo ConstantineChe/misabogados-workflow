@@ -1,0 +1,67 @@
+/* Global
+---------------------------------------------*/
+
+body {
+  /* Move down content because we have a fixed navbar that is 50px tall */
+  font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
+  padding-top: 75px;
+}
+
+@media (max-width: 1010px) {
+  body {
+    padding-top: 0px;
+  }
+}
+
+h1, h2, h3, h4 {
+  font-family: "Raleway", serif;
+  font-weight: 300;
+}
+
+p {
+  font-size: 18px;
+}
+
+.btn-lg {
+  margin-top: 20px;
+}
+
+.jumbotron {
+  margin-bottom: 0px;
+  padding-bottom: 75px;
+}
+
+.jumbotron h1 {
+  font-size: 2.25em;
+}
+
+@media (min-width: 1010px) {
+  .jumbotron h1 {
+    font-size: 3.6em;
+  }
+}
+
+.glyphicon {
+  vertical-align: middle;
+  margin-top: -5px;
+}
+
+.glyphicon-left {
+  margin-right: 5px;
+}
+
+.anchor {
+ display: block;
+ height: 100px;
+ margin: -100px 0 0;
+ visibility: hidden;
+}
+
+@media (max-width: 992px) {
+  .anchor {
+    display: block;
+    height: 50px;
+    margin: -50px 0 0;
+    visibility: hidden;
+  }
+}

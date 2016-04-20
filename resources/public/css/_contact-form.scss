@@ -1,0 +1,25 @@
+/* Contact Form
+---------------------------------------------*/
+.contact-form h4 {
+  text-align: center;
+  text-transform: uppercase;
+  font-size: 2em;
+}
+
+.contact-form h5 {
+  text-align: center;
+  font-size: 1.25em;
+  margin-bottom: 20px;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.btn-default.active {
+  background-color: #c0c0c0 !important;
+}
+
+.contact-form textarea {
+  resize: vertical;
+}

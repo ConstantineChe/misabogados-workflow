@@ -1,0 +1,331 @@
+/*--------------------------------------------
+ * Home Page Sections                        *
+---------------------------------------------*/
+
+
+
+/* CTA
+---------------------------------------------*/
+
+.cta {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  color: #FFFFFF;
+  text-align: center;
+}
+
+.cta h1 {
+  font-size: 3.15em;
+  font-weight: 400;
+  text-transform: uppercase;
+  margin-top: 4em;
+}
+
+@media (max-width: 992px) {
+  .cta h1 {
+    margin-top: 1.25em
+  }
+}
+
+.cta p {
+  font-size: 1.75em;
+}
+
+.cta button {
+  font-size: 1em;
+  margin-top: 15px;
+  margin-bottom: 100px;
+}
+
+@media (max-width: 992px) {
+  .cta button {
+    margin-bottom: 50px;
+  }
+}
+
+.cta h5 {
+  font-size: 1.25em;
+  text-transform: uppercase;
+}
+
+.cta .thumbnail {
+  background: transparent;
+  border: none;
+}
+
+.cta .thumbnail img {
+  max-height: 75px;
+}
+
+
+
+/* Main CTA
+---------------------------------------------*/
+
+.cta-main {
+  background: url(/img/main-cta/cta-bg.jpg);
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: cover;
+}
+
+
+
+/* Categories Section
+---------------------------------------------*/
+
+.categories-section {
+  background-color: #FFFFFF;
+}
+
+.categories-section h1 {
+  color: #2877D7;
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+@media (min-width: 992px) {
+  .categories-section h1 {
+    margin-bottom: 50px;
+  }
+}
+
+.categories-section .input-group {
+  margin-bottom: 50px;
+  max-width: 350px;
+  margin-left: auto;
+  margin-right: auto;
+  float: none;
+}
+
+@media (min-width: 992px) {
+  .categories-section .input-group {
+    padding-top: 40px;
+    margin-bottom: 25px;
+    float: left;
+  }
+}
+
+.categories-list .thumbnail {
+  position: relative;
+  overflow: hidden;
+  height: 160px;
+  background-color: rgba(0, 0, 0, 0.05);;
+}
+
+.caption h5 {
+  font-size: .85em;
+}
+
+@media (min-width: 992px) {
+  .caption h5 {
+    font-size: 1em;
+  }
+}
+
+.caption-overlay {
+  background-color: rgba(0, 0, 0, 0.55);
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  padding: 2%;
+  opacity: 0;
+  z-index: 2;
+  text-align: center;
+  color: #FFFFFF !important;
+}
+
+.caption-overlay h5 {
+  font-size: 1.25em;
+  font-weight: bold;
+  margin-top: 30px;
+}
+
+.caption-overlay button {
+  position: absolute;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto;
+  width: 85%;
+  bottom: 15px;
+}
+
+.caption-overlay button span {
+  margin-right: 0px;
+}
+
+.caption-overlay:hover {
+  opacity: 100;
+}
+
+.categories-list img {
+  height: 75px;
+  margin-top: 15px;
+}
+
+.categories-list h5 {
+  text-align: center;
+  text-transform: uppercase;
+}
+
+
+
+/* Laywers Section
+---------------------------------------------*/
+
+.lawyers-section {
+  background-color: #2877D7;
+  color: #FFFFFF;
+}
+
+.lawyers-section li {
+  font-size: 18px;
+}
+
+@media (max-width: 768px) {
+  .lawyer-list {
+    margin-top: 75px;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 20px;
+  }
+}
+
+.lawyer-list li {
+  list-style-type: none;
+  margin-bottom: 40px;
+}
+
+.lawyer-list h4 {
+  font-weight: bold;
+  margin-top: 5px;
+}
+
+.lawyer-pic img {
+  max-width: 150px;
+}
+
+.icon-certificate {
+  height: 20px;
+  vertical-align: middle;
+  margin-top: -5px;
+}
+
+.icon-star {
+  height: 25px;
+}
+
+@media (max-width: 787px) {
+  .lawyer-list h4 {
+    font-size: 16px;
+  }
+
+  .lawyer-list li {
+    font-size: 14px;
+  }
+}
+
+
+
+/* Testimonies Section
+---------------------------------------------*/
+
+.testimonies-section {
+  background-color: #FFFFFF;
+}
+
+.testimonies-section h1 {
+  color: #4A8FE2;
+  padding-bottom: 40px;
+}
+
+.testimonies-list li {
+  list-style-type: none;
+  margin-bottom: 30px;
+}
+
+.testimonies-list img {
+  max-height: 125px;
+  float: right;
+}
+
+.testimonies-list h4 {
+  color: #4A8FE2;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.testimonies-list blockquote {
+  font-size: 16px;
+  font-style: italic;
+  padding: 0px;
+  margin-bottom: 0px;
+  border-left: none;
+}
+
+@media (max-width: 787px) {
+
+  .testimonies-list {
+    padding-left: 20px;
+  }
+
+  .testimonies-list h4 {
+    font-size: 16px;
+  }
+
+  .testimonies-list blockquote {
+    font-size: 14px;
+  }
+}
+
+.testimony-video {
+  margin-top: 10%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 992px) {
+  .testimony-video {
+    margin-top: 5%;
+  }
+}
+
+
+/* Garantia Section
+---------------------------------------------*/
+
+.garantia-section {
+  background-color: #2877D7;
+  color: #FFFFFF;
+}
+
+.garantia-section img {
+  padding-top: 30px;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 991px) {
+  .garantia-section h1 {
+    margin-top: 50px;
+  }
+}
+
+.garantia-section li {
+  font-size: 18px;
+}
+
+
+/* Second CTA
+---------------------------------------------*/
+
+.cta-second {
+  background: url(/img/second-cta/cierre-2.jpg) no-repeat center;
+  background-size: cover;
+  padding-bottom: 30px;
+}
