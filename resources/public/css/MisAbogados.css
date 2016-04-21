@@ -279,7 +279,7 @@ p {
     padding-bottom: 2px; }
 
   .navbar-button button span {
-    margin-top: -1px;
+    margin-top: -3px;
     font-weight: bold; }
 
   .navbar-button:last-of-type {
@@ -633,6 +633,15 @@ p {
   background: url(/img/second-cta/cierre-2.jpg) no-repeat center;
   background-size: cover;
   padding-bottom: 30px; }
+
+/* Radio Agricultura Player
+---------------------------------------------*/
+.radioAgriculturaPlayer {
+  text-align: center; }
+
+.radioAgriculturaPlayer audio {
+  margin-top: 10px;
+  margin-bottom: 20px; }
 
 /*--------------------------------------------
  * Categories Page Sections                  *
