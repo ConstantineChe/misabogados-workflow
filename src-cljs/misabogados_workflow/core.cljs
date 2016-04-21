@@ -11,6 +11,7 @@
             [misabogados-workflow.payments :refer [payments]]
             [misabogados-workflow.lead :as lead]
             [misabogados-workflow.admin.categories :as categories]
+            [misabogados-workflow.admin.lawyers :as lawyers]
             [misabogados-workflow.utils :as u :refer [get-session!]]
             [reagent.core :as r]
             [reagent.session :as session]
@@ -198,6 +199,7 @@
 (def pages
   (merge lead/pages
          categories/pages
+         lawyers/pages
          {:home #'home-page
           :about #'about-page
           :login #'login-page

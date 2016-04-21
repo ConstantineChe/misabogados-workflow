@@ -128,6 +128,27 @@
        {:render-type :text})})
      }))
 
+(def lawyer-schema-expanded
+  (array-map
+   :lawyer
+   {:render-type :entity
+    :collection-name "lawyers"
+    :field-definitions
+    (array-map
+     :name
+     {:render-type :text
+      :label "Name"}
+     :email
+     {:render-type :email
+      :label "Email"}
+     :phone
+     {:render-type :text
+      :label "Phone"}
+     :address
+     {:render-type :text
+      :label "Address"})
+    }))
+
 (def category-schema-expanded
   (array-map
    :category
