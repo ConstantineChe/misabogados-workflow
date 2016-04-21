@@ -499,7 +499,7 @@
         <h4 class="modal-title" id="contactModalLabel">A un paso de comenzar</h4>
         <h5>Déjanos tus datos para responderte dentro de los próximos minutos. <span class="bold">100% Confidencial.</span></h5>
         <form id="contact_form" method="POST" action="/contact">
-          <input id="__anti-forgery-token" name="__anti-forgery-token" type="hidden" value="OS1C7RBV26f1kKpos3E8tvsmgHIhPxLQZ+z48JIRp2wo2ZrkIpyv85vSjJ4nOSGu9ndu8h75PpSvBTNd" />
+          {% csrf-field %}
           <div class="form-group">
             <label class="control-label" for="client_name">Nombre:</label>
             <input class="form-control" type="text" name="client_name" placeholder="Nombre" required/>
@@ -526,6 +526,7 @@
             <label class="control-label" for="problem">Problema:</label>
             <textarea class="form-control" type="textarea" name="problem" rows="4" placeholder="¿Qué estás buscando? ¿Qué necesitas? Descríbenos tu problema aquí." required></textarea>
           </div>
+          {% recaptcha-field %}
           <button class="btn  btn-lg  btn-block  btn-success" data-loading-text="Cargando...">Conéctame con un Abogado</button>
         </form>
       </div>
