@@ -1,7 +1,7 @@
 (ns misabogados-workflow.schema
   (:require
    [clojure.walk :as w]
- ;  #?(:clj [inflections.core :as i])
+   [inflections.core :as i]
 )
   #?(:cljs (:require-macros [misabogados-workflow.schema :refer [defexpand]]))
    )
@@ -15,7 +15,7 @@
       (let [name# (str name)]
         `(do (def ~(symbol name#) {:name (keyword ~name#)
                                    :type :entity
-                                   :collection-name ~name# ;(i/plural (i/underscore ~name#))
+                                   :collection-name (i/plural (i/underscore ~name#))
                                    :field-definitions [~@fields]
                                    })
              (defn ~(symbol (str name# "-get")) [] (println "GET " ~name#)))))

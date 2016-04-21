@@ -34,9 +34,9 @@
                                                                response))) nil)
                 :error-handler (fn [response] (reset! error (get "error" response)) nil)})]
     (fn []
-      [:div.container
+      [:div.container-fluid
        (if (:role (session/get :user))
-         [:legend "Admin Dashboard"])
+         [:h1 "Admin Dashboard"])
        [:div.btn-group
         [:a {:href "#/admin"} [:button.btn {:class (if (= (session/get :page) :admin)
                                                                "btn-primary" "btn-default")} "Manage users"]]
@@ -44,7 +44,7 @@
                                                                 "btn-primary" "btn-default")} "Manage categories"]]]
        (if-not (nil? @error) [:p.error (str @error)])
        (if-not (empty? @table-data)
-         [:div.container
+         [:div
           [:legend "Users"]
           [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
            [:th "name"]
