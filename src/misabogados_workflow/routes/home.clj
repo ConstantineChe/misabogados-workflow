@@ -12,7 +12,7 @@
             [misabogados-workflow.email :as email]
             ))
 
-(defn home-page [request]
+(defn app-page [request]
   (render "app.html" {:forms-css (-> "reagent-forms.css" io/resource slurp)}))
   ;; (layout/blank-page "home" [:div.container [:div "hi"
                                ;; (map (fn [item] [:div.row [:h4 (key item)]
@@ -45,8 +45,8 @@
   (GET "/" [] (render "home_page.html" {:title "Home"}))
   (GET "/garantia" [] (render "guarantee.html" {:title "Garantia"}))
   (GET "/terminos-y-condiciones" [] (render "terms_and_conditions.html" {:title "Garantia"}))
-  (GET "/categorias/:slug" [slug :as request] (show-category slug))
-  (GET "/app" [] home-page)
+  (GET "/categoria/:slug" [slug :as request] (show-category slug))
+  (GET "/app" [] app-page)
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
   (GET "/contact" [] (render "contact.html"))
   (POST "/contact" [] create-lead-from-contact))

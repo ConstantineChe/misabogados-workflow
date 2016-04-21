@@ -1,0 +1,45 @@
+<form id="contact_form" method="POST" action="/contact">
+  {% csrf-field %}
+
+  {% for field,message in messages.errors %}
+  <div class="alert alert-danger">
+    <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+    <p>{{message}}</p>
+  </div>
+  {% endfor %}
+
+  <div class="form-group">
+    <label class="control-label" for="client_name">Nombre:</label>
+    <input class="form-control" type="text" name="client_name" placeholder="Nombre" required value="{{client_name}}"/>
+  </div>
+  <div class="form-group">
+    <label class="control-label" for="client_phone">Telefono:</label>
+    <div class="input-group">
+      <div class="input-group-addon">+56</div>
+      <input class="form-control" type="text" name="client_phone" placeholder="Telefono" required value="{{client_phone}}"/>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label" for="client_email">Email:</label>
+    <input class="form-control" type="email" name="client_email" placeholder="Email" required value="{{client_email}}"/>
+  </div>
+  <div class="form-group">
+    <label class="control-label" for="lead_type_code">Tipo:</label><br>
+    <div class="btn-group" data-toggle="buttons">
+      <label class="btn btn-default {% ifequal lead_type_code "question" %}active{% endifequal %}">
+        <input type="radio" name="lead_type_code" id="lead_type_code" value="question" required {% ifequal lead_type_code "question" %}checked{% endifequal %}>
+        Consulta
+      </label>
+      <label class="btn btn-default {% ifequal lead_type_code "case" %}active{% endifequal %}">
+        <input type="radio" name="lead_type_code" id="lead_type_code" value="case" {% ifequal lead_type_code "case" %}checked{% endifequal %}>
+        Caso
+      </label>
+    </div>
+  </div>
+  <div class="form-group">
+    <label class="control-label" for="problem">Problema:</label>
+    <textarea class="form-control" type="textarea" name="problem" rows="4" placeholder="¿Qué estás buscando? ¿Qué necesitas? Descríbenos tu problema aquí." required>{{problem}}</textarea>
+  </div>
+  {% recaptcha-field %}
+  <button class="btn  btn-lg  btn-block  btn-success" data-loading-text="Cargando...">Conéctame con un Abogado</button>
+</form>
