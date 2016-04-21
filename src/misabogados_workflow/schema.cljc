@@ -1,10 +1,10 @@
 (ns misabogados-workflow.schema
   (:require
-   #?(:cljs [misabogados-workflow.elements :as el])
-   #?(:cljs [reagent.core :as r])
    [clojure.walk :as w]
-   [clojure.zip :as z]
-   [inflections.core :refer :all]))
+   [inflections.core :as i]
+)
+  #?(:cljs (:require-macros [misabogados-workflow.schema :refer [defexpand]]))
+   )
 
 
 (defmacro defentity
@@ -14,6 +14,14 @@
     `(do (def ~(symbol name#) (entity ~(keyword name#) 
                                       ~fields))
          (defn ~(symbol (str name# "-get")) [] (println "GET " ~name#)))))
+
+      ;; (let [name# (str name)]
+      ;;   `(do (def ~(symbol name#) {:name (keyword ~name#)
+      ;;                              :type :entity
+      ;;                              :collection-name (i/plural (i/underscore ~name#))
+      ;;                              :field-definitions [~@fields]
+      ;;                              })
+      ;;        (defn ~(symbol (str name# "-get")) [] (println "GET " ~name#)))))
 
 (defn entity
   "Defines an entity. The data provided here is enough to tell what is the possible structure of stored entity and where it is stored. It is also enough to generate scaffold form to edit this entity"
@@ -73,29 +81,93 @@
                            (datetime-field :time))))
 
 ;; This is what entity definitions should be expanded to. This data structures holds all information abount entity and it's fields in format easily digestable programmatically.
+
+(defmacro defexpand [name schema]
+  `(def ~(symbol (str name "-expanded")) ~schema))
+
+(defexpand category-macro
+  (array-map
+   :category
+   {:render-type :entity
+    :collection-name "categories"
+    :field-definitions
+    (array-map
+     :name
+     {:render-type :text
+      :label "Name"}
+     :quote
+     {:render-type :text}
+     :slug
+     {:render-type :text}
+     :persons
+     {:render-type :checkbox}
+     :enterprises
+     {:render-type :checkbox}
+     :showed_by_default
+     {:render-type :checkbox}
+     :meta_description
+     {:render-type :markdown}
+     :faq_items
+     {:render-type :collection
+      :entity-label "FAQ item"
+      :field-definitions
+      (array-map
+       :name
+       {:render-type :text}
+       :text
+       {:render-type :markdown})}
+     :posts
+     {:render-type :collection
+      :entity-label "Post"
+      :field-definitions
+      (array-map
+       :name
+       {:render-type :text}
+       :url
+       {:render-type :text})})
+     }))
+
 (def category-schema-expanded
-  {:name :category
-   :type :entity
-   :collection-name "categories"
-   :field-definitions [{:name :faq-item
-                        :type :embedded-collection
-                        :field-definitions [{:name :question
-                                             :type :text-field}
-                                            {:name :contents
-                                             :type :markdown-field}]}
-                       {:name :post
-                        :type :embedded-collection
-                        :field-definitions [{:name :title
-                                             :type :text-field}
-                                            {:name :link
-                                             :type :url-field}]}
-                       {:name :name
-                        :type :text-field
-                        :label "Name"}
-                       {:name :slug
-                        :type :text-field}
-                       {:name :description
-                        :type :markdown-field}]})
+  (array-map
+   :category
+   {:render-type :entity
+    :collection-name "categories"
+    :field-definitions
+    (array-map
+     :name
+     {:render-type :text
+      :label "Name"}
+     :quote
+     {:render-type :text}
+     :slug
+     {:render-type :text}
+     :persons
+     {:render-type :checkbox}
+     :enterprises
+     {:render-type :checkbox}
+     :showed_by_default
+     {:render-type :checkbox}
+     :meta_description
+     {:render-type :markdown}
+     :faq_items
+     {:render-type :collection
+      :entity-label "FAQ item"
+      :field-definitions
+      (array-map
+       :name
+       {:render-type :text}
+       :text
+       {:render-type :markdown})}
+     :posts
+     {:render-type :collection
+      :entity-label "Post"
+      :field-definitions
+      (array-map
+       :name
+       {:render-type :text}
+       :url
+       {:render-type :text})})
+     }))
 
 (def lead-schema-expanded
   {:name :lead

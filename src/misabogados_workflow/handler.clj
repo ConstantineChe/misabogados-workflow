@@ -8,6 +8,7 @@
             [misabogados-workflow.routes.payments :refer [payments-routes payments-integration-routes]]
             [misabogados-workflow.routes.payment-requests :refer [payment-requests-routes]]
             [misabogados-workflow.routes.leads :refer [leads-routes]]
+            [misabogados-workflow.routes.admin.categories :refer [categories-admin]]
             [misabogados-workflow.middleware :as middleware]
             [misabogados-workflow.db.indexes :as indexes]
             [ring.middleware.json :as json]
@@ -43,6 +44,7 @@
 
 (def app-routes
   (routes
+   (wrap-routes #'categories-admin middleware/wrap-csrf)
    (wrap-routes #'home-routes middleware/wrap-csrf)
    (wrap-routes #'registration-routes middleware/wrap-csrf)
    (wrap-routes #'session-routes middleware/wrap-csrf)

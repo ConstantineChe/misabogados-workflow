@@ -3,6 +3,7 @@
             [reagent.session :as session]
             [clojure.string :as s]
             [misabogados-workflow.utils :as u]
+            [markdown.core :refer [md->html]]
             [reagent-forms.datepicker
              :refer [parse-format format-date datepicker]])
 )
@@ -27,13 +28,13 @@
         select (fn [[l v]] (do (reset! cursor v)
                               (reset! text l)
                               (reset! dropdown-class "")))
-        list (map-indexed (fn [i [label value :as option]]
+        dropdown-items (map-indexed (fn [i [label value :as option]]
                             [:li {:key i
                                   :on-mouse-over #(reset! selected-index i)
                                   :class (if (= i @selected-index) "active" "")
                                   :on-click #(select option)
-                                  :on-focus #((do (print value)
-                                                  (reset! cursor value)))} [:a label]])
+                                  :on-focus #(reset! cursor value)}
+                             [:a label]])
                           (if @f-opts @f-opts options))
         input [:input.form-control
                {:type :text
@@ -85,7 +86,7 @@
                  {:id name
                   :role :menu
                   :style {:height :auto :max-height :200px :overflow-x :hidden}}]
-                list
+                dropdown-items
                 ))]]))
 
 (defn input [type label cursor]
@@ -126,7 +127,7 @@
 
 
 (defn input-datetimepicker [label cursor]
-  (fn [[form opts util]]
+  (fn [[form _ util]]
     (let [r-key cursor
           time (r/cursor util (into [:time] cursor))
           [name cursor] (prepare-input cursor form)
@@ -138,7 +139,7 @@
           day (or (:day selected-date) (.getDate today))
           [hour minute] (if @cursor (let [time (second (s/split @cursor #"T"))]
                               (s/split time #":")))
-          expanded? (r/cursor opts (into [:date-extended?] r-key))]
+          expanded? (r/cursor util (into [:date-extended?] r-key))]
       (when (and (not @time) @cursor) (reset! time (str hour ":" minute)))
       [:div {:key r-key}
        [:div.datepicker-wrapper.col-xs-3
@@ -199,6 +200,33 @@
        [create]
        ])))
 
+(defn input-markdown
+  "textarea with markdown->html preview."
+  [label path]
+  (fn [[form _ util]]
+    (let [preview (r/cursor util (into [:preview] path))
+          [name cursor] (prepare-input path form)]
+      (when (and @cursor (not @preview)) (reset! preview (md->html @cursor)))
+      [:div.col-xs-12 {:key name}
+       [:div.form-group.col-xs-6
+         [:label.control-label {:for name} label]
+         [:textarea.form-control
+          {:type type
+           :id name
+           :value @cursor
+           :on-change #(do (reset! cursor (-> % .-target .-value))
+                           (reset! preview (md->html (-> % .-target .-value))))
+           }]]
+       [:div.col-xs-6
+        [:label.control-label "Preview"]
+        [:div.preview {:style {:border "solid grey 1px"
+                               :padding :5px}
+                       :dangerouslySetInnerHTML {:__html @preview}}]]]
+
+       ))
+  )
+
+
 (defn btn-new-fieldset [cursor label]
   (fn [[form]]
     (let [[name cursor] (prepare-input cursor form)]
@@ -210,10 +238,12 @@
 (defn btn-remove-fieldset [cursor index label]
   (fn [[form]]
     (let [[name cursor] (prepare-input cursor form)]
-      [:button.btn.btn-secondary
-       {:key (str label index)
-        :on-click #(swap! cursor drop-nth index)}
-       label])))
+      (list
+       [:span.clearfix {:key :remove-cf}]
+       [:button.btn.btn-secondary
+        {:key (str label index)
+         :on-click #(swap! cursor drop-nth index)}
+        label]))))
 
 (def input-text (partial input :text))
 
@@ -232,6 +262,8 @@
    :textarea input-textarea
    :typeahead input-textarea
    :date-time input-datetimepicker
+   :checkbox input-checkbox
+   :markdown input-markdown
    :entity input-entity})
 
 
@@ -260,7 +292,7 @@
                       (fieldset-fn form-data field
                                    (conj new-path (.indexOf
                                                    (to-array (get fieldset-list (first field)))
-                                                   field)) hidden?)
+                                                   field)) false) ;;hidden?
                       (fieldset-fn form-data field new-path false))
                     (field form-data))))])])))
 
@@ -276,6 +308,7 @@
 
 (defmulti render-form
   (fn [[key schema] data path]
+;    (prn key ":" schema)
     (:render-type schema)))
 
 (defmethod render-form :collection [[key schema] data path]
@@ -320,3 +353,10 @@
 (defn prepare-atom [schema atom]
   (reset! atom (apply merge (map get-struct schema)))
   atom)
+
+
+(defn create-form
+  "Create form from schema."
+  [legend schema atoms]
+  (apply form legend atoms (map #(render-form % @(first atoms) []) schema))
+  )

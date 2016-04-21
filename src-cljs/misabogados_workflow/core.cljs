@@ -10,6 +10,7 @@
             [misabogados-workflow.dashboard :refer [dashboard]]
             [misabogados-workflow.payments :refer [payments]]
             [misabogados-workflow.lead :as lead]
+            [misabogados-workflow.admin.categories :as categories]
             [misabogados-workflow.utils :as u :refer [get-session!]]
             [reagent.core :as r]
             [reagent.session :as session]
@@ -195,14 +196,16 @@
     [:p "This is a home page"]]])
 
 (def pages
-  (merge lead/pages {:home #'home-page
-     :about #'about-page
-     :login #'login-page
-     :signup #'signup-page
+  (merge lead/pages
+         categories/pages
+         {:home #'home-page
+          :about #'about-page
+          :login #'login-page
+          :signup #'signup-page
                                         ;   :debug #'debug
-     :dashboard #'dashboard
-     :payments #'payments
-     :admin #'admin}))
+          :dashboard #'dashboard
+          :payments #'payments
+          :admin #'admin}))
 
 (defn page []
   [(pages (session/get :page))])
