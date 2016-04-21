@@ -9,11 +9,14 @@
 .contact-form h5 {
   text-align: center;
   font-size: 1.25em;
-  margin-bottom: 20px;
 }
 
 .bold {
   font-weight: bold;
+}
+
+.form-group {
+  margin-bottom: 10px;
 }
 
 .btn-default.active {
@@ -22,4 +25,8 @@
 
 .contact-form textarea {
   resize: vertical;
+}
+
+.contact-form .btn-lg {
+  margin-top: 10px;
 }

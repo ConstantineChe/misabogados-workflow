@@ -315,17 +315,22 @@ p {
 
 .contact-form h5 {
   text-align: center;
-  font-size: 1.25em;
-  margin-bottom: 20px; }
+  font-size: 1.25em; }
 
 .bold {
   font-weight: bold; }
+
+.form-group {
+  margin-bottom: 10px; }
 
 .btn-default.active {
   background-color: #c0c0c0 !important; }
 
 .contact-form textarea {
   resize: vertical; }
+
+.contact-form .btn-lg {
+  margin-top: 10px; }
 
 /* Footer
 ---------------------------------------------*/
