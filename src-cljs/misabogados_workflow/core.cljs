@@ -10,7 +10,7 @@
             [misabogados-workflow.dashboard :refer [dashboard]]
             [misabogados-workflow.payments :refer [payments]]
             [misabogados-workflow.lead :as lead]
-            [misabogados-workflow.categories :as categories]
+            [misabogados-workflow.admin.categories :as categories]
             [misabogados-workflow.utils :as u :refer [get-session!]]
             [reagent.core :as r]
             [reagent.session :as session]

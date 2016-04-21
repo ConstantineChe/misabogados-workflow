@@ -1,4 +1,4 @@
-(ns misabogados-workflow.categories
+(ns misabogados-workflow.admin.categories
   (:require [reagent.core :as r]
             [misabogados-workflow.utils :as u]
             [reagent.session :as session]
@@ -79,13 +79,7 @@
   (let []
     (get-categories)
     (fn []
-      [:div.container-fluid
-       [:h1 "Admin Dashboard"]
-       [:div.btn-group
-        [:a {:href "#admin"} [:button.btn {:class (if (= (session/get :page) :admin)
-                                                               "btn-primary" "btn-default")} "Manage users"]]
-        [:a {:href "#admin/categories"} [:button.btn {:class (if (= (session/get :page) :admin/categories)
-                                                                "btn-primary" "btn-default")} "Manage categories"]]]
+      [:div
        [:legend "Categories"]
        [:a {:href "#admin/categories/new"} [:button.btn.btn-primary "New category"]]
        (categories-table @categories)])))
@@ -137,15 +131,12 @@
 
 
 (def pages
-  {:admin/categories #'categories-page
-   :admin/categories-edit #'edit-category
+  {:admin/categories-edit #'edit-category
    :admin/categories-new #'new-category})
 
 (defn page []
   [(pages (session/get :page))])
 
-(secretary/defroute "/admin/categories" []
-  (session/put! :page :admin/categories))
 
 (secretary/defroute "/admin/categories/new" []
   (session/put! :page :admin/categories-new))
