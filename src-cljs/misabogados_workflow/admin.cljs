@@ -17,6 +17,7 @@
 
 (defn admin []
   (fn []
+    (when-not (session/get-in [:admin :tab]) (session/assoc-in! [:admin :tab] :users))
     [:div.container-fluid
      [:div.row
       [:div.sidebar.col-sm-3.col-md-2
