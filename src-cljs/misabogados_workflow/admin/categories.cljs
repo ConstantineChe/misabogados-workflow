@@ -1,6 +1,5 @@
 (ns misabogados-workflow.admin.categories
   (:require [reagent.core :as r]
-            [misabogados-workflow.utils :as u]
             [reagent.session :as session]
             [misabogados-workflow.ajax :refer [GET POST PUT DELETE]]
             [misabogados-workflow.elements :as el]
@@ -50,39 +49,33 @@
 (defn categories-table
   "Create table from categories list."
   [categories]
-  [:table.table.table-hover.table-striped.panel-body
-   [:thead
-    [:th "Id"]
-    [:th "Name"]
-    [:th "Slug"]
-    [:th "Showed by default"]
-    [:th "Persons"]
-    [:th "Enterprises"]
-    [:th "Actions"]]
-   [:tbody
-    (for [category categories]
-      [:tr {:key (:_id category)}
-       [:td (:_id category)]
-       [:td (:name category)]
-       [:td (:slug category)]
-       [:td (if (:showed_by_default category) "Yes" "No")]
-       [:td (if (:persons category) "Yes" "No")]
-       [:td (if (:enterprises category) "Yes" "No")]
-       [:td [:a {:href (str "#admin/categories/" (:_id category) "/edit")} [:button.btn.btn-default "edit"]]
-        [:button.btn.btn-default {:on-click #(delete-category (:_id category) (:name category))} "delete"]]])]]
+  (el/data-table categories
+                 ["Id" "Name" "Slug" "Showed by default" "Persons" "Enterprises" "Actions"]
+                 [:_id
+                  :name
+                  :slug
+                  #(if (% :showed_by_default) "Yes" "No")
+                  #(if (% :persons) "Yes" "No")
+                  #(if (% :enterprises) "Yes" "No")
+                  (fn [category] (list [:a {:href (str "#admin/categories/" (:_id category) "/edit")
+                                           :key :edit}
+                                       [:button.btn.btn-default "edit"]]
+                                      [:button.btn.btn-default
+                                       {:key :delete
+                                        :on-click #(delete-category (:_id category) (:name category))}
+                                       "delete"]))])
   )
 
 
-(defn categories-page
+(defn categories-tab
   "Categories page component."
   []
-  (let []
-    (get-categories)
-    (fn []
-      [:div
-       [:legend "Categories"]
-       [:a {:href "#admin/categories/new"} [:button.btn.btn-primary "New category"]]
-       (categories-table @categories)])))
+  (get-categories)
+  (fn []
+    [:div
+     [:legend "Categories"]
+     [:a {:href "#admin/categories/new"} [:button.btn.btn-primary "New category"]]
+     (categories-table @categories)]))
 
 
 (defn edit-category
@@ -118,7 +111,7 @@
       [:div.container-fluid
              (str @category)
 
-       (el/create-form "New category" s/category-schema-expanded [category options util])
+       (el/create-form "New category" s/category-macro-expanded [category options util])
        [:div
         [:button.btn.btn-primary
           {:on-click #(create-category @category)}
@@ -133,9 +126,6 @@
 (def pages
   {:admin/categories-edit #'edit-category
    :admin/categories-new #'new-category})
-
-(defn page []
-  [(pages (session/get :page))])
 
 
 (secretary/defroute "/admin/categories/new" []

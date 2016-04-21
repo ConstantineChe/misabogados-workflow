@@ -53,3 +53,13 @@ h1 {
 .form-group.col-xs-6, .form-group.col-xs-3 {
     margin-right: 15px;
 }
+
+.admin-tab {
+    bottom: 140px;
+}
+
+.nav-sidebar > .active > a, .nav-sidebar > .active >
+ a:hover, .nav-sidebar > .active > a:focus {
+    color: #fff;
+    background-color: #428bca;
+}

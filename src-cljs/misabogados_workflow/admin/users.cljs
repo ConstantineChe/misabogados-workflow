@@ -24,7 +24,7 @@
                              :value value}]
                     value)]))
 
-(defn users []
+(defn users-tab []
   (let [error (r/atom nil)
         selected-cell (r/atom [])
         _ (GET (str js/context "/users")

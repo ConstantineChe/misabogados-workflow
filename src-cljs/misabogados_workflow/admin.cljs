@@ -1,14 +1,16 @@
 (ns misabogados-workflow.admin
   (:require [reagent.core :as r]
             [reagent.session :as session]
-            [misabogados-workflow.admin.users :refer [users]]
-            [misabogados-workflow.admin.categories :refer [categories-page]]
+            [misabogados-workflow.admin.users :refer [users-tab]]
+            [misabogados-workflow.admin.categories :refer [categories-tab]]
+            [misabogados-workflow.admin.lawyers :refer [lawyers-tab]]
             [secretary.core :as secretary :include-macros true]))
 
 
 (def tabs
-  {:users #'users
-   :categories #'categories-page})
+  {:users #'users-tab
+   :categories #'categories-tab
+   :lawyers #'lawyers-tab})
 
 (defn tab []
   [(tabs (session/get-in [:admin :tab]))])
@@ -25,8 +27,11 @@
         [:li {::class (if (= (session/get-in [:admin :tab]) :users) "active")}
          [:a {:href "#admin/users"} "Manage users"]]
         [:li {:class (if (= (session/get-in [:admin :tab]) :categories) "active")}
-         [:a {:href "#admin/categories"} "Manage categories"]]]]
-      [:div.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.main
+         [:a {:href "#admin/categories"} "Manage categories"]]
+        [:li {:class (if (= (session/get-in [:admin :tab]) :lawyers) "active")}
+         [:a {:href "#admin/lawyers"} "Manage lawyer profiles"]]
+        ]]
+      [:div.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.admin-tab
        [:h1 "Admin Dashboard"]
        [tab]]]
      ]))
@@ -38,3 +43,7 @@
 (secretary/defroute "/admin/users" []
   (do (session/put! :page :admin)
       (session/assoc-in! [:admin :tab] :users)))
+
+(secretary/defroute "/admin/lawyers" []
+  (do (session/put! :page :admin)
+      (session/assoc-in! [:admin :tab] :lawyers)))

@@ -221,11 +221,20 @@
         [:label.control-label "Preview"]
         [:div.preview {:style {:border "solid grey 1px"
                                :padding :5px}
-                       :dangerouslySetInnerHTML {:__html @preview}}]]]
+                       :dangerouslySetInnerHTML {:__html @preview}}]]])))
 
-       ))
-  )
 
+(defn data-table [data headers getters]
+  [:table.table.table-hover.table-striped.panel-body
+   [:thead
+    (for [header headers]
+      [:th {:key (.indexOf (to-array headers) header)} header])]
+   [:tbody
+    (for [item data]
+      [:tr {:key (.indexOf (to-array data) item)}
+       (for [getter getters]
+         [:td {:key (.indexOf (to-array getters) getter)}
+          (getter item)])])]])
 
 (defn btn-new-fieldset [cursor label]
   (fn [[form]]
