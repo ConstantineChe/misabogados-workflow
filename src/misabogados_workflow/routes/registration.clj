@@ -2,19 +2,18 @@
   (:require [compojure.core :refer [defroutes GET PUT POST]]
             [ring.util.http-response :refer [ok]]
             [clojure.java.io :as io]
-            [misabogados-workflow.layout.core :as layout]
+            [misabogados-workflow.layout :as layout]
             [hiccup.form :as form]
             [ring.util.response :refer [redirect response]]
             [misabogados-workflow.db.core :as db]
             [misabogados-workflow.util :as util]
             [buddy.auth :refer [authenticated?]]
-            [buddy.hashers :refer [encrypt]]
-            [misabogados-workflow.layout.core :as layout]))
+            [buddy.hashers :refer [encrypt]]))
 
 (def permitted #{:name :email})
 
-(defn signup-page []
-  (layout/signup))
+(defn signup-page [r]
+  (layout/render "signup.html" {:title "Sign-up"}))
 
 
 
@@ -23,7 +22,7 @@
       (db/create-user (into {:verification-code (-> request :params :email util/generate-hash)
                              :password (-> request :params :password encrypt)
                              :role :client}
-                          (filter #(contains? permitted  (key %))
+                          (filter #(permitted  (key %))
                                   (:params request))))
       (-> (response {:identity (-> request :params :email)
                      :role (-> request :params :role)})
@@ -46,7 +45,7 @@
 
 
 (defroutes registration-routes
-  (GET "/signup" _ (signup-page))
+  (GET "/signup" [] signup-page)
   (POST "/signup" [] signup)
   (GET "/verify/:code" [code :as request] (verify-email code request))
 )
