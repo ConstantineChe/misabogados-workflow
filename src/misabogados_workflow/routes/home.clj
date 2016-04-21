@@ -45,7 +45,7 @@
   (GET "/home" [] (render "home_page.html" {:title "Home"}))
   (GET "/garantia" [] (render "guarantee.html" {:title "Garantia"}))
   (GET "/terminos-y-condiciones" [] (render "terms_and_conditions.html" {:title "Garantia"}))
-  (GET "/categorias/:slug" [slug :as request] (show-category slug))
+  (GET "/categoria/:slug" [slug :as request] (show-category slug))
   (GET "/" [] home-page)
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
   (GET "/contact" [] (render "contact.html"))
