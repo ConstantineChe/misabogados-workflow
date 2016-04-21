@@ -1,9 +1,13 @@
 (ns misabogados-workflow.util
-  (:require [clojure.string :as str]))
+  (:require [clojure.string :as str]
+            [clj-recaptcha.client-v2 :as c]))
 
 (defn remove-kebab [str]
   "removes kebab and makes string human-eatable"
   (if str (str/capitalize (str/replace str "-" " "))))
+
+(defn check-recaptcha [params]
+  (c/verify "6Lc92P4SAAAAAMydKZy-wL7PAUTJghmVU7sXfehY" (:g-recaptcha-response params)))
 
 (defn generate-hash [something]
   (let [hash-bytes

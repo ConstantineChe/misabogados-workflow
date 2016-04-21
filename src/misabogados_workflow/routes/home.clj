@@ -6,20 +6,20 @@
             [ring.util.response :refer [redirect response]]
             [monger.collection :as mc]
             [misabogados-workflow.db.core :as db]
+            [misabogados-workflow.util :as u]
             [clojure.pprint :refer [pprint]]
             [misabogados-workflow.layout :refer [render]]
             [misabogados-workflow.email :as email]
-            [clj-recaptcha.client-v2 :as c]))
+            ))
 
-(defn home-page [request]
+(defn app-page [request]
   (render "app.html" {:forms-css (-> "reagent-forms.css" io/resource slurp)}))
   ;; (layout/blank-page "home" [:div.container [:div "hi"
                                ;; (map (fn [item] [:div.row [:h4 (key item)]
                                                ;; [:p (val item)]]) request)]]))
 
 (defn create-lead-from-contact [{:keys [params]}]
-  (clojure.pprint/pprint params)
-  (let [recaptcha-response (c/verify "6Lc92P4SAAAAAMydKZy-wL7PAUTJghmVU7sXfehY" (:g-recaptcha-response params))]
+  (let [recaptcha-response (u/check-recaptcha params)]
     (if (:valid? recaptcha-response)
       (let [
             client-fields (clojure.set/rename-keys (select-keys params [:client_name :client_phone :client_email])
@@ -42,11 +42,11 @@
                              :category category})))
 
 (defroutes home-routes
-  (GET "/home" [] (render "home_page.html" {:title "Home"}))
+  (GET "/" [] (render "home_page.html" {:title "Home"}))
   (GET "/garantia" [] (render "guarantee.html" {:title "Garantia"}))
   (GET "/terminos-y-condiciones" [] (render "terms_and_conditions.html" {:title "Garantia"}))
-  (GET "/categorias/:slug" [slug :as request] (show-category slug))
-  (GET "/" [] home-page)
+  (GET "/categoria/:slug" [slug :as request] (show-category slug))
+  (GET "/app" [] app-page)
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
-  (GET "/contact" [] (render "contact.html"))
+  (GET "/contact" [] (render "contact.html" {:title "Contactar"}))
   (POST "/contact" [] create-lead-from-contact))

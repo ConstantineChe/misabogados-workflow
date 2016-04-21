@@ -1,61 +1,49 @@
 (ns misabogados-workflow.admin
   (:require [reagent.core :as r]
-            [misabogados-workflow.ajax :refer [GET PUT]]
-            [reagent.session :as session]))
+            [reagent.session :as session]
+            [misabogados-workflow.admin.users :refer [users-tab]]
+            [misabogados-workflow.admin.categories :refer [categories-tab]]
+            [misabogados-workflow.admin.lawyers :refer [lawyers-tab]]
+            [secretary.core :as secretary :include-macros true]))
 
-(def table-data (r/atom {}))
 
-(defn cell [col item id selected-cell]
-  (let [value (get-in @table-data [id col])]
-                 [:td {:on-click #(reset! selected-cell [id col])
-                       :on-blur #(do (PUT (str js/context "/users/" id) {:params {:id id
-                                                                             :data {col (-> % .-target .-value)}}
-                                                                       :handler (fn [response]
+(def tabs
+  {:users #'users-tab
+   :categories #'categories-tab
+   :lawyers #'lawyers-tab})
 
-                                                                                  nil)
-                                                                       :error-handler (fn [response]
-                                                                                        (js/alert (str "error: " response))
-                                                                                        nil)})
-                                     (reset! selected-cell []))}
-                  (if (= @selected-cell [id col])
-                    [:input {:autoFocus "true"
-                             :type :text
-                             :on-change #(reset! table-data (assoc-in @table-data [id col] (-> % .-target .-value)))
-                             :value value}]
-                    value)]))
+(defn tab []
+  [(tabs (session/get-in [:admin :tab]))])
+
+
 
 (defn admin []
-  (let [error (r/atom nil)
-        selected-cell (r/atom [])
-        _ (GET (str js/context "/users")
-               {:handler (fn [response]
-                           (reset! table-data (into {} (map (fn [item]
-                                                                 {(get item "_id") item})
-                                                               response))) nil)
-                :error-handler (fn [response] (reset! error (get "error" response)) nil)})]
-    (fn []
-      [:div.container-fluid
-       (if (:role (session/get :user))
-         [:h1 "Admin Dashboard"])
-       [:div.btn-group
-        [:a {:href "#/admin"} [:button.btn {:class (if (= (session/get :page) :admin)
-                                                               "btn-primary" "btn-default")} "Manage users"]]
-        [:a {:href "#/admin/categories"} [:button.btn {:class (if (= (session/get :page) :admin/categories)
-                                                                "btn-primary" "btn-default")} "Manage categories"]]]
-       (if-not (nil? @error) [:p.error (str @error)])
-       (if-not (empty? @table-data)
-         [:div
-          [:legend "Users"]
-          [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
-           [:th "name"]
-           [:th "email"]
-           [:th "role"]
-           [:th "verified"]
-           [:tbody
-            (doall
-             (for [user @table-data]
-               [:tr {:key (key user)}
-                (cell "name" (val user) (key user) selected-cell)
-                (cell "email" (val user) (key user) selected-cell)
-                (cell "role" (val user) (key user) selected-cell)
-                (cell "verified" (val user) (key user) selected-cell)]))]]])])))
+  (fn []
+    (when-not (session/get-in [:admin :tab]) (session/assoc-in! [:admin :tab] :users))
+    [:div.container-fluid
+     [:div.row
+      [:div.sidebar.col-sm-3.col-md-2
+       [:ul.nav.nav-sidebar
+        [:li {::class (if (= (session/get-in [:admin :tab]) :users) "active")}
+         [:a {:href "#admin/users"} "Manage users"]]
+        [:li {:class (if (= (session/get-in [:admin :tab]) :categories) "active")}
+         [:a {:href "#admin/categories"} "Manage categories"]]
+        [:li {:class (if (= (session/get-in [:admin :tab]) :lawyers) "active")}
+         [:a {:href "#admin/lawyers"} "Manage lawyer profiles"]]
+        ]]
+      [:div.col-sm-9.col-sm-offset-3.col-md-10.col-md-offset-2.admin-tab
+       [:h1 "Admin Dashboard"]
+       [tab]]]
+     ]))
+
+(secretary/defroute "/admin/categories" []
+  (do (session/put! :page :admin)
+      (session/assoc-in! [:admin :tab] :categories)))
+
+(secretary/defroute "/admin/users" []
+  (do (session/put! :page :admin)
+      (session/assoc-in! [:admin :tab] :users)))
+
+(secretary/defroute "/admin/lawyers" []
+  (do (session/put! :page :admin)
+      (session/assoc-in! [:admin :tab] :lawyers)))
