@@ -23,17 +23,18 @@
       ;;                              })
       ;;        (defn ~(symbol (str name# "-get")) [] (println "GET " ~name#)))))
 
+(defn entity-schema [name mixin fields] {name (conj mixin {:field-definitions (reduce conj fields)})})
+
 (defn entity
   "Defines an entity. The data provided here is enough to tell what is the possible structure of stored entity and where it is stored. It is also enough to generate scaffold form to edit this entity"
   [name & fields]
   (entity-schema (keyword name) 
                  {:type :entity
-                  :collection-name (plural (underscore name))}
+                  :collection-name name}
                  fields)
   
   )
 
-(defn entity-schema [name mixin fields] {name (conj mixin {:field-definitions (reduce conj fields)})})
 
 ;; Functions that define fields
 (defn embeds-many [name & fields] (entity-schema name {:type :embadded-collection} fields))
@@ -70,15 +71,15 @@
   (text-field :phone)
   (text-field :email))
 
-(defentity lead
-  (has-one client)
-  (text-field :problem)
-  (simple-dict-field :lead-type)
-  (embeds-one :match
-               (has-one lawyer)
-               (embeds-many :meeting
-                           (simple-dict-field :meeting-type)
-                           (datetime-field :time))))
+;; (defentity lead
+;;   (has-one client)
+;;   (text-field :problem)
+;;   (simple-dict-field :lead-type)
+;;   (embeds-one :match
+;;                (has-one lawyer)
+;;                (embeds-many :meeting
+;;                            (simple-dict-field :meeting-type)
+;;                            (datetime-field :time))))
 
 ;; This is what entity definitions should be expanded to. This data structures holds all information abount entity and it's fields in format easily digestable programmatically.
 
