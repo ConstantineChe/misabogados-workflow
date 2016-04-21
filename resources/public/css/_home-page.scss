@@ -15,7 +15,7 @@
 }
 
 .cta h1 {
-  font-size: 3.15em;
+  font-size: 3.1em;
   font-weight: 400;
   text-transform: uppercase;
   margin-top: 4em;
@@ -28,13 +28,13 @@
 }
 
 .cta p {
-  font-size: 1.75em;
+  font-size: 1.85em;
 }
 
 .cta button {
   font-size: 1em;
-  margin-top: 15px;
-  margin-bottom: 100px;
+  margin-top: 40px;
+  margin-bottom: 80px;
 }
 
 @media (max-width: 992px) {
@@ -43,8 +43,9 @@
   }
 }
 
-.cta h5 {
-  font-size: 1.25em;
+.cta h6 {
+  font-size: 1em;
+  font-weight: bold;
   text-transform: uppercase;
 }
 
@@ -65,7 +66,7 @@
 .cta-main {
   background: url(/img/main-cta/cta-bg.jpg);
   background-repeat: no-repeat;
-  background-position: center top;
+  background-position: 35% 25%;
   background-size: cover;
 }
 
@@ -182,7 +183,7 @@
 }
 
 .lawyers-section li {
-  font-size: 18px;
+  font-size: $base-font-size;
 }
 
 @media (max-width: 768px) {
@@ -198,6 +199,7 @@
 .lawyer-list li {
   list-style-type: none;
   margin-bottom: 40px;
+  font-size: 14px;
 }
 
 .lawyer-list h4 {
@@ -216,16 +218,12 @@
 }
 
 .icon-star {
-  height: 25px;
+  height: 20px;
 }
 
 @media (max-width: 787px) {
   .lawyer-list h4 {
     font-size: 16px;
-  }
-
-  .lawyer-list li {
-    font-size: 14px;
   }
 }
 
@@ -260,7 +258,7 @@
 }
 
 .testimonies-list blockquote {
-  font-size: 16px;
+  font-size: $base-font-size;
   font-style: italic;
   padding: 0px;
   margin-bottom: 0px;
@@ -317,7 +315,7 @@
 }
 
 .garantia-section li {
-  font-size: 18px;
+  font-size: $base-font-size;
 }
 
 

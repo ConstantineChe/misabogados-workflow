@@ -55,10 +55,21 @@
   padding-right: 2px;
 }
 
+.footer-main i:hover {
+  color: #FFFFFF;
+}
+
 .webpay-img {
   margin-top: 20px;
   max-height: 50px;
 }
+
+@media (min-width: 1200px) {
+  .footer-contact .container {
+    width: 1200px;
+  }
+}
+
 
 .footer-contact {
   background-color: #2877D7;

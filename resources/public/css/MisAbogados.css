@@ -6,6 +6,8 @@
 */
 /* Global
 ---------------------------------------------*/
+/* Global Variables */
+/* Resets */
 body {
   /* Move down content because we have a fixed navbar that is 50px tall */
   font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
@@ -14,12 +16,15 @@ body {
 @media (max-width: 1010px) {
   body {
     padding-top: 0px; } }
+@media (min-width: 1200px) {
+  .container {
+    width: 1000px; } }
 h1, h2, h3, h4 {
   font-family: "Raleway", serif;
   font-weight: 300; }
 
 p {
-  font-size: 18px; }
+  font-size: 16px; }
 
 .btn-lg {
   margin-top: 20px; }
@@ -33,7 +38,7 @@ p {
 
 @media (min-width: 1010px) {
   .jumbotron h1 {
-    font-size: 3.6em; } }
+    font-size: 3.25em; } }
 .glyphicon {
   vertical-align: middle;
   margin-top: -5px; }
@@ -358,10 +363,16 @@ p {
   font-size: 32px;
   padding-right: 2px; }
 
+.footer-main i:hover {
+  color: #FFFFFF; }
+
 .webpay-img {
   margin-top: 20px;
   max-height: 50px; }
 
+@media (min-width: 1200px) {
+  .footer-contact .container {
+    width: 1200px; } }
 .footer-contact {
   background-color: #2877D7;
   font-size: 14px;
@@ -396,7 +407,7 @@ p {
   text-align: center; }
 
 .cta h1 {
-  font-size: 3.15em;
+  font-size: 3.1em;
   font-weight: 400;
   text-transform: uppercase;
   margin-top: 4em; }
@@ -405,18 +416,19 @@ p {
   .cta h1 {
     margin-top: 1.25em; } }
 .cta p {
-  font-size: 1.75em; }
+  font-size: 1.85em; }
 
 .cta button {
   font-size: 1em;
-  margin-top: 15px;
-  margin-bottom: 100px; }
+  margin-top: 40px;
+  margin-bottom: 80px; }
 
 @media (max-width: 992px) {
   .cta button {
     margin-bottom: 50px; } }
-.cta h5 {
-  font-size: 1.25em;
+.cta h6 {
+  font-size: 1em;
+  font-weight: bold;
   text-transform: uppercase; }
 
 .cta .thumbnail {
@@ -431,7 +443,7 @@ p {
 .cta-main {
   background: url(/img/main-cta/cta-bg.jpg);
   background-repeat: no-repeat;
-  background-position: center top;
+  background-position: 35% 25%;
   background-size: cover; }
 
 /* Categories Section
@@ -519,7 +531,7 @@ p {
   color: #FFFFFF; }
 
 .lawyers-section li {
-  font-size: 18px; }
+  font-size: 16px; }
 
 @media (max-width: 768px) {
   .lawyer-list {
@@ -530,7 +542,8 @@ p {
     padding-left: 20px; } }
 .lawyer-list li {
   list-style-type: none;
-  margin-bottom: 40px; }
+  margin-bottom: 40px;
+  font-size: 14px; }
 
 .lawyer-list h4 {
   font-weight: bold;
@@ -545,14 +558,11 @@ p {
   margin-top: -5px; }
 
 .icon-star {
-  height: 25px; }
+  height: 20px; }
 
 @media (max-width: 787px) {
   .lawyer-list h4 {
-    font-size: 16px; }
-
-  .lawyer-list li {
-    font-size: 14px; } }
+    font-size: 16px; } }
 /* Testimonies Section
 ---------------------------------------------*/
 .testimonies-section {
@@ -615,7 +625,7 @@ p {
   .garantia-section h1 {
     margin-top: 50px; } }
 .garantia-section li {
-  font-size: 18px; }
+  font-size: 16px; }
 
 /* Second CTA
 ---------------------------------------------*/
@@ -756,7 +766,7 @@ p {
 ---------------------------------------------*/
 .version {
   color: #6f6f6f;
-  font-size: 1.15em;
+  font-size: 16px;
   font-weight: normal; }
 
 /* Garantía

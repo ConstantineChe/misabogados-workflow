@@ -1,6 +1,14 @@
 /* Global
 ---------------------------------------------*/
 
+/* Global Variables */
+
+$base-font-size: 16px;
+
+
+
+/* Resets */
+
 body {
   /* Move down content because we have a fixed navbar that is 50px tall */
   font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
@@ -13,13 +21,19 @@ body {
   }
 }
 
+@media (min-width: 1200px) {
+  .container {
+      width: 1000px;
+  }
+}
+
 h1, h2, h3, h4 {
   font-family: "Raleway", serif;
   font-weight: 300;
 }
 
 p {
-  font-size: 18px;
+  font-size: $base-font-size;
 }
 
 .btn-lg {
@@ -37,7 +51,7 @@ p {
 
 @media (min-width: 1010px) {
   .jumbotron h1 {
-    font-size: 3.6em;
+    font-size: 3.25em;
   }
 }
 
