@@ -2,19 +2,18 @@
   (:require [compojure.core :refer [defroutes GET PUT POST]]
             [ring.util.http-response :refer [ok content-type]]
             [clojure.java.io :as io]
-            [misabogados-workflow.layout.core :as layout]
+            [misabogados-workflow.layout :as layout]
             [hiccup.form :as form]
             [ring.util.response :refer [redirect response]]
             [ring.middleware.session :as s]
             [misabogados-workflow.db.core :as db]
             [buddy.auth :refer [authenticated?]]
             [buddy.hashers :refer [encrypt check]]
-            [misabogados-workflow.layout.core :as layout]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]))
 
 (defn login-page [request]
   (if-not (authenticated? request)
-    (layout/login)
+    (layout/render "login.html" {:title "Login"})
     (-> (redirect "/")
         (assoc :flash (assoc-in request
                        [:params :errors] "Already logged in")))))
