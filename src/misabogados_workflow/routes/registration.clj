@@ -13,7 +13,7 @@
 (def permitted #{:name :email})
 
 (defn signup-page [r]
-  (layout/render "signup.html" {:title "Sign-up"}))
+  (layout/render "signup.html" {:title "Registrar"}))
 
 
 

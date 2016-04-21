@@ -48,5 +48,5 @@
   (GET "/categoria/:slug" [slug :as request] (show-category slug))
   (GET "/app" [] app-page)
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
-  (GET "/contact" [] (render "contact.html"))
+  (GET "/contact" [] (render "contact.html" {:title "Contactar"}))
   (POST "/contact" [] create-lead-from-contact))

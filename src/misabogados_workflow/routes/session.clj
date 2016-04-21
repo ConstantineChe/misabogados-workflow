@@ -13,7 +13,7 @@
 
 (defn login-page [request]
   (if-not (authenticated? request)
-    (layout/render "login.html" {:title "Login"})
+    (layout/render "login.html" {:title "Ingresar"})
     (-> (redirect "/")
         (assoc :flash (assoc-in request
                        [:params :errors] "Already logged in")))))
