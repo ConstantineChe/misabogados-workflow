@@ -26,7 +26,6 @@ $(document).ready(function() {
     });
 
     input[0].addEventListener("keydown", function(ev) {
-        console.log(ev.keyCode);
         if (ev.keyCode === 13) {
             window.location = "categoria/" + input.typeahead("getActive").id;
         }
