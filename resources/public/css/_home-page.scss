@@ -10,7 +10,7 @@
 .cta {
   padding-top: 0px;
   padding-bottom: 0px;
-  color: #FFFFFF;
+  color: $inverse-font-color;
   text-align: center;
 }
 
@@ -76,11 +76,11 @@
 ---------------------------------------------*/
 
 .categories-section {
-  background-color: #FFFFFF;
+  background-color: $background-white;
 }
 
 .categories-section h1 {
-  color: #2877D7;
+  color: $heading-blue;
   text-align: center;
   margin-bottom: 30px;
 }
@@ -111,7 +111,7 @@
   position: relative;
   overflow: hidden;
   height: 160px;
-  background-color: rgba(0, 0, 0, 0.05);;
+  background-color: $background-panel;
 }
 
 .caption h5 {
@@ -125,7 +125,7 @@
 }
 
 .caption-overlay {
-  background-color: rgba(0, 0, 0, 0.55);
+  background-color: $background-caption-overlay;
   position: absolute;
   top: 0;
   right: 0;
@@ -135,7 +135,7 @@
   opacity: 0;
   z-index: 2;
   text-align: center;
-  color: #FFFFFF !important;
+  color: $inverse-font-color !important;
 }
 
 .caption-overlay h5 {
@@ -178,8 +178,8 @@
 ---------------------------------------------*/
 
 .lawyers-section {
-  background-color: #2877D7;
-  color: #FFFFFF;
+  background-color: $background-blue;
+  color: $inverse-font-color;
 }
 
 .lawyers-section li {
@@ -223,7 +223,7 @@
 
 @media (max-width: 787px) {
   .lawyer-list h4 {
-    font-size: 16px;
+    font-size: $base-font-size;
   }
 }
 
@@ -233,11 +233,11 @@
 ---------------------------------------------*/
 
 .testimonies-section {
-  background-color: #FFFFFF;
+  background-color: $background-white;
 }
 
 .testimonies-section h1 {
-  color: #4A8FE2;
+  color: $heading-blue;
   padding-bottom: 40px;
 }
 
@@ -252,7 +252,7 @@
 }
 
 .testimonies-list h4 {
-  color: #4A8FE2;
+  color: $heading-blue;
   text-transform: uppercase;
   font-weight: bold;
 }
@@ -272,7 +272,7 @@
   }
 
   .testimonies-list h4 {
-    font-size: 16px;
+    font-size: $base-font-size;
   }
 
   .testimonies-list blockquote {
@@ -297,8 +297,8 @@
 ---------------------------------------------*/
 
 .garantia-section {
-  background-color: #2877D7;
-  color: #FFFFFF;
+  background-color: $background-blue;
+  color: $inverse-font-color;
 }
 
 .garantia-section img {

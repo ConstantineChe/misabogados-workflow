@@ -2,7 +2,7 @@
 ---------------------------------------------*/
 
 .navbar {
-  background-color: #2b2b2b;
+  background-color: $background-grey;
 }
 
 .navbar .container {
@@ -63,14 +63,14 @@
   }
 
   .navbar-ctl a {
-    color: #FFFFFF !important;
-    font-size: 16px;
+    color: $inverse-font-color !important;
+    font-size: $base-font-size;
     font-weight: bold;
     text-decoration: none;
   }
 
   .navbar-ctl a:hover {
-    color: #b2b2b2 !important;
+    color: $inverse-font-color-hover !important;
   }
 
   .navbar-ctl ul {
@@ -105,17 +105,17 @@
 
 .navbar-button a {
   margin-top: 2px;
-  color: #FFFFFF !important;
+  color: $inverse-font-color !important;
   font-weight: bold;
 }
 
 .navbar-button a:hover {
-  color: #b2b2b2 !important;
+  color: $inverse-font-color-hover !important;
 }
 
 .dropdown-menu {
-  background-color: #2b2b2b;
-  color: #FFFFFF;
+  background-color: $background-grey;
+  color: $inverse-font-color;
 }
 
 .categoria-list {

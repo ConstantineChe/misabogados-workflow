@@ -9,13 +9,15 @@
 /* Global Variables */
 /* Resets */
 body {
-  /* Move down content because we have a fixed navbar that is 50px tall */
   font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
+  /* Move down content because we have a fixed navbar */
   padding-top: 70px; }
 
+/* The paddding adjustment isn't necessary on mobile devices */
 @media (max-width: 1010px) {
   body {
     padding-top: 0px; } }
+/* Constraining display width on large screens */
 @media (min-width: 1200px) {
   .container {
     width: 1000px; } }
@@ -334,6 +336,7 @@ p {
 
 /* Footer
 ---------------------------------------------*/
+/* Footer: Main */
 .footer {
   color: #FFFFFF; }
 
@@ -354,7 +357,7 @@ p {
   margin-bottom: 25px; }
 
 .footer-main a {
-  color: #BBBBBB; }
+  color: #b2b2b2; }
 
 .footer-main p {
   margin-bottom: 25px; }
@@ -386,6 +389,7 @@ p {
 @media (min-width: 1200px) {
   .footer-contact .container {
     width: 1200px; } }
+/* Footer: Contact Information */
 .footer-contact {
   background-color: #2877D7;
   font-size: 14px;
@@ -465,7 +469,7 @@ p {
   background-color: #FFFFFF; }
 
 .categories-section h1 {
-  color: #2877D7;
+  color: #089ad6;
   text-align: center;
   margin-bottom: 30px; }
 
@@ -488,7 +492,7 @@ p {
   position: relative;
   overflow: hidden;
   height: 160px;
-  background-color: rgba(0, 0, 0, 0.05); }
+  background-color: #f5f5f5; }
 
 .caption h5 {
   font-size: .85em; }
@@ -582,7 +586,7 @@ p {
   background-color: #FFFFFF; }
 
 .testimonies-section h1 {
-  color: #4A8FE2;
+  color: #089ad6;
   padding-bottom: 40px; }
 
 .testimonies-list li {
@@ -594,7 +598,7 @@ p {
   float: right; }
 
 .testimonies-list h4 {
-  color: #4A8FE2;
+  color: #089ad6;
   text-transform: uppercase;
   font-weight: bold; }
 
