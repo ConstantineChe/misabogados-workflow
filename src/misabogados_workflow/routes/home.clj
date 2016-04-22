@@ -20,9 +20,6 @@
 
 (defn app-page [request]
   (render "app.html" {:forms-css (-> "reagent-forms.css" io/resource slurp)}))
-  ;; (layout/blank-page "home" [:div.container [:div "hi"
-                               ;; (map (fn [item] [:div.row [:h4 (key item)]
-                                               ;; [:p (val item)]]) request)]]))
 
 (defn create-lead-from-contact [{:keys [params]}]
   (let [recaptcha-response (u/check-recaptcha params)]
