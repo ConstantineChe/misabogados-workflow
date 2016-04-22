@@ -17,12 +17,16 @@
               <li><a href="tel:+56226569866"><span class="glyphicon  glyphicon-earphone  glyphicon-left"></span>+56 (2) 2656 9866</a></li>
               <li class="dropdown  country-selector">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="/img/flags/Chile.png" alt="Chile" /></a>
-                <ul class="dropdown-menu">
+                <ul class="dropdown-menu">Iniciar sesión
                   <li><a href="#"><img src="/img/flags/Colombia.png" alt="Colombia" />Colombia</a></li>
                   <li><a href="#"><img src="/img/flags/Mexico.png" alt="Mexico" />Mexico</a></li>
                 </ul>
               </li>
-              <li><a href="#">Iniciar sesión</a></li>
+              {% if not logged-in? %}
+              <li><a href="/login">Iniciar sesión</a></li>
+              {% else %}
+              <li><a href="#">Hola, {{user.name}}</a>
+              {% endif %}
             </ul>
           </div>
         </div>

@@ -10,7 +10,13 @@
             [clojure.pprint :refer [pprint]]
             [misabogados-workflow.layout :refer [render]]
             [misabogados-workflow.email :as email]
+            [buddy.auth :refer [authenticated?]]
             ))
+
+(defn home-page [request]
+  (render "home_page.html" {:title "Recomendamos Abogados Confiables"
+                            :logged-in? (authenticated? request)
+                            :user (db/get-user (:identity request))}))
 
 (defn app-page [request]
   (render "app.html" {:forms-css (-> "reagent-forms.css" io/resource slurp)}))
@@ -42,11 +48,12 @@
                              :category category})))
 
 (defroutes home-routes
-  (GET "/" [] (render "home_page.html" {:title "Recomendamos Abogados Confiables"}))
+  (GET "/" [] home-page)
   (GET "/garantia" [] (render "guarantee.html" {:title "Garantía"}))
   (GET "/terminos-y-condiciones" [] (render "terms_and_conditions.html" {:title "Términos y Condiciones"}))
   (GET "/categoria/:slug" [slug :as request] (show-category slug))
   (GET "/app" [] app-page)
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
   (GET "/contact" [] (render "contact.html" {:title "Contactar"}))
-  (POST "/contact" [] create-lead-from-contact))
+  (POST "/contact" [] create-lead-from-contact)
+  (GET "/categories_json" [] (map (fn [i] {:id (:slug i) :name (:name i)}) (mc/find-maps @db/db "categories"))))

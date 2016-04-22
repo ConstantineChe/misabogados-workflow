@@ -63,7 +63,7 @@
         <!-- Categories Filter -->
         <div class="input-group">
           <label class="sr-only" for="categories-filter">Filtro áreas legales</label>
-          <input type="text" class="form-control" placeholder="Buscar...">
+          <input type="text" class="form-control" data-provide="typeahead" id="categories-filter" placeholder="Buscar...">
           <span class="input-group-btn">
             <button class="btn btn-default" type="button">Buscar</button>
           </span>
@@ -485,5 +485,13 @@
     </div>
   </div>
 </div>
+
+{% endblock %}
+
+{% block page-scripts %}
+
+{% script "https://cdnjs.cloudflare.com/ajax/libs/bootstrap-3-typeahead/4.0.1/bootstrap3-typeahead.min.js" %}
+
+{% script "js/categories.js" %}
 
 {% endblock %}
