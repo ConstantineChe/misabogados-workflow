@@ -27,7 +27,7 @@
         session (:session request)]
     (if-not (= (:password params) (:confirm-password params))
       (-> (redirect "/signup")
-          (assoc-in [:flash :messages :errors :error] "Password doesn't match with confirmation")
+          (assoc-in [:flash :messages :errors :error] "La contraseña y su confirmación no coinciden")
           (assoc-in [:flash :params] params))
       (try (when-let [user (db/create-user (into {:verification-code (-> params :email util/generate-hash)
                                               :password (-> params :password encrypt)
@@ -61,7 +61,7 @@
               (assoc :session updated-session))))
       (redirect "/"))
     (redirect "/" (assoc :flash (assoc-in request [:params :errors]
-                                          "Invalid verification code")))))
+                                          "Código de virificación invalido")))))
 
 
 (defroutes registration-routes

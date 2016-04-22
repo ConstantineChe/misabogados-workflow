@@ -19,7 +19,7 @@
                                        (-> request :flash :params)))
     (-> (redirect "/")
         (assoc :flash (assoc-in request
-                       [:params :errors] "Already logged in")))))
+                       [:params :errors] "Ya se ha ingresado")))))
 
 (defn login [request]
   (let [user (db/get-user (:email (:params request)))
@@ -35,7 +35,7 @@
                                  :role (keyword (:role user))}) "application/json")
               (assoc :session updated-session))
           (content-type (ok {:status "fail"
-                             :error "incorrect username or password"})
+                             :error "Email o contraseña incorrecta"})
                         "application/json"))
         (if success?
           (-> (redirect "/")
