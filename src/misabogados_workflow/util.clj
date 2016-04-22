@@ -27,7 +27,7 @@
     (str padding sig)))
 
 (defn base-path [request]
-  (str (name (:scheme request)) "://" (:server-name request) ":" (:server-port request)))
+  (str (name (:scheme request)) "://" (:server-name request)))
 
 (defn full-path [request rel-path]
   (str (base-path request) rel-path))

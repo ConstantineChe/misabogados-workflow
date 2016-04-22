@@ -34,7 +34,8 @@
                                               :role :client}
                                              (filter #(permitted  (key %))
                                                      (:params request))))]
-             (future (email/verification-email user))
+             (future (email/verification-email (assoc user :verification-url
+                                                      (str util/base-path "/verify/" (:verification-code user)))))
              (if (= "application/transit+json; charset=UTF-8" (:content-type request))
                (-> (response {:identity (-> request :params :email)
                               :role (-> request :params :role)})
