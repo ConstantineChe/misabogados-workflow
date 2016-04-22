@@ -42,9 +42,9 @@
                              :category category})))
 
 (defroutes home-routes
-  (GET "/" [] (render "home_page.html" {:title "Home"}))
-  (GET "/garantia" [] (render "guarantee.html" {:title "Garantia"}))
-  (GET "/terminos-y-condiciones" [] (render "terms_and_conditions.html" {:title "Garantia"}))
+  (GET "/" [] (render "home_page.html" {:title "Recomendamos Abogados Confiables"}))
+  (GET "/garantia" [] (render "guarantee.html" {:title "Garantía"}))
+  (GET "/terminos-y-condiciones" [] (render "terms_and_conditions.html" {:title "Términos y Condiciones"}))
   (GET "/categoria/:slug" [slug :as request] (show-category slug))
   (GET "/app" [] app-page)
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
