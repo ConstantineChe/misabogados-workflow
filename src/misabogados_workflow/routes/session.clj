@@ -13,7 +13,10 @@
 
 (defn login-page [request]
   (if-not (authenticated? request)
-    (layout/render "login.html" {:title "Ingresar"})
+    (layout/render "login.html" (merge {:title "Ingresar"}
+                                       (if-let [messages (-> request :flash :messages)]
+                                        {:messages messages})
+                                       (-> request :flash :params)))
     (-> (redirect "/")
         (assoc :flash (assoc-in request
                        [:params :errors] "Already logged in")))))
@@ -37,7 +40,10 @@
         (if success?
           (-> (redirect "/")
               (assoc :session updated-session))
-          (redirect "/login"))))))
+          (-> (redirect "/login")
+              (assoc-in [:flash :params] (:params request))
+              (assoc-in [:flash :messages :errors :error]
+                        "incorrect username or password")))))))
 
 (defn logout [request]
   (if (= "application/transit+json; charset=UTF-8" (:content-type request))

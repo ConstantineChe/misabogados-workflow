@@ -21,7 +21,7 @@
 (defn oid [id] (ObjectId. id))
 
 (defn create-user [user]
-  (mc/insert @db "users" user))
+  (mc/insert-and-return @db "users" user))
 
 (defn update-user [id data]
   (mc/update @db "users" {:_id (oid id)}
@@ -58,9 +58,9 @@
                                    :foreignField :_id
                                    :as :client}}
                        ;;{"$limit" 20}
-                       {"$sort" {:_id -1}} 
+                       {"$sort" {:_id -1}}
                        ])
-        (= :operator role) 
+        (= :operator role)
         (mc/find-maps @db "leads" {:step {$nin ["archive"]}})
         (= :lawyer role)
         {}
