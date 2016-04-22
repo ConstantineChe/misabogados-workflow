@@ -35,7 +35,7 @@
                                              (filter #(permitted  (key %))
                                                      (:params request))))]
              (future (email/verification-email (assoc user :verification-url
-                                                      (str util/base-path "/verify/" (:verification-code user)))))
+                                                      (str (util/base-path request) "/verify/" (:verification-code user)))))
              (if (= "application/transit+json; charset=UTF-8" (:content-type request))
                (-> (response {:identity (-> request :params :email)
                               :role (-> request :params :role)})
@@ -55,7 +55,7 @@
   (if-let [user (db/find-user-by-code code)]
     (if-not (:verified user)
       (do
-        (db/update-user (:email user) {:verified true})
+        (db/update-user (str (:_id user)) {:verified true})
         (let [updated-session (assoc (:session request) :identity (keyword (:email user)))]
           (-> (redirect "/")
               (assoc :session updated-session))))
