@@ -25,6 +25,13 @@ h1, h2, h3, h4 {
   font-family: "Raleway", serif;
   font-weight: 300; }
 
+/* To comply with SEO best practices, treat h2 as if h1 */
+h2 {
+  font-size: 3.25em; }
+
+@media (max-width: 992px) {
+  h2 {
+    font-size: 2.25em; } }
 p {
   font-size: 16px; }
 
@@ -468,13 +475,13 @@ p {
 .categories-section {
   background-color: #FFFFFF; }
 
-.categories-section h1 {
+.categories-section h2 {
   color: #089ad6;
   text-align: center;
   margin-bottom: 30px; }
 
 @media (min-width: 992px) {
-  .categories-section h1 {
+  .categories-section h2 {
     margin-bottom: 50px; } }
 .categories-section .input-group {
   margin-bottom: 50px;
@@ -585,7 +592,7 @@ p {
 .testimonies-section {
   background-color: #FFFFFF; }
 
-.testimonies-section h1 {
+.testimonies-section h2 {
   color: #089ad6;
   padding-bottom: 40px; }
 
@@ -639,7 +646,7 @@ p {
   margin-right: auto; }
 
 @media (max-width: 991px) {
-  .garantia-section h1 {
+  .garantia-section h2 {
     margin-top: 50px; } }
 .garantia-section li {
   font-size: 16px; }
@@ -651,6 +658,15 @@ p {
   background-size: cover;
   padding-bottom: 30px; }
 
+.cta-second h2 {
+  font-size: 3.1em;
+  font-weight: 400;
+  text-transform: uppercase;
+  margin-top: 4em; }
+
+@media (max-width: 992px) {
+  .cta h2 {
+    margin-top: 1.25em; } }
 /* Radio Agricultura Player
 ---------------------------------------------*/
 .radioAgriculturaPlayer {
