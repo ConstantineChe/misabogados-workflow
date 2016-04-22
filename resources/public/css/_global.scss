@@ -5,6 +5,14 @@
 
 $base-font-size: 16px;
 
+$home-cta-h1-size: 3.1em;
+$home-cta-h1-mobile-size: 1.25em;
+$cta-h1-size: 2.25em;
+$cta-h1-mobile-size: 1.5em;
+
+$h2-size: 3.25em;
+$h2-mobile-size: 2.25em;
+
 $font-color: #333333;
 $inverse-font-color: #FFFFFF;
 $inverse-font-color-hover: #b2b2b2;
@@ -49,6 +57,17 @@ body {
 h1, h2, h3, h4 {
   font-family: "Raleway", serif;
   font-weight: 300;
+}
+
+/* To comply with SEO best practices, treat h2 as if h1 */
+h2 {
+  font-size: $h2-size;
+}
+
+@media (max-width: 992px) {
+  h2 {
+    font-size: $h2-mobile-size;
+  }
 }
 
 p {
