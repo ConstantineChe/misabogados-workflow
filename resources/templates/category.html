@@ -1,7 +1,9 @@
 {% extends "layout.html" %}
 
 {% block metadata %}
-    <meta name="description" content="" />
+<meta name="description" content="" />
+{% endblock %}
+
 {% block page %}
 
 <!-- Main CTA -->
@@ -76,6 +78,9 @@
   </div>
 </div>
 
+{% endblock %}
+
+{% block page-scripts %}
 <script type="text/javascript">
   $(document).ready(function () {
   if(location.hash != null && location.hash != ""){
