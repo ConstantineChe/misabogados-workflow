@@ -38,7 +38,7 @@
                              :error "Email o contraseña incorrecta"})
                         "application/json"))
         (if success?
-          (-> (redirect "/")
+          (-> (redirect "/app")
               (assoc :session updated-session))
           (-> (redirect "/login")
               (assoc-in [:flash :params] (:params request))
