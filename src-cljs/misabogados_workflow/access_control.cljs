@@ -18,19 +18,19 @@
 (defn reset-access! []
   (case (:role (session/get :user))
     "client" (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
-                                                            ["#logout" "Logout"]])})
+                                                                 ["#logout" "Logout"]])})
      "lawyer" (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
-                                                            ["#payments" "Pagos" :payments]
-                                                            ["#logout" "Logout"]])})
+                                                                  ["#payments" "Pagos" :payments]
+                                                                  ["#logout" "Logout"]])})
      "operator" (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
-                                                            ["#payments" "Pagos" :payments]
-                                                            ["#logout" "Logout"]])})
+                                                                    ["#payments" "Pagos" :payments]
+                                                                    ["#logout" "Logout"]])})
      "finance" (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
-                                                            ["#payments" "Pagos" :payments]
-                                                            ["#logout" "Logout"]])})
+                                                                   ["#payments" "Pagos" :payments]
+                                                                   ["#logout" "Logout"]])})
      "admin" (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
-                                                            ["#payments" "Pagos" :payments]
-                                                            ["#logout" "Logout"]
-                                                            ["#admin" "Admin" :admin]])})
+                                                                 ["#payments" "Pagos" :payments]
+                                                                 ["#admin" "Admin" :admin]
+                                                                 ["#logout" "Logout"]])})
      (reset! components {:nav-links (into no-role-links [["#login" "Login" :login]
-                                                            ["#signup" "Signup" :signup]])})))
+                                                         ["#signup" "Signup" :signup]])})))
