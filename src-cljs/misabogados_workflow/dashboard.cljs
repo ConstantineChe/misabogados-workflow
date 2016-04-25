@@ -70,5 +70,5 @@
        (js/setTimeout #(session/put! :notification nil) 5000)
                   notification)
        [:a {:class "btn btn-primary"
-            :href "/#lead"} "New Lead"]
+            :href "#lead"} "New Lead"]
        [table]])))
