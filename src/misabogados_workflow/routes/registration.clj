@@ -58,10 +58,11 @@
         (db/update-user (str (:_id user)) {:verified true})
         (let [updated-session (assoc (:session request) :identity (keyword (:email user)))]
           (-> (redirect "/")
-              (assoc :session updated-session))))
+              (assoc :session updated-session)
+              (assoc-in [:flash :messages :success :verified] "Your email was verified."))))
       (redirect "/"))
-    (redirect "/" (assoc :flash (assoc-in request [:params :errors]
-                                          "Código de virificación invalido")))))
+    (-> (redirect "/")
+        (assoc-in [:flash :messages :errors :invalid-code] "Código de virificación invalido"))))
 
 
 (defroutes registration-routes

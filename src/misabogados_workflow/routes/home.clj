@@ -14,9 +14,11 @@
             ))
 
 (defn home-page [request]
-  (render "home_page.html" {:title "Recomendamos Abogados Confiables"
-                            :logged-in? (authenticated? request)
-                            :user (db/get-user (:identity request))}))
+  (render "home_page.html" (merge {:title "Recomendamos Abogados Confiables"
+                                   :logged-in? (authenticated? request)
+                                   :user (db/get-user (:identity request))}
+                                  (if-let [messages (-> request :flash :messages)]
+                                        {:messages messages}))))
 
 (defn app-page [request]
   (render "app.html" {:forms-css (-> "reagent-forms.css" io/resource slurp)}))
