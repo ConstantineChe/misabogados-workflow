@@ -11,6 +11,7 @@
             [misabogados-workflow.routes.admin.categories :refer [categories-admin]]
             [misabogados-workflow.routes.admin.lawyers :refer [lawyers-admin]]
             [misabogados-workflow.middleware :as middleware]
+            [misabogados-workflow.settings :as settings]
             [misabogados-workflow.db.indexes :as indexes]
             [ring.middleware.json :as json]
             [clojure.tools.logging :as log]
@@ -30,6 +31,7 @@
   (logger/init env)
   (db/connect!)
   (indexes/setup-indexes)
+  (settings/init!)
   (doseq [component (:started (mount/start))]
     (log/info component "started"))
   ((:init defaults)))
