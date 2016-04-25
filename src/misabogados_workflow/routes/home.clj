@@ -14,6 +14,7 @@
             ))
 
 (defn home-page [request]
+  (clojure.pprint/pprint request)
   (render "home_page.html" {:title "Recomendamos Abogados Confiables"
                             :logged-in? (authenticated? request)
                             :user (db/get-user (:identity request))}))
