@@ -7,10 +7,9 @@
 /* Shared classes
 ---------------------------------------------*/
 
-.static-content{
-  padding-top: 60px;
+.static-content {
+  @extend .section-padding;
   max-width: 820px;
-  padding-bottom: 60px;
 }
 
 .static-content h1 {
