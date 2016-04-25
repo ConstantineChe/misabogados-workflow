@@ -8,8 +8,26 @@
             [ring.middleware.session :as s]
             [misabogados-workflow.db.core :as db]
             [buddy.auth :refer [authenticated?]]
+            [taoensso.sente.server-adapters.immutant :refer (sente-web-server-adapter)]
+            [clojure.core.async :as async  :refer (<! <!! >! >!! put! chan go go-loop)]
+            [taoensso.encore    :as encore :refer ()]
+            [taoensso.timbre    :as timbre :refer (tracef debugf infof warnf errorf)]
+            [taoensso.sente     :as sente]
             [buddy.hashers :refer [encrypt check]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]))
+
+(defn- current-time []
+  (quot (System/currentTimeMillis) 1000))
+
+(let [{:keys [ch-recv send-fn ajax-post-fn ajax-get-or-ws-handshake-fn
+              connected-uids]}
+      (sente/make-channel-socket! sente-web-server-adapter {})]
+  (def ring-ajax-post                ajax-post-fn)
+  (def ring-ajax-get-or-ws-handshake ajax-get-or-ws-handshake-fn)
+  (def ch-chsk                       ch-recv) ; ChannelSocket's receive channel
+  (def chsk-send!                    send-fn) ; ChannelSocket's send API fn
+  (def connected-uids                connected-uids) ; Watchable, read-only atom
+  )
 
 (defn login-page [request]
   (if-not (authenticated? request)
@@ -57,4 +75,6 @@
   (GET "/logout" [] logout)
   (GET "/csrf-token" [] (content-type (ok {:token *anti-forgery-token*}) "application/json"))
   (GET "/request" request (str request))
-  (GET "/session" request (content-type (ok {:identity (:identity request) :role (-> request :session :role)}) "application/json")))
+  (GET "/session" request (content-type (ok {:identity (:identity request) :role (-> request :session :role)}) "application/json"))
+  (GET "/chsk" [] ring-ajax-get-or-ws-handshake)
+  (POST "/chsk" [] ring-ajax-post))

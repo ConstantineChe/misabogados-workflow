@@ -44,7 +44,9 @@
                  [gws/clj-mandrill "0.4.2"]
                  [clj-time "0.11.0"]
                  [inflections "0.12.1"]
-                 [clj-recaptcha "0.0.2"]]
+                 [clj-recaptcha "0.0.2"]
+                 [com.taoensso/sente "1.8.1"]
+                 [org.clojure/core.async "0.2.374"]]
 
   :min-lein-version "2.0.0"
   :uberjar-name "misabogados-workflow.jar"
