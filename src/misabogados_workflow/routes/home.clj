@@ -55,4 +55,5 @@
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
   (GET "/contact" [] (render "contact.html" {:title "Contactar"}))
   (POST "/contact" [] create-lead-from-contact)
+  (GET "/éxito-contratar" [] (render "contact-success.html" {:title "¡Has enviado tu mensaje!"}))
   (GET "/categories_json" [] (map (fn [i] {:id (:slug i) :name (:name i)}) (mc/find-maps @db/db "categories"))))
