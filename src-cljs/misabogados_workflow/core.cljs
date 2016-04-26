@@ -96,7 +96,9 @@
 
        (into [:ul.nav.navbar-nav]
              (doall (map (fn [item]  (apply nav-link item)) (:nav-links @ac/components)))
-             )]]]))
+             )
+       (into [:ul.nav.navbar-nav.navbar-right]
+             (doall (map (fn [item]  (apply nav-link item)) (:nav-links-right @ac/components))))]]]))
 
 (comment (defn debug []
     (let [request (r/atom nil)

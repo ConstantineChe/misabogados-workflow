@@ -31,3 +31,10 @@
                           :body [{:type "text/html; charset=utf-8"
                                   :content (parser/render-file "verification_email.html" user)}]})
   )
+
+(defn reset-password-email [user link]
+  (send-message settings {:from "no-reply@misabogados.com"
+                          :to (:email user)
+                          :subject "Verification email"
+                          :body [{:type "text/html; charset=utf-8"
+                                  :content (parser/render-file "reset-password_email.html" (merge user {:reset-link link}))}]}))

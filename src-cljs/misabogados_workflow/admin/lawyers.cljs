@@ -7,6 +7,7 @@
             [inflections.core :as i]
             [bouncer.validators :as v]
             [misabogados-workflow.schema :as s]
+            [misabogados_workflow.utils :as u]
             [clojure.walk :refer [keywordize-keys]]
             [secretary.core :as secretary :include-macros true])  )
 
@@ -20,7 +21,7 @@
                                                             500 (js/alert "Internal server error")
                                                             (js/alert (str %)))}))                                                                                                                                                                                                                                          (defn save-lawyer [id data]
   (PUT (str js/context "/admin/lawyers/" id) {:params (update data :lawyer dissoc :_id)
-                                                 :handler #(do (aset js/window "location" "#admin/lawyers")
+                                                 :handler #(do (u/redirect "#admin/lawyers")
                                                                )
                                                  :error-handler  #(case (:status %)
                                                                     403 (js/alert "Access denied")
@@ -29,7 +30,7 @@
 
 (defn create-lawyer [data]
   (POST (str js/context "/admin/lawyers") {:params data
-                                               :handler #(do (aset js/window "location" "#admin/lawyers")
+                                               :handler #(do (u/redirect "#admin/lawyers")
                                                              )
                                                :error-handler  #(case (:status %)
                                                                   403 (js/alert "Access denied")
@@ -76,32 +77,32 @@
                                                            (js/alert (str %)))})
     (fn []
       [:div.container-fluid
-       (el/create-form "Edit lawyer" s/lawyer-schema-expanded [lawyer options util])
+       (el/create-form "Edit lawyer" s/lawyer [lawyer options util])
        [:div
         [:button.btn.btn-primary
           {:on-click #(save-lawyer id @lawyer)}
          "Save"]
         [:button.btn.btn-default
-         {:on-click #(aset js/window "location" "#admin/lawyers")}
+         {:on-click #(u/redirect "#admin/lawyers")}
          "Cancel"]]])))
 
 (defn new-lawyer
   "New lawyer page component."
   []
-  (let [lawyer (el/prepare-atom s/lawyer-schema-expanded (r/atom nil))
+  (let [lawyer (el/prepare-atom s/lawyer (r/atom nil))
         util (r/atom nil)
         options (r/atom nil)]
     (fn []
       [:div.container-fluid
              (str @lawyer)
 
-       (el/create-form "New lawyer" s/lawyer-schema-expanded [lawyer options util])
+       (el/create-form "New lawyer" s/lawyer [lawyer options util])
        [:div
         [:button.btn.btn-primary
           {:on-click #(create-lawyer @lawyer)}
          "Create"]
         [:button.btn.btn-default
-         {:on-click #(aset js/window "location" "#admin/lawyers")}
+         {:on-click #(u/redirect "#admin/lawyers")}
          "Cancel"]]]))
   )
 

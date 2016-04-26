@@ -6,6 +6,7 @@
             [bouncer.core :as b]
             [inflections.core :as i]
             [bouncer.validators :as v]
+            [misabogados-workflow.utils :as u]
             [misabogados-workflow.schema :as s :include-macros true]
             [clojure.walk :refer [keywordize-keys]]
             [secretary.core :as secretary :include-macros true]))
@@ -21,7 +22,7 @@
 
 (defn save-category [id data]
   (PUT (str js/context "/admin/categories/" id) {:params (update data :category dissoc :_id)
-                                                 :handler #(do (aset js/window "location" "#admin/categories")
+                                                 :handler #(do (u/redirect "#admin/categories")
                                                                )
                                                  :error-handler  #(case (:status %)
                                                                     403 (js/alert "Access denied")
@@ -30,7 +31,7 @@
 
 (defn create-category [data]
   (POST (str js/context "/admin/categories") {:params data
-                                               :handler #(do (aset js/window "location" "#admin/categories")
+                                               :handler #(do (u/redirect "#admin/categories")
                                                              )
                                                :error-handler  #(case (:status %)
                                                                   403 (js/alert "Access denied")
@@ -96,7 +97,7 @@
           {:on-click #(save-category id @category)}
          "Save"]
         [:button.btn.btn-default
-         {:on-click #(aset js/window "location" "#admin/categories")}
+         {:on-click #(u/redirect "#admin/categories")}
          "Cancel"]]])))
 
 (defn new-category
@@ -113,7 +114,7 @@
           {:on-click #(create-category @category)}
          "Create"]
         [:button.btn.btn-default
-         {:on-click #(aset js/window "location" "#admin/categories")}
+         {:on-click #(u/redirect "#admin/categories")}
          "Cancel"]]]))
   )
 

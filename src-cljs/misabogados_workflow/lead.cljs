@@ -255,66 +255,17 @@
                                                   ;; (reset! validation-message nil))
                                                   ))} "Guardar"]])))
 
-(def schema-expanded
-  {:lead
-   {:render-type :entity
-    :collection-name "leads"
-    :field-definitions
-    {:client
-     {:render-type :text}
-     :match
-     {:render-type :entity
-      :field-definitions
-      {:lawyer
-       {:render-type :text}
-       :meetings
-       {:render-type :collection
-        :label "Meetings"
-        :entity-label "Meeting"
-        :field-definitions
-        {:time
-         {:render-type :text}
-         :meeting_type
-         {:render-type :text}}}}}
-     :lead_type
-     {:render-type :text
-      :label "Lead Type"}
-     :problem
-     {:render-type :text}}}})
 
-
-(def data-l {:lead {:client "cl", :match
-                    {:lawyer nil, :meetings [{:time "11", :meeting_type nil}
-                                             {:time "testt1," :meeting_type "test1"}]},
-                    :lead_type nil, :problem nil}}
-)
-
-(defn schema []
-  (let [atoms [(r/atom {}) (r/atom {}) (r/atom {})]
-        meetings (r/cursor (first atoms) [:lead :match :meetings])]
-    (fn []
-      [:div (str "data " @(first atoms)) [:br]
-       (str @(last atoms))
-      ; (str "schema " @schema)
-       (apply el/form "apply schema form" atoms (map (fn [schema] (el/render-form schema @(first atoms) []))
-                                                     s/category-macro-expanded))
-       [:button.btn.btn-primary {:on-click #(swap! meetings conj {})}
-        "New Meeting"]
-       ])))
 
 (def pages
   {:new-lead #'new-lead
-   :edit-lead #'edit-lead
-   :schema #'schema})
+   :edit-lead #'edit-lead})
 
 (defn page []
   [(pages (session/get :page))])
 
 (secretary/defroute "/lead" []
   (session/put! :page :new-lead))
-
-(secretary/defroute "/schema" []
-  (session/put! :page :schema))
 
 (secretary/defroute "/lead/:id/edit" {id :id}
   (do (session/put! :page :edit-lead)
