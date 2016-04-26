@@ -1,12 +1,12 @@
   {% for field,message in messages.errors %}
-  <div class="alert alert-danger">
+  <div class="alert  alert-danger  alert-top" role="alert">
     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
     <p>{{message}}</p>
   </div>
   {% endfor %}
 
   {% for field,message in messages.success %}
-  <div class="alert alert-success">
+  <div class="alert  alert-success  alert-top" role="alert">
     <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
     <p>{{message}}</p>
   </div>

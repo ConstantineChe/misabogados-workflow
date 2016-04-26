@@ -72,6 +72,19 @@ p {
     height: 50px;
     margin: -50px 0 0;
     visibility: hidden; } }
+/* Alert styling */
+.alert-top {
+  position: absolute;
+  top: 105px;
+  width: 80%;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto; }
+
+@media (max-width: 1010px) {
+  .alert-top {
+    top: 70px; } }
 /* Helpers
 ---------------------------------------------*/
 /* 2 row navbar */
