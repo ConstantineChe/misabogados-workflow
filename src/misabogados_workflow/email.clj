@@ -18,7 +18,8 @@
 
 (defn contact-email [data]
   (send-message settings {:from "no-reply@misabogados.com"
-                          :to (:client_email data)
+                          ;; :to (:client_email data)
+                          :to "contacto@misabogados.com"
                           :subject (str "Buscar abogado " (:client_email data))
                           :body [{:type "text/html; charset=utf-8"
                                   :content (parser/render-file "contact_email.html" {:values data})}]}))

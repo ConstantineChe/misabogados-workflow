@@ -5,6 +5,7 @@
             [ring.util.http-response :refer [content-type ok]]
             [ring.util.anti-forgery :refer [anti-forgery-field]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
+            [misabogados-workflow.settings :as s]
             [clj-recaptcha.client-v2 :as c]))
 
 (declare ^:dynamic *identity*)
@@ -23,6 +24,7 @@
         template
         (assoc params
           :page template
+          :settings @s/settings
           :csrf-token *anti-forgery-token*
           :servlet-context *app-context*)))
     "text/html; charset=utf-8"))

@@ -51,6 +51,7 @@
   (GET "/" [] home-page)
   (GET "/garantia" [] (render "guarantee.html" {:title "Garantía"}))
   (GET "/terminos-y-condiciones" [] (render "terms_and_conditions.html" {:title "Términos y Condiciones"}))
+  (GET "/politica-de-privacidad" [] (render "privacy.html" {:title "Politica de privacidad"}))
   (GET "/categoria/:slug" [slug :as request] (show-category slug))
   (GET "/app" [] app-page)
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
