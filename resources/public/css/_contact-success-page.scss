@@ -26,15 +26,20 @@
   }
 
   img {
-    float: left;
-    max-width: 75px;
-    margin: 10px;
+    margin-top: 10px;
   }
 
   ul {
     padding-left: 0px;
   }
 
+}
+
+@media (max-width: 787px) {
+  .next-steps img {
+    max-width: 75px;
+    margin-top: 5px;
+  }
 }
 
 .extra-details {
@@ -59,15 +64,13 @@
   button {
     margin-top: 10px;
   }
-  
+
 }
 
 .emergencia {
 
   img {
     max-width: 100px;
-    margin-left: auto;
-    margin-right: auto;
   }
 
   h3 {
