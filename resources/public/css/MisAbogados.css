@@ -822,12 +822,14 @@ p {
 .next-steps h3 {
   text-align: center; }
 .next-steps img {
-  float: left;
-  max-width: 75px;
-  margin: 10px; }
+  margin-top: 10px; }
 .next-steps ul {
   padding-left: 0px; }
 
+@media (max-width: 787px) {
+  .next-steps img {
+    max-width: 75px;
+    margin-top: 5px; } }
 .extra-details {
   margin-top: 30px; }
 
@@ -842,9 +844,7 @@ p {
   margin-top: 10px; }
 
 .emergencia img {
-  max-width: 100px;
-  margin-left: auto;
-  margin-right: auto; }
+  max-width: 100px; }
 .emergencia h3 {
   font-size: 28px;
   text-align: center;
