@@ -218,7 +218,7 @@
                            (reset! preview (md->html (-> % .-target .-value))))
            }]]
        [:div.col-xs-6
-        [:label.control-label "Preview"]
+        [:label.control-label (str label " Preview")]
         [:div.preview {:style {:border "solid grey 1px"
                                :padding :5px}
                        :dangerouslySetInnerHTML {:__html @preview}}]]])))

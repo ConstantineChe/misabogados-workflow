@@ -72,6 +72,9 @@
       :externs ["react/externs/react.js"]
       :pretty-print true}}}}
 
+  :figwheel {:reload-clj-files {:clj true
+                                :cljc true}}
+
   :profiles
   {:uberjar {:omit-source true
              :env {:production true
@@ -103,7 +106,7 @@
                                  [lein-figwheel "0.5.0-6"]
                                  [com.cemerick/piggieback "0.2.2-SNAPSHOT"]
                                  [spyscope "0.1.5"]]
-                  :plugins [[lein-figwheel "0.5.0-6"] [org.clojure/clojurescript "1.7.228"]]
+                  :plugins [[lein-figwheel "0.5.2"] [org.clojure/clojurescript "1.8.51"]]
                    :cljsbuild
                    {:builds
                     {:app

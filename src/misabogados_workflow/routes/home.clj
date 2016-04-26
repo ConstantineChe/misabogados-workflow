@@ -11,6 +11,7 @@
             [misabogados-workflow.layout :refer [render]]
             [misabogados-workflow.email :as email]
             [buddy.auth :refer [authenticated?]]
+            [misabogados-workflow.schema :as s]
             ))
 
 (defn home-page [request]

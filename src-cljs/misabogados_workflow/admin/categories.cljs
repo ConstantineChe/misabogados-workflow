@@ -6,7 +6,7 @@
             [bouncer.core :as b]
             [inflections.core :as i]
             [bouncer.validators :as v]
-            [misabogados-workflow.schema :as s]
+            [misabogados-workflow.schema :as s :include-macros true]
             [clojure.walk :refer [keywordize-keys]]
             [secretary.core :as secretary :include-macros true]))
 
@@ -51,9 +51,7 @@
   [categories]
   (el/data-table categories
                  ["Id" "Name" "Slug" "Showed by default" "Persons" "Enterprises" "Actions"]
-                 [:_id
-                  :name
-                  :slug
+                 [:_id :name :slug
                   #(if (% :showed_by_default) "Yes" "No")
                   #(if (% :persons) "Yes" "No")
                   #(if (% :enterprises) "Yes" "No")
@@ -92,7 +90,7 @@
                                                            (js/alert (str %)))})
     (fn []
       [:div.container-fluid
-       (el/create-form "Edit category" s/category-schema-expanded [category options util])
+       (el/create-form "Edit category" s/category [category options util])
        [:div
         [:button.btn.btn-primary
           {:on-click #(save-category id @category)}
@@ -104,14 +102,12 @@
 (defn new-category
   "New category page component."
   []
-  (let [category (el/prepare-atom s/category-schema-expanded (r/atom nil))
+  (let [category (el/prepare-atom s/category (r/atom nil))
         util (r/atom nil)
         options (r/atom nil)]
     (fn []
       [:div.container-fluid
-             (str @category)
-
-       (el/create-form "New category" s/category-macro-expanded [category options util])
+       (el/create-form "New category" s/category [category options util])
        [:div
         [:button.btn.btn-primary
           {:on-click #(create-category @category)}
