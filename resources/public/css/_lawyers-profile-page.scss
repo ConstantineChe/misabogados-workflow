@@ -2,5 +2,45 @@
 ---------------------------------------------*/
 
 .lawyer-profile-header {
+  background-color: $background-blue;
+  color: $inverse-font-color;
+  padding-bottom: 0px;
+  position: relative;
 
+  h1 {
+    text-transform: uppercase;
+    margin-top: 0px;
+  }
+
+  .profile-img {
+    height: 200px;
+    width: 200px;
+    overflow: hidden;
+    border-radius: 50%;
+    position: absolute;
+    margin-top: -10px;
+  }
+
+  blockquote {
+    border-left: none;
+  }
+}
+
+.lawyer-profile {
+  i {
+    color: $background-green;
+    float: left;
+    margin: 10px;
+    font-size: 40px;
+  }
+
+  img {
+    width: 40px;
+    float: left;
+    margin: 10px;
+  }
+
+  .progress-bar {
+    background-color: $background-green;
+  }
 }

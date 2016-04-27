@@ -8,7 +8,7 @@
 ---------------------------------------------*/
 /* Global Variables */
 /* Global Patterns */
-.section-padding, .contact-success, .static-content {
+.section-padding, .static-content {
   padding-top: 60px;
   padding-bottom: 60px; }
 
@@ -869,6 +869,36 @@ p {
 
 /* Lawyers Profile Page
 ---------------------------------------------*/
+.lawyer-profile-header {
+  background-color: #2877D7;
+  color: #FFFFFF;
+  padding-bottom: 0px;
+  position: relative; }
+  .lawyer-profile-header h1 {
+    text-transform: uppercase;
+    margin-top: 0px; }
+  .lawyer-profile-header .profile-img {
+    height: 200px;
+    width: 200px;
+    overflow: hidden;
+    border-radius: 50%;
+    position: absolute;
+    margin-top: -10px; }
+  .lawyer-profile-header blockquote {
+    border-left: none; }
+
+.lawyer-profile i {
+  color: #4ccf5c;
+  float: left;
+  margin: 10px;
+  font-size: 40px; }
+.lawyer-profile img {
+  width: 40px;
+  float: left;
+  margin: 10px; }
+.lawyer-profile .progress-bar {
+  background-color: #4ccf5c; }
+
 /*--------------------------------------------
  * Static Page Sections                  *
 ---------------------------------------------*/
