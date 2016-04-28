@@ -874,30 +874,84 @@ p {
   color: #FFFFFF;
   padding-bottom: 0px;
   position: relative; }
-  .lawyer-profile-header h1 {
-    text-transform: uppercase;
-    margin-top: 0px; }
   .lawyer-profile-header .profile-img {
     height: 200px;
     width: 200px;
     overflow: hidden;
     border-radius: 50%;
     position: absolute;
-    margin-top: -10px; }
+    margin-top: -10px;
+    box-shadow: 0px 2px 5px #888888; }
+  .lawyer-profile-header h1 {
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 5px; }
+  .lawyer-profile-header .qualifier {
+    font-size: 18px; }
+  .lawyer-profile-header p {
+    margin-top: 30px;
+    margin-bottom: 20px; }
   .lawyer-profile-header blockquote {
-    border-left: none; }
+    border-left: none;
+    padding: 0px; }
+    .lawyer-profile-header blockquote h3 {
+      margin-top: 20px;
+      font-family: "Open Sans", Helvetica, Arial, sans-serif;
+      font-weight: bold;
+      line-height: 1.25em;
+      text-align: center; }
 
-.lawyer-profile i {
-  color: #4ccf5c;
-  float: left;
-  margin: 10px;
-  font-size: 40px; }
-.lawyer-profile img {
-  width: 40px;
-  float: left;
-  margin: 10px; }
-.lawyer-profile .progress-bar {
-  background-color: #4ccf5c; }
+.lawyer-profile {
+  padding-top: 40px; }
+  .lawyer-profile h3, .lawyer-profile h4, .lawyer-profile h5 {
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    color: #089ad6; }
+  .lawyer-profile h3 {
+    margin-top: 20px;
+    text-transform: uppercase;
+    font-weight: bold; }
+  .lawyer-profile h5:first-of-type {
+    margin-top: 5px; }
+  .lawyer-profile h5 {
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 30px;
+    margin-bottom: 5px; }
+
+.overview:first-of-type {
+  margin-top: 40px; }
+
+.overview {
+  height: 45px; }
+  .overview .icon-box {
+    width: 20%;
+    float: left;
+    text-align: center; }
+  .overview i {
+    color: #4ccf5c;
+    font-size: 30px; }
+  .overview img {
+    width: 30px; }
+  .overview .description-box {
+    width: 80%;
+    float: right;
+    padding-left: 10px; }
+  .overview p {
+    font-size: 14px; }
+
+.recommendation {
+  margin-top: 40px; }
+  .recommendation h4 {
+    font-weight: bold;
+    text-align: center;
+    font-size: 16px; }
+  .recommendation .progress {
+    margin-bottom: 5px; }
+  .recommendation .progress-bar {
+    background-color: #4ccf5c; }
+  .recommendation p {
+    font-size: 14px;
+    text-align: center; }
 
 /*--------------------------------------------
  * Static Page Sections                  *
