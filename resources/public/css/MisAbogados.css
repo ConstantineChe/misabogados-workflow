@@ -915,8 +915,8 @@ p {
       margin-bottom: 30px; } }
   @media (max-width: 768px) {
     .lawyer-profile-header .profile-img {
-      height: 125px;
-      width: 125px;
+      max-height: 125px;
+      max-width: 125px;
       margin-top: 15px; }
     .lawyer-profile-header h1 {
       margin-top: 30px;
@@ -929,6 +929,10 @@ p {
       margin-bottom: 0px; }
     .lawyer-profile-header h3 {
       font-size: 20px; } }
+  @media (max-width: 400px) {
+    .lawyer-profile-header .profile-img {
+      margin-right: -15px;
+      margin-top: 25px; } }
 
 .lawyer-profile {
   padding-top: 40px; }
@@ -968,7 +972,7 @@ p {
   .overview p {
     font-size: 14px; }
 
-@media (max-width: 768px) {
+@media (max-width: 765px) {
   .overview:first-of-type {
     margin-top: 0px; } }
 .recommendation {

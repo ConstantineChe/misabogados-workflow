@@ -69,9 +69,8 @@
 
   @media (max-width: 768px) {
     .profile-img {
-
-      height: 125px;
-      width: 125px;
+      max-height: 125px;
+      max-width: 125px;
       margin-top: 15px;
     }
 
@@ -92,6 +91,13 @@
 
     h3 {
       font-size: $base-font-size + 4;
+    }
+  }
+
+  @media (max-width: 400px) {
+    .profile-img {
+      margin-right: -15px;
+      margin-top: 25px;
     }
   }
 }
@@ -157,7 +163,7 @@
 
 }
 
-@media (max-width: 768px) {
+@media (max-width: 765px) {
   .overview:first-of-type {
     margin-top: 0px;
   }
