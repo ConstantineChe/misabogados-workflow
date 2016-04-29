@@ -19,7 +19,9 @@
             [buddy.auth.accessrules :refer [restrict]]))
 
 (defn get-current-user [request]
-  (dbcore/get-user (:identity request)))
+  (if (= (-> request :session :role) :admin)
+    (mc/find-one-as-map @db "lawyers" {:_id (oid (-> request :params :lawyer))})
+    (dbcore/get-user (:identity request))))
 
 (defn get-current-user-id [request]
   (:_id (get-current-user request)))
@@ -51,7 +53,7 @@
                                                                                                             (key f))))
                                                                                      c))))
                                                       (mc/aggregate @db "payment_requests"
-                                                                        [{"$lookup" {:from "users"
+                                                                        [{"$lookup" {:from "lawyers"
                                                                                      :localField :lawyer
                                                                                      :foreignField :_id
                                                                                      :as :lawyer_data}}
@@ -67,10 +69,10 @@
 (defn create-payment-request [request]
   (let [params (:params request)
         current-user (get-current-user request)
-        payment-request (assoc (:params request)
-                                          :lawyer (:_id current-user)
-                                          :code (util/generate-hash params)
-                                          :date_created (new java.util.Date))]
+        payment-request (-> (assoc (:params request)
+                                   :lawyer (:_id current-user)
+                                   :code (util/generate-hash params)
+                                   :date_created (new java.util.Date)))]
     (dbcore/create-payment-request payment-request)
     (future (email/payment-request-email (:client_email params) {:lawyer-name (:name current-user)
                                                                  :payment-request payment-request
@@ -79,6 +81,7 @@
                :status "ok"
                :role (-> request :session :role)
                :params params})))
+
 
 (defn update-payment-request [id request]
   (let [id (oid id)
@@ -131,4 +134,8 @@
   (DELETE "/payment-requests/:id" [id :as request]
           (restrict (fn [request] (remove-payment-request id request))
                     {:handler {:or [ac/admin-access ac/lawyer-access ac/finance-access]}
-                     :on-error access-error-handler})))
+                     :on-error access-error-handler}))
+  (GET "/payment-requests/js/options" [] (restrict (fn [request] (response {:lawyer (map #((juxt (fn [x] (str (:name x) " (" (:email x) ")")) :_id) %) (mc/find-maps @db "lawyers"))
+                                                                   :own_client [["" nil] ["Cliente propio" true] ["Cliente MisAbogados" false]]}))
+                                    {:handler {:or [ac/admin-access ac/lawyer-access ac/finance-access]}
+                                     :on-error access-error-handler})))
