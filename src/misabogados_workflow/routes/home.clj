@@ -35,7 +35,7 @@
             ]
         (mc/insert @db/db "leads" lead-fields)
         (future (email/contact-email params))
-        (redirect "/éxito-contratar"))
+        (redirect "/exito-contratar"))
       (render "contact.html" (assoc params :messages {:errors {:g-recaptcha-response "Captcha es requerido"}}) ))))
 
 (defn save-document [doc]
@@ -57,6 +57,6 @@
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
   (GET "/contact" [] (render "contact.html" {:title "Contactar"}))
   (POST "/contact" [] create-lead-from-contact)
-  (GET "/éxito-contratar" [] (render "contact-success.html" {:title "¡Has enviado tu mensaje!"}))
+  (GET "/exito-contratar" [] (render "contact-success.html" {:title "¡Has enviado tu mensaje!"}))
   (GET "/abogado/alfredo-alcaino" [] (render "lawyers_profile.html" {:title "Alfredo Alcaíno"}))
   (GET "/categories_json" [] (map (fn [i] {:id (:slug i) :name (:name i)}) (mc/find-maps @db/db "categories"))))
