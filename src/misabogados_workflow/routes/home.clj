@@ -35,7 +35,7 @@
             ]
         (mc/insert @db/db "leads" lead-fields)
         (future (email/contact-email params))
-        (redirect "/"))
+        (redirect "/éxito-contratar"))
       (render "contact.html" (assoc params :messages {:errors {:g-recaptcha-response "Captcha es requerido"}}) ))))
 
 (defn save-document [doc]
