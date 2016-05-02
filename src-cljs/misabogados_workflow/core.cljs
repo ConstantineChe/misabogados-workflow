@@ -17,12 +17,14 @@
             [reagent.session :as session]
             [secretary.core :as secretary :include-macros true]
             [cljsjs.jquery]
-            [cljsjs.bootstrap])
+            [cljsjs.bootstrap]
+            [misabogados-workflow.websockets :as ws])
   (:import goog.History))
 
 (defn https? []
   (= "https:" (.-protocol js/location)))
 
+(defonce messages (atom []))
 
 (defn signup! [signup-form]
   (POST (str js/context "/signup") {:params signup-form
@@ -90,7 +92,7 @@
       [:div.navbar-header
        [:button#navbar-hamburger.navbar-toggle.collapsed {:data-toggle "collapse" :data-target "#navbar-body" :aria-expanded "false"}
         [:span.sr-only "Toggle navigation"] [:span.icon-bar][:span.icon-bar][:span.icon-bar]]
-       [:a.navbar-brand {:href "#/"} "Misabogados Workflow"]]
+       [:a.navbar-brand {:href "#/"} (str @messages "Misabogados Workflow")]]
 
       [:div#navbar-body.navbar-collapse.collapse
 
@@ -245,6 +247,14 @@
   (session/put! :page :admin))
 
 ;; -------------------------
+;; Websockets
+
+
+
+(defn update-messages! [{:keys [message]}]
+  (swap! messages #(vec (take 10 (conj % message)))))
+
+;; -------------------------
 ;; History
 ;; must be called after routes have been defined
 (defn hook-browser-navigation! []
@@ -264,6 +274,7 @@
   (r/render [#'page] (.getElementById js/document "app")))
 
 (defn init! []
+  (ws/make-websocket! (str "ws://" (.-host js/location) "/ws") update-messages!)
   (get-session!)
   (update-csrf-token!)
   (hook-browser-navigation!)
