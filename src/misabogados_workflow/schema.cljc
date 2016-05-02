@@ -44,6 +44,8 @@
 
 (defn text-field [name label] [name {:render-type :text :label label}])
 
+(defn field [type name label][name {:render-type type :label label}])
+
 (defn has-many [entity] {(key (first entity))
                          {:type :collection-refenence}})
 
@@ -94,7 +96,21 @@
   (text-field :name "Nombre")
   (text-field :email "Email")
   (text-field :phone "Phone")
-  (text-field :address "Address"))
+  (text-field :address "Address")
+  (text-field :years_of_experience "Years of experience")
+  (text-field :slug "Slug")
+  (checkbox-field :certified "Certified lawyer")
+  (field :textarea :description "Description")
+  (embeds-many :experience "Experience"
+               (text-field :place "Where")
+               (text-field :position "Position")
+               (text-field :from "From")
+               (text-field :to "To"))
+  (embeds-many :study "Study"
+               (text-field :place "Where")
+               (text-field :from "From")
+               (text-field :to "To")
+               (text-field :degree "Degree")))
 
 ;; (defentity client
 ;;   (text-field :name)

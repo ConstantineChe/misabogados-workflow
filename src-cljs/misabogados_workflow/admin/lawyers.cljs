@@ -94,8 +94,6 @@
         options (r/atom nil)]
     (fn []
       [:div.container-fluid
-             (str @lawyer)
-
        (el/create-form "New lawyer" s/lawyer [lawyer options util])
        [:div
         [:button.btn.btn-primary

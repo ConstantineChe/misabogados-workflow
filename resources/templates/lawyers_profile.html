@@ -17,7 +17,8 @@
       </div>
       <div class="col-lg-5  col-md-5  col-sm-8  col-xs-7">
         <h1>Alfredo Alcaíno</h1>
-        <img src="/img/lawyer-profile/certificado.png" class="icon-certificate" alt="" /><span class="qualifier"> Abogado Certificado</span>
+        {% if lawyer.certified %} <img src="/img/lawyer-profile/certificado.png" class="icon-certificate" alt="" /><span class="qualifier"> Abogado Certificado</span>
+        {% endif %}
         <p>Alcaíno | Abogados</p>
       </div>
       <div class="col-lg-4  col-md-4  col-sm-12  col-xs-12">
@@ -36,7 +37,7 @@
           <i class="fa fa-map-marker  center-block" aria-hidden="true"></i>
         </div>
         <div class="description-box">
-          <p>Vitacura, Santiago</p>
+          <p>{{lawyer.address}}</p>
         </div>
       </div>
       <div class="overview">
@@ -44,7 +45,7 @@
           <i class="fa fa-list-ul  center-block" aria-hidden="true"></i>
         </div>
         <div class="description-box">
-          <p>30 años de experiencia</p>
+          <p>{{lawyer.years_of_experience}} años de experiencia</p>
         </div>
       </div>
       <div class="overview">
@@ -52,42 +53,40 @@
           <img src="/img/lawyer-profile/MisAbogados-icon.png" class="center-block" alt="Icono de MisAbogados" />
         </div>
         <div class="description-box">
-          <p>Miembro desde 15 de julio 2015</p>
+          <p>Miembro desde TODO/TBD</p>
         </div>
       </div>
       <div class="recommendation">
         <h4>¿Recomendarías a este abogado?</h4>
         <div class="progress">
           <div class="progress-bar" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="width: 95%;">
-            <span class="sr-only">95% recomendado</span>
+            <span class="sr-only">TODO/TBD recomendado</span>
           </div>
         </div>
-        <p>85% de los usuarios dice que sí</p>
+        <p>TODO/TBD de los usuarios dice que sí</p>
       </div>
     </div>
     <div class="col-lg-9  col-md-9  col-sm-8  col-xs-12">
       <h3>Acerca del Abogado</h3>
       <p>
-        Alf looks like a respectable individual. He's probably a good lawyer too. I don't know what more to say on the matter.
+        {{lawyer.description}}
       </p>
     </div>
     <div class="col-lg-4  col-md-4  col-sm-4  col-xs-12">
       <h3>Estudios</h3>
-      <h5>Universidad Católica de Chile. Facultad de Derecho.</h5>
-      <p>Some details on his time there.</p>
-      <h5>Universidad Alberto Hurtado. Facultad de Derecho.</h5>
-      <p>Some details on his time there.</p>
-      <h5>Universidad de Chile. Facultad de Derecho.</h5>
-      <p>Some details on his time there.</p>
+      {% for item in lawyer.study %}
+      <h5>{{item.place}}</h5>
+      <p>from {{item.from}} to {{item.to}}</p>
+      <p>Degree {{item.degree}}</p>
+      {% endfor %}
     </div>
     <div class="col-lg-5  col-md-5  col-sm-4  col-xs-12">
       <h3>Experiencia</h3>
-      <h5>Socio de Alcaíno | Abogados</h5>
-      <p>1980 a la fecha</p>
-      <h5>Árbitro del Centro de Mediación y Arbitraje de la Cámara de Comercio de Santiago Estudios</h5>
-      <p>Some details on his time there.</p>
-      <h5>Profesor en Diploma en Gobiernos Corporativos y Sociedades Anónimas, Pontificia Universidad Católica de Chile</h5>
-      <p>2012. Some more details on his time there here.</p>
+      {% for item in lawyer.experience %}
+      <h5>{{item.place}}</h5>
+      <p>{{item.position}}</p>
+      <p>From {{item.from}} To {{item.to}}</p>
+      {% endfor %}
     </div>
   </div>
 </div>
