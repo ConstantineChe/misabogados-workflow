@@ -6,6 +6,8 @@
 (defn- current-time []
   (quot (System/currentTimeMillis) 1000))
 
+(defonce channels (atom #{}))
+
 (defn notify-clients! [channel msg]
   (doseq [channel @channels]
     (async/send! channel msg)))
@@ -24,8 +26,6 @@
   {:on-open connect!
    :on-close disconnect!
    :on-message notify-clients!})
-
-(defonce channels (atom #{}))
 
 (defn ws-handler [request]
   (async/as-channel request websocket-callbacks))
