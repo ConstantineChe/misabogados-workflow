@@ -18,13 +18,24 @@
             [misabogados-workflow.email :as email]
             [buddy.auth.accessrules :refer [restrict]]))
 
-(defn get-current-user [request]
+(defn get-lawyer-profile [request]
   (if (= (-> request :session :role) :admin)
     (mc/find-one-as-map @db "lawyers" {:_id (oid (-> request :params :lawyer))})
-    (dbcore/get-user (:identity request))))
+    (if-let  [lawyer-profile (-> request :identity dbcore/get-user :lawyer_profile)]
+      (mc/find-one-as-map @db "lawyers" {:_id lawyer-profile})
+      (if-let [lawyer-profile (mc/find-one-as-map @db "lawyers" {:email (:identity request)})]
+        (do (mc/update @db "users" {:email (:identity request)}
+                       {$set {:lawyer_profile (:_id lawyer-profile)}})
+            lawyer-profile)
+        (let [user (dbcore/get-user (:identity request))
+              lawyer-profile (mc/insert-and-return @db "lawyers" (select-keys user [:name :email]))]
+          (mc/update @db "users" {:email (:identity request)}
+                     {$set {:lawyer_profile (:_id lawyer-profile)}})
+          lawyer-profile)
+        ))))
 
-(defn get-current-user-id [request]
-  (:_id (get-current-user request)))
+(defn get-lawyer-profile-id [request]
+  (:_id (get-lawyer-profile request)))
 
 (defn access-error-handler [request value]
   {:status 403
@@ -36,7 +47,7 @@
   (if (or (= :admin (-> request :session :role))
           (= :finance (-> request :session :role))
           (= (:lawyer (mc/find-one-as-map @db "payment_requests" {:_id id}))
-             (get-current-user-id request)))
+             (get-lawyer-profile-id request)))
     true
     {:message "Not allowed"}))
 
@@ -44,7 +55,7 @@
   (let [payment-requests (apply merge (map (fn [payment-request]
                           {(str (:_id payment-request)) (dissoc payment-request :_id)})
                                            (cond (= :lawyer (-> request :session :role))
-                                                 (dbcore/get-payment-requests (get-current-user-id request))
+                                                 (dbcore/get-payment-requests (get-lawyer-profile-id request))
                                                  (or (= :admin (-> request :session :role))
                                                      (= :finance (-> request :session :role)))
                                                  (map #(update-in % [:lawyer_data 0]
@@ -68,7 +79,7 @@
 
 (defn create-payment-request [request]
   (let [params (:params request)
-        current-user (get-current-user request)
+        current-user (get-lawyer-profile request)
         payment-request (-> (assoc (:params request)
                                    :lawyer (:_id current-user)
                                    :code (util/generate-hash params)
@@ -92,7 +103,7 @@
                                                          (assoc (dissoc params :lawyer)
                                                                 :date_updated (new java.util.Date)
                                                                 :code (util/generate-hash (:params request)))})
-          (let [current-user (get-current-user request)
+          (let [current-user (get-lawyer-profile request)
                 payment-request (mc/find-one-as-map @db "payment_requests" {:_id id})]
             (println (str "-----" payment-request))
             (future (email/payment-request-email (:client_email payment-request) {:lawyer-name (:name current-user)
@@ -136,6 +147,6 @@
                     {:handler {:or [ac/admin-access ac/lawyer-access ac/finance-access]}
                      :on-error access-error-handler}))
   (GET "/payment-requests/js/options" [] (restrict (fn [request] (response {:lawyer (map #((juxt (fn [x] (str (:name x) " (" (:email x) ")")) :_id) %) (mc/find-maps @db "lawyers"))
-                                                                   :own_client [["" nil] ["Cliente propio" true] ["Cliente MisAbogados" false]]}))
+                                                                   :own_client [["" :empty] ["Cliente propio" true] ["Cliente MisAbogados" false]]}))
                                     {:handler {:or [ac/admin-access ac/lawyer-access ac/finance-access]}
                                      :on-error access-error-handler})))
