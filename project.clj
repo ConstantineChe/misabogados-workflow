@@ -135,8 +135,8 @@
                   :env {:dev        true
                         :port       3000
                         :nrepl-port 7000
-                        :payment-system "webpay"
-                        :currency "CLP"
+                        :payment-system "payu"
+                        :currency "COP"
                         :log-path "log/misabogados.log"
                         :database-url "mongodb://127.0.0.1/misabogados_workflow_dev"}
                   }
