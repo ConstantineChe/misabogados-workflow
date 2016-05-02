@@ -10,7 +10,6 @@
               [secretary.core :as secretary :include-macros true]
               [json-html.core :refer [edn->hiccup]]
               [misabogados-workflow.schema :as s])
-    (:require-macros [misabogados-workflow.schema :refer [defexpand]])
     )
 
 (defn create-client! [data id-cursor options text]
