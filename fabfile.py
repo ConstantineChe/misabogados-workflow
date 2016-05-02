@@ -15,6 +15,19 @@ deploy_location = "/var/deploy/"
 
 class Instance:
 
+    websites = {'cl':
+                {'psp': 'webpay',
+                 'port': 0,
+                 'directory': 'cl/'},
+                'mx':
+                {'psp': 'payu',
+                 'port': 1,
+                 'directory': 'mx/'},
+                'co':
+                {'psp': 'payu',
+                 'port': 2,
+                 'directory': 'co/'}}
+
     def __init__(self):
         self.directory = "default/"
         self.opts = {'DATABASE_URL': 'mongodb://127.0.0.1/%s_dev' % project,
@@ -23,24 +36,26 @@ class Instance:
                      'PAYMENT_SYSTEM': 'webpay',
                      'CURRENCY': 'CLP'}
 
-    def production(self):
-        self.directory = "production/"
-        self.opts['DATABASE_URL'] = 'mongodb://127.0.0.1/%s_production' % project
-        self.opts['PORT'] = '8080'
+    def production(self, website):
+        self.directory = "production/" + Instance.websites[website]['directory']
+        self.opts['DATABASE_URL'] = 'mongodb://127.0.0.1/%s_%s_production' % (project, website)
+        self.opts['WEBSITE_SETTINGS_DB'] = 'monbodb://127.0.0.1/%s_production_settings' % project
+        self.opts['PORT'] = str(8080 + Instance.websites[website]['port'])
         self.opts['PRODUCTION'] = 'true'
         self.opts['LOG_PATH'] = '/var/deploy/log/%s%s.log' % (self.directory, project)
+        self.opts['PAYMENT_SYSTEM'] = Instance.websites[website]['psp']
 
-    def staging(self):
-        self.directory = "staging/"
+    def staging(self, website):
+        self.directory = "staging/" + Instance.websites[website]['directory']
         self.opts['PRODUCTION'] = 'true'
-        self.opts['DATABASE_URL'] = 'mongodb://127.0.0.1/%s_staging' % project
-        self.opts['PORT'] = '3000'
+        self.opts['DATABASE_URL'] = 'mongodb://127.0.0.1/%s_%s_staging' % (project, website)
+        self.opts['WEBSITE_SETTINGS_DB'] = 'monbodb://127.0.0.1/%s_staging_settings' % project
+        self.opts['PORT'] = str(3000 + Instance.websites[website]['port'])
         self.opts['LOG_PATH'] = '/var/deploy/log/%s%s.log' % (self.directory, project)
-        self.opts['TEST'] = 'test'
+        self.opts['PAYMENT_SYSTEM'] = Instance.websites[website]['psp']
 
     def get_opts_string(self):
         return ' '.join(map(lambda (k, v): k+'='+v, self.opts.iteritems()))
-
 
 instance = Instance()
 
@@ -48,11 +63,11 @@ instance = Instance()
 
 #============ Tasks =============
 
-def production():
-    instance.production()
+def production(website = 'CL'):
+    instance.production(website)
 
-def staging():
-    instance.staging()
+def staging(website = 'CL'):
+    instance.staging(website)
 
 
 def deploy(branch="master"):
@@ -69,7 +84,9 @@ def deploy(branch="master"):
         run("lein clean")
         run("lein uberjar")
         if not files.exists(deploy_location+instance.directory):
-            run("mkdir %s" % deploy_location + instance.directory)
+            run("mkdir -p %s" % deploy_location + instance.directory)
+        if not files.exists(instance.opts['LOG_PATH']):
+            sudo("mkdir -p %s" % "/var/log/" + instance.directory)
         file_name = "%s_%s.jar" % (project, datetime.today().isoformat())
         run("cp target/uberjar/%s %s" % (project+".jar", deploy_location + instance.directory + file_name))
         with cd(deploy_location + instance.directory):
