@@ -19,7 +19,8 @@
                                           :error-handler #(case (:status %)
                                                             403 (js/alert "Access denied")
                                                             500 (js/alert "Internal server error")
-                                                            (js/alert (str %)))}))                                                                                                                                                                                                                                          (defn save-lawyer [id data]
+                                                            (js/alert (str %)))}))
+(defn save-lawyer [id data]
   (PUT (str js/context "/admin/lawyers/" id) {:params (update data :lawyer dissoc :_id)
                                                  :handler #(do (u/redirect "#admin/lawyers")
                                                                )

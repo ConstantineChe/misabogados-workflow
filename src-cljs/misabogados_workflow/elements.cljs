@@ -242,7 +242,7 @@
     (let [[name cursor] (prepare-input cursor form)]
       [:button.btn.btn-secondary
        {:key (str "add-" label)
-        :on-click #(swap! cursor conj {})}
+        :on-click #(swap! cursor (fnil conj []) {})}
        label])))
 
 (defn btn-remove-fieldset [cursor index label]
@@ -350,7 +350,7 @@
 
 (defmethod get-struct :collection [[key schema]]
   (let [{content :field-definitions} schema]
-    {key [(apply merge  (map get-struct content))]}))
+    {key []}))
 
 (defmethod get-struct :entity [[key schema]]
   (let [{content :field-definitions} schema

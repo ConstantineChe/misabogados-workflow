@@ -95,7 +95,7 @@
   (text-field :name "Nombre")
   (text-field :email "Email")
   (text-field :phone "Teléfono")
-  (text-field :address "Dirección"))
+  (text-field :address "Dirección")
   (text-field :years_of_experience "Years of experience")
   (text-field :slug "Slug")
   (checkbox-field :certified "Certified lawyer")
@@ -116,12 +116,14 @@
   (text-field :contact_phone "Teléfono")
   (text-field :country "Código del país")
   (text-field :base_url "Enlace básico")
+  (checkbox-field :private_app_disabled "Private app disabled")
+  (text-field :payment_system "Payment system")
   (embeds-many :regions "Regions"
-               (text-field :code "Código")
-               (text-field :name "Nombre"))
-  (embeds-many :payment_system_options "Ajustes del sistema de pago"
-               (text-field :key "Llave")
-               (text-field :value "Valor")))
+               (text-field :code "Code")
+               (text-field :name "Name"))
+  (embeds-many :payment_system_options "Payment system options"
+               (text-field :key "Key")
+               (text-field :value "Value")))
 
 ;; (defentity client
 ;;   (text-field :name)

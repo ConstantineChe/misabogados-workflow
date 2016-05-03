@@ -20,15 +20,16 @@
                                                               (js/alert (str %)))}))
 
 (defn settings-tab []
-  (let [settings (r/atom nil)
+  (let [settings (el/prepare-atom s/settings (r/atom nil))
         util (r/atom nil)
         options (r/atom nil)]
-    (GET (str js/context "/admin/settings") {:handler #(reset! settings {:settings (keywordize-keys %)})
-                                              :error-handler #(case (:status %)
-                                                                403 (js/alert "Access denied")
-                                                                500 (js/alert "Internal server error")
-                                                                (js/alert (str %)))})
-     (fn [] [:div.container-fluid
+    (GET (str js/context "/admin/settings") {:handler #(do (reset! settings {:settings (keywordize-keys %)}) 
+)
+                                             :error-handler #(case (:status %)
+                                                               403 (js/alert "Access denied")
+                                                               500 (js/alert "Internal server error")
+                                                               (js/alert (str %)))})
+    (fn [] [:div.container-fluid
              [:p (str @settings)]
              (el/create-form "Ajustos del sitio" s/settings [settings options util])
              [:div
