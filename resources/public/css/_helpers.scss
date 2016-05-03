@@ -53,6 +53,15 @@
   padding-bottom: 30px;
 }
 
+/* Adds a blue overlay with transparency */
+.bluen-bg {
+  background-color: rgba(40, 119, 215, 0.498039);
+  margin-top: -60px;
+  margin-bottom: -60px;
+  padding-top: 30px;
+  padding-bottom: 30px;
+}
+
 /* Adds helper class for removing button background */
 .btn-no-fill {
   background-color: rgba(0, 0, 0, 0);
