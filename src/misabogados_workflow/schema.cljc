@@ -93,8 +93,17 @@
 (defentity lawyer "Abogado"
   (text-field :name "Nombre")
   (text-field :email "Email")
-  (text-field :phone "Phone")
-  (text-field :address "Address"))
+  (text-field :phone "Teléfono")
+  (text-field :address "Dirección"))
+
+(defentity settings "Ajustes"
+  (text-field :full-country-name "País")
+  (text-field :contact-phone "Teléfono")
+  (text-field :country "Código del país")
+  (text-field :base-url "Enlace básico")
+  (embeds-many :regions "Regions"
+               (text-field :code "Código")
+               (text-field :name "Nombre")))
 
 ;; (defentity client
 ;;   (text-field :name)

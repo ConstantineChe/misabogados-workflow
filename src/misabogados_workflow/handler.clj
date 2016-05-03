@@ -10,6 +10,7 @@
             [misabogados-workflow.routes.leads :refer [leads-routes]]
             [misabogados-workflow.routes.admin.categories :refer [categories-admin]]
             [misabogados-workflow.routes.admin.lawyers :refer [lawyers-admin]]
+            [misabogados-workflow.routes.admin.settings :refer [settings-admin]]
             [misabogados-workflow.middleware :as middleware]
             [misabogados-workflow.settings :as settings]
             [misabogados-workflow.db.indexes :as indexes]
@@ -47,6 +48,7 @@
 
 (def app-routes
   (routes
+   (wrap-routes #'settings-admin middleware/wrap-csrf)
    (wrap-routes #'categories-admin middleware/wrap-csrf)
    (wrap-routes #'lawyers-admin middleware/wrap-csrf)
    (wrap-routes #'home-routes middleware/wrap-csrf)

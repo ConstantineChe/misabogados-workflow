@@ -133,12 +133,14 @@
                                (require 'spyscope.core)]
                   ;;when :nrepl-port is set the application starts the nREPL server on load
                   :env {:dev        true
+                        :country "cl"
                         :port       3000
                         :nrepl-port 7000
                         :payment-system "payu"
                         :currency "COP"
                         :log-path "log/misabogados.log"
-                        :database-url "mongodb://127.0.0.1/misabogados_workflow_dev"}
+                        :database-url "mongodb://127.0.0.1/misabogados_workflow_dev"
+                        :settings-database-url "mongodb://127.0.0.1/misabogados_workflow_settings_dev"}
                   }
    :project/test {:env {:test       true
                         :port       3001

@@ -73,11 +73,11 @@
 
 (defmethod construct-payment-attempt-form "payu" [request payment-request date]
   {:form-data (add-signature (merge payu-test-payment-data {:amount (:amount payment-request)
-                                                            :referenceCode (str (:_id payment-request) "-" (c/to-long date))
+                                                            :referenceCode (util/generate-hash (:_id payment-request))
                                                             :description (:service payment-request)
                                                             :buyerEmail (:client_email payment-request)
                                                        }))
-   :form-path "https://stg.gateway.payulatam.com/ppp-web-gateway/"})
+   :form-path "https://sandbox.gateway.payulatam.com/ppp-web-gateway/"})
 
 (defmethod construct-payment-attempt-form "webpay" [request payment-request date]
   {:form-data {:TBK_URL_EXITO (util/full-path request "/payments/success")
