@@ -24,7 +24,7 @@
 (defn https? []
   (= "https:" (.-protocol js/location)))
 
-(defonce messages (atom []))
+(defonce messages (r/atom []))
 
 (defn signup! [signup-form]
   (POST (str js/context "/signup") {:params signup-form
@@ -93,7 +93,10 @@
       [:div.navbar-header
        [:button#navbar-hamburger.navbar-toggle.collapsed {:data-toggle "collapse" :data-target "#navbar-body" :aria-expanded "false"}
         [:span.sr-only "Toggle navigation"] [:span.icon-bar][:span.icon-bar][:span.icon-bar]]
-       [:a.navbar-brand {:href "#/"} (str @messages "Misabogados Workflow")]]
+       [:a.navbar-brand {:href "#/"} (str @messages "Misabogados Workflow")]
+       [:button.btn {:on-click #(ws/send-transit-msg!
+                                 {:message "hi"})} "ws snd"]
+       [:button.btn {:on-click #(POST (str js/context "/msg") {:params {:message "Hi"}})} "ajax snd"]]
 
       [:div#navbar-body.navbar-collapse.collapse
 

@@ -10,6 +10,7 @@
             [misabogados-workflow.routes.leads :refer [leads-routes]]
             [misabogados-workflow.routes.admin.categories :refer [categories-admin]]
             [misabogados-workflow.routes.admin.lawyers :refer [lawyers-admin]]
+            [misabogados-workflow.routes.websockets :refer [websocket-routes]]
             [misabogados-workflow.middleware :as middleware]
             [misabogados-workflow.settings :as settings]
             [misabogados-workflow.db.indexes :as indexes]
@@ -56,6 +57,7 @@
    (wrap-routes #'payments-routes middleware/wrap-csrf)
    (wrap-routes #'payment-requests-routes middleware/wrap-csrf)
    (wrap-routes #'leads-routes middleware/wrap-csrf)
+   websocket-routes
    payments-integration-routes
    (route/not-found
     (:body
