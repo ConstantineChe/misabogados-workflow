@@ -131,6 +131,14 @@ p {
   padding-top: 30px;
   padding-bottom: 30px; }
 
+/* Adds a blue overlay with transparency */
+.bluen-bg {
+  background-color: rgba(40, 119, 215, 0.49804);
+  margin-top: -60px;
+  margin-bottom: -60px;
+  padding-top: 30px;
+  padding-bottom: 30px; }
+
 /* Adds helper class for removing button background */
 .btn-no-fill {
   background-color: transparent;
@@ -487,9 +495,9 @@ p {
 ---------------------------------------------*/
 .cta-main {
   background: url(/img/main-cta/cta-bg.jpg);
-  background-repeat: no-repeat;
+  background-size: cover;
   background-position: 35% 25%;
-  background-size: cover; }
+  background-repeat: no-repeat; }
 
 /* Categories Section
 ---------------------------------------------*/
@@ -893,6 +901,33 @@ p {
   font-size: 20px;
   text-align: center;
   margin-bottom: 0px; }
+
+/*--------------------------------------------
+ * Lawyers' Landing Page Sections            *
+---------------------------------------------*/
+/* CTA
+---------------------------------------------*/
+.cta-main-lawyers {
+  background: url(/img/lawyers-landing-page/looking-at-computer.jpg);
+  background-size: cover;
+  background-position: 70% 100%;
+  background-repeat: no-repeat; }
+
+/* Hundreds of Lawyers use MisAbogados
+---------------------------------------------*/
+.social-proof {
+  background: url(/img/lawyers-landing-page/guy-with-phone.jpg);
+  background-size: cover;
+  background-position: 15% 0%;
+  background-repeat: no-repeat; }
+
+/* Client Break-down
+---------------------------------------------*/
+.client-break-down {
+  background: url(/img/lawyers-landing-page/desk-with-objects.png);
+  background-size: cover;
+  background-position: 44% 0%;
+  background-repeat: no-repeat; }
 
 /* Lawyers Profile Page
 ---------------------------------------------*/
