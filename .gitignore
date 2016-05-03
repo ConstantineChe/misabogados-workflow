@@ -18,3 +18,4 @@ profiles.clj
 .idea
 *.iml
 /.sass-cache
+/resources/public/MisAbogados.css*

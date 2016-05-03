@@ -56,11 +56,32 @@
 
   :plugins [[lein-environ "1.0.1"]
             [lein-cljsbuild "1.1.1"]
-            [lein-uberwar "0.1.0"]]
+            [lein-uberwar "0.1.0"]
+            [lein-sass "0.3.0"]
+            [lein-scss "0.2.0"]]
+
   :uberwar {:handler misabogados-workflow.handler/app
             :init misabogados-workflow.handler/init
             :destroy misabogados-workflow.handler/destroy
             :name "misabogados-workflow.war"}
+
+  :sass {:src "resources/scss"
+         :output-directory "resources/public/css"
+
+         :source-maps true
+         :style :nested
+         }
+
+  :scss {:builds
+         {:develop    {:source-dir "resources/scss/"
+                       :dest-dir   "resources/public/css/"
+                       :executable "sassc"
+                       :args       ["-t" "nested"]}
+          :production {:source-dir "scss/"
+                       :dest-dir   "resources/public/css/"
+                       :executable "sassc"
+                       :args       ["-I" "resources/scss/" "-t" "compressed"]}}}
+
   :clean-targets ^{:protect false} [:target-path [:cljsbuild :builds :app :compiler :output-dir] [:cljsbuild :builds :app :compiler :output-to]]
   :cljsbuild
   {:builds
