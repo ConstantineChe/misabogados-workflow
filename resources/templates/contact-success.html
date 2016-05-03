@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+
+{% block metadata %}
+    <meta name="description" content="Conectamos personas con abogados. Cuéntanos tu problema y nosotros te conectaremos con el abogado que más se ajuste a lo que necesitas: fácil y simple." />
+{% endblock %}
+
+{% block content %}
+
+{% include "navbar.html" %}
+
+<!-- Contact Success Page -->
+<div class="container  section-padding  contact-success">
+  <div class="row  next-steps">
+    <div class="col-lg-12  col-md-12  col-sm-12  col-xs-12">
+      <div class="alert alert-success">
+        <h1>¡Has enviado tu mensaje!</h1>
+      </div>
+    </div>
+    <div class="col-lg-4  col-md-4  col-sm-4  col-xs-12">
+      <h3>¿Qué pasa ahora?</h3>
+      <div class="row">
+        <div class="col-lg-4  col-md-4  col-sm-4  col-xs-4">
+          <img src="/img/contact-success/list_of_people@2.png" class="img-responsive  center-block" alt="" />
+        </div>
+        <div class="col-lg-8  col-md-8  col-sm-8  col-xs-8">
+          <p>Nuestros ejecutivos están analizando tu mensaje y preparando un abogado especialista para connectarse contigo.</p>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4  col-md-4  col-sm-4  col-xs-12">
+      <h3>Recomendaciones</h3>
+      <div class="row">
+        <div class="col-lg-4  col-md-4  col-sm-4  col-xs-4">
+          <img src="/img/contact-success/phone_with_clock@2.png" class="img-responsive  center-block" alt="" />
+        </div>
+        <div class="col-lg-8  col-md-8  col-sm-8  col-xs-8">
+          <ul>
+            <li>Mantén tu telefono encendido y cerca tuyo durante las siguentes horas.</li>
+            <li>Revisa constantamente tu correo electrónico por posibles preguntas.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4  col-md-4  col-sm-4  col-xs-12">
+      <h3>¡Relájate!</h3>
+      <div class="row">
+        <div class="col-lg-4  col-md-4  col-sm-4  col-xs-4">
+          <img src="/img/contact-success/group_hug@2.png" class="img-responsive  center-block" alt="" />
+        </div>
+        <div class="col-lg-8  col-md-8  col-sm-8  col-xs-8">
+          <p>Más de 2.500 personas ya confiaron en nosotros.</p>
+          <p>¡Gracias!</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row  extra-details">
+    <div class="col-lg-8  col-md-8  col-sm-7  col-xs-12">
+      <div class="panel  panel-default  mientras-tanto">
+        <div class="panel-heading">
+          <h3>Mientras tanto</h3>
+          <p>Puedes consultar parte del contenido más popular según nuestros usuarios:</p>
+          <ul>
+            <li>
+              <a href="http://blog.misabogados.com/es/que-tipos-de-infracciones-a-la-ley-de-transito-existen/">
+                ¿Qué tipos de infracciones a la ley de tránsito existen?
+              </a>
+            </li>
+            <li>
+              <a href="http://blog.misabogados.com/es/ley-emilia/">
+                Lo nuevo de la Ley Emilia
+              </a>
+            </li>
+            <li>
+              <a href="https://blog.misabogados.com/es/demanda-por-pension-alimenticia/">
+                Pasos para demandar por pensión alimenticia
+              </a>
+            </li>
+            <li>
+              <a href="http://blog.misabogados.com/es/que-tipos-de-infracciones-a-la-ley-de-transito-existen/">
+                Protección a la maternidad
+              </a>
+            </li>
+            <li>
+              <a href="https://blog.misabogados.com/es/proteccion-ala-maternidad/">
+                Nueva ley para trabajadoras de casa particular
+              </a>
+            </li>
+          </ul>
+          <button type="button" class="btn  btn-success" href="/">No, gracias, llévame al Home <span class="glyphicon  glyphicon-menu-right"></span></button>
+        </div>
+      </div>
+    </div>
+    <div class="col-lg-4  col-md-4  col-sm-5  col-xs-12">
+      <div class="panel  panel-default  emergencia">
+        <div class="panel-heading">
+          <img src="/img/contact-success/emergency@2.png" class="img-responsive  center-block" alt="" />
+          <h3>¿Emergencia?</h3>
+          <p>Llámanos de inmediato:</p>
+          <p><a href="tel:+56229402121">+56(2)29402121</a></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+{% include "footer.html" %}
+
+<!-- TODO: Add conversion tracker scripts etc. -->
+
+{% endblock %}

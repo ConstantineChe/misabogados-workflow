@@ -7,6 +7,11 @@
 /* Global
 ---------------------------------------------*/
 /* Global Variables */
+/* Global Patterns */
+.section-padding, .static-content {
+  padding-top: 60px;
+  padding-bottom: 60px; }
+
 /* Resets */
 body {
   font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
@@ -67,6 +72,19 @@ p {
     height: 50px;
     margin: -50px 0 0;
     visibility: hidden; } }
+/* Alert styling */
+.alert-top {
+  position: absolute;
+  top: 105px;
+  width: 80%;
+  left: 0;
+  right: 0;
+  margin-left: auto;
+  margin-right: auto; }
+
+@media (max-width: 1010px) {
+  .alert-top {
+    top: 70px; } }
 /* Helpers
 ---------------------------------------------*/
 /* 2 row navbar */
@@ -750,7 +768,7 @@ p {
 
 .faq-anchor {
   position: absolute;
-  top: -100px}
+  top: -100px; }
 
 .anchor-icon {
   position: absolute;
@@ -804,15 +822,186 @@ p {
   margin-top: 10px;
   margin-bottom: 15px; }
 
+/* Contact Success Page
+---------------------------------------------*/
+.alert-success h1 {
+  text-align: center;
+  text-transform: uppercase;
+  margin: 5px; }
+
+.contact-success h3 {
+  text-transform: uppercase; }
+
+.next-steps h3 {
+  text-align: center; }
+.next-steps img {
+  margin-top: 10px; }
+.next-steps ul {
+  padding-left: 0px; }
+
+@media (max-width: 787px) {
+  .next-steps img {
+    max-width: 75px;
+    margin-top: 5px; } }
+.extra-details {
+  margin-top: 30px; }
+
+.mientras-tanto h3 {
+  font-size: 28px;
+  margin-top: 0px; }
+.mientras-tanto p {
+  font-size: 18px; }
+.mientras-tanto ul {
+  font-size: 16px; }
+.mientras-tanto button {
+  margin-top: 10px; }
+
+.emergencia img {
+  max-width: 100px; }
+.emergencia h3 {
+  font-size: 28px;
+  text-align: center;
+  color: #b56f1d; }
+.emergencia p {
+  font-size: 20px;
+  text-align: center;
+  margin-bottom: 0px; }
+
+/* Lawyers Profile Page
+---------------------------------------------*/
+.lawyer-profile-header {
+  background-color: #2877D7;
+  color: #FFFFFF;
+  padding-bottom: 0px;
+  position: relative; }
+  .lawyer-profile-header .profile-img {
+    height: 200px;
+    width: 200px;
+    overflow: hidden;
+    border-radius: 50%;
+    position: absolute;
+    margin-top: -10px;
+    box-shadow: 0px 2px 5px #888888; }
+  .lawyer-profile-header h1 {
+    text-transform: uppercase;
+    font-weight: bold;
+    margin-bottom: 5px; }
+  .lawyer-profile-header .qualifier {
+    font-size: 18px; }
+  .lawyer-profile-header p {
+    margin-top: 30px;
+    margin-bottom: 20px; }
+  .lawyer-profile-header blockquote {
+    border-left: none;
+    padding: 0px; }
+    .lawyer-profile-header blockquote h3 {
+      margin-top: 20px;
+      font-family: "Open Sans", Helvetica, Arial, sans-serif;
+      font-weight: bold;
+      line-height: 1.25em;
+      text-align: center; }
+  @media (max-width: 992px) {
+    .lawyer-profile-header .profile-img {
+      margin-top: 10px;
+      position: relative;
+      float: right; }
+    .lawyer-profile-header h1 {
+      margin-top: 45px; }
+    .lawyer-profile-header p {
+      margin-top: 25px;
+      margin-bottom: 0px; }
+    .lawyer-profile-header blockquote {
+      margin-top: 30px;
+      margin-bottom: 30px; } }
+  @media (max-width: 768px) {
+    .lawyer-profile-header .profile-img {
+      max-height: 125px;
+      max-width: 125px;
+      margin-top: 15px; }
+    .lawyer-profile-header h1 {
+      margin-top: 30px;
+      font-size: 30px; }
+    .lawyer-profile-header .qualifier {
+      font-size: 14px; }
+    .lawyer-profile-header p {
+      font-size: 14px;
+      margin-top: 5px;
+      margin-bottom: 0px; }
+    .lawyer-profile-header h3 {
+      font-size: 20px; } }
+  @media (max-width: 400px) {
+    .lawyer-profile-header .profile-img {
+      margin-right: -15px;
+      margin-top: 25px; } }
+
+.lawyer-profile {
+  padding-top: 40px; }
+  .lawyer-profile h3, .lawyer-profile h4, .lawyer-profile h5 {
+    font-family: "Open Sans", Helvetica, Arial, sans-serif;
+    color: #089ad6; }
+  .lawyer-profile h3 {
+    margin-top: 30px;
+    text-transform: uppercase;
+    font-weight: bold; }
+  .lawyer-profile h5:first-of-type {
+    margin-top: 5px; }
+  .lawyer-profile h5 {
+    font-size: 16px;
+    font-weight: 400;
+    margin-top: 30px;
+    margin-bottom: 5px; }
+
+.overview:first-of-type {
+  margin-top: 40px; }
+
+.overview {
+  height: 45px; }
+  .overview .icon-box {
+    width: 20%;
+    float: left;
+    text-align: center; }
+  .overview i {
+    color: #4ccf5c;
+    font-size: 30px; }
+  .overview img {
+    width: 30px; }
+  .overview .description-box {
+    width: 80%;
+    float: right;
+    padding-left: 10px; }
+  .overview p {
+    font-size: 14px; }
+
+@media (max-width: 765px) {
+  .overview:first-of-type {
+    margin-top: 0px; } }
+.recommendation {
+  margin-top: 40px; }
+  .recommendation h4 {
+    font-weight: bold;
+    text-align: center;
+    font-size: 16px; }
+  .recommendation .progress {
+    margin-bottom: 5px; }
+  .recommendation .progress-bar {
+    background-color: #4ccf5c; }
+  .recommendation p {
+    font-size: 14px;
+    text-align: center; }
+
+@media (max-width: 768px) {
+  .recommendation {
+    margin-top: 20px; }
+
+  h3 {
+    margin-top: 40px; } }
 /*--------------------------------------------
  * Static Page Sections                  *
 ---------------------------------------------*/
 /* Shared classes
 ---------------------------------------------*/
 .static-content {
-  padding-top: 60px;
-  max-width: 820px;
-  padding-bottom: 60px; }
+  max-width: 820px; }
 
 .static-content h1 {
   text-transform: uppercase;

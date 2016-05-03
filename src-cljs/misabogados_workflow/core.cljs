@@ -51,7 +51,7 @@
                                                   (do (session/put! :user {:identity (get response "identity")
                                                                            :role (get response "role")})
                                                       (ac/reset-access!)
-                                                      (aset js/window "location" "#dashboard")
+                                                      (u/redirect "#dashboard")
                                                       (update-csrf-token!))
                                                   (reset! error (get response "error")))
                                                 nil)
@@ -63,6 +63,7 @@
   (GET (str js/context "/logout") {:handler (fn [response] (session/put! :user {})
                                               (ac/reset-access!)
                                               (update-csrf-token!)
+                                              (u/redirect "#login")
                                               nil)}))
 
 (defn logged-in? [] (not (empty? (session/get :user))))
@@ -98,7 +99,9 @@
 
        (into [:ul.nav.navbar-nav]
              (doall (map (fn [item]  (apply nav-link item)) (:nav-links @ac/components)))
-             )]]]))
+             )
+       (into [:ul.nav.navbar-nav.navbar-right]
+             (doall (map (fn [item]  (apply nav-link item)) (:nav-links-right @ac/components))))]]]))
 
 (comment (defn debug []
     (let [request (r/atom nil)

@@ -114,6 +114,7 @@
   (fn [[form options]]
     (let [options (get-in @options (->> cursor (filter keyword?) vec))
           [name cursor] (prepare-input cursor form)]
+      (when (nil? @cursor) (reset! cursor (second (first options))))
       [:div.form-group.col-xs-6 {:key name}
        [:label.control-label {:for name} label]
        (into [:select.form-control {:id name
@@ -218,7 +219,7 @@
                            (reset! preview (md->html (-> % .-target .-value))))
            }]]
        [:div.col-xs-6
-        [:label.control-label "Preview"]
+        [:label.control-label (str label " Preview")]
         [:div.preview {:style {:border "solid grey 1px"
                                :padding :5px}
                        :dangerouslySetInnerHTML {:__html @preview}}]]])))

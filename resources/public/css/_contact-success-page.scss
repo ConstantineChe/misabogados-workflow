@@ -1,0 +1,84 @@
+/* Contact Success Page
+---------------------------------------------*/
+
+.alert-success {
+
+  h1 {
+    text-align: center;
+    text-transform: uppercase;
+    margin: 5px;
+  }
+
+}
+
+.contact-success h3 {
+  text-transform: uppercase;
+}
+
+.next-steps {
+
+  h3 {
+    text-align: center;
+  }
+
+  img {
+    margin-top: 10px;
+  }
+
+  ul {
+    padding-left: 0px;
+  }
+
+}
+
+@media (max-width: 787px) {
+  .next-steps img {
+    max-width: 75px;
+    margin-top: 5px;
+  }
+}
+
+.extra-details {
+  margin-top: 30px;
+}
+
+.mientras-tanto {
+
+  h3 {
+    font-size: 28px;
+    margin-top: 0px;
+  }
+
+  p {
+    font-size: $base-font-size+2;
+  }
+
+  ul {
+    font-size: $base-font-size;
+  }
+
+  button {
+    margin-top: 10px;
+  }
+
+}
+
+.emergencia {
+
+  img {
+    max-width: 100px;
+  }
+
+  h3 {
+    font-size: 28px;
+    text-align: center;
+    color: #b56f1d;
+  }
+
+  p {
+    font-size: $base-font-size+4;
+    text-align: center;
+    margin-bottom: 0px;
+  }
+
+}

@@ -28,3 +28,7 @@
                                           :role (get response "role")}))
                    (ac/reset-access!)
                    nil)}))
+
+(defn redirect [url]
+  (aset js/window "location" url)
+  (.scrollTo js/window 0 0))

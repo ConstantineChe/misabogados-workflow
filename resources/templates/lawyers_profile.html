@@ -1,0 +1,94 @@
+{% extends "layout.html" %}
+
+{% block metadata %}
+    <meta name="description" content="" />
+{% endblock %}
+
+{% block page %}
+
+<!-- Lawyers' Profile Page -->
+<div class="container-fluid  section-padding  lawyer-profile-header">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-3  col-md-3  col-sm-4  col-xs-5">
+        <div class="profile-img">
+          <img src="/img/lawyer-profile/alf.jpg" class="center-block" alt="Alfredo Alcaíno" />
+        </div>
+      </div>
+      <div class="col-lg-5  col-md-5  col-sm-8  col-xs-7">
+        <h1>{{lawyer.name}}</h1>
+        {% if lawyer.certified %} <img src="/img/lawyer-profile/certificado.png" class="icon-certificate" alt="" /><span class="qualifier"> Abogado Certificado</span>
+        {% endif %}
+        <p>Alcaíno | Abogados</p>
+      </div>
+      <div class="col-lg-4  col-md-4  col-sm-12  col-xs-12">
+        <blockquote>
+          <h3>"...Excelente abogado, está simpre atento a tus dudas..."</h3>
+        </blockquote>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container  section-padding  lawyer-profile">
+  <div class="row">
+    <div class="col-lg-3  col-md-3  col-sm-4  col-xs-12">
+      <div class="overview">
+        <div class="icon-box">
+          <i class="fa fa-map-marker  center-block" aria-hidden="true"></i>
+        </div>
+        <div class="description-box">
+          <p>{{lawyer.address}}</p>
+        </div>
+      </div>
+      <div class="overview">
+        <div class="icon-box">
+          <i class="fa fa-list-ul  center-block" aria-hidden="true"></i>
+        </div>
+        <div class="description-box">
+          <p>{{lawyer.years_of_experience}} años de experiencia</p>
+        </div>
+      </div>
+      <div class="overview">
+        <div class="icon-box">
+          <img src="/img/lawyer-profile/MisAbogados-icon.png" class="center-block" alt="Icono de MisAbogados" />
+        </div>
+        <div class="description-box">
+          <p>Miembro desde TODO/TBD</p>
+        </div>
+      </div>
+      <div class="recommendation">
+        <h4>¿Recomendarías a este abogado?</h4>
+        <div class="progress">
+          <div class="progress-bar" role="progressbar" aria-valuenow="95" aria-valuemin="0" aria-valuemax="100" style="width: 95%;">
+            <span class="sr-only">TODO/TBD recomendado</span>
+          </div>
+        </div>
+        <p>TODO/TBD de los usuarios dice que sí</p>
+      </div>
+    </div>
+    <div class="col-lg-9  col-md-9  col-sm-8  col-xs-12">
+      <h3>Acerca del Abogado</h3>
+      <p>
+        {{lawyer.description}}
+      </p>
+    </div>
+    <div class="col-lg-4  col-md-4  col-sm-4  col-xs-12">
+      <h3>Estudios</h3>
+      {% for item in lawyer.study %}
+      <h5>{{item.place}}</h5>
+      <p>from {{item.from}} to {{item.to}}</p>
+      <p>Degree {{item.degree}}</p>
+      {% endfor %}
+    </div>
+    <div class="col-lg-5  col-md-5  col-sm-4  col-xs-12">
+      <h3>Experiencia</h3>
+      {% for item in lawyer.experience %}
+      <h5>{{item.place}}</h5>
+      <p>{{item.position}}</p>
+      <p>From {{item.from}} To {{item.to}}</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+{% endblock %}
