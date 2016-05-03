@@ -103,7 +103,10 @@
   (text-field :base_url "Enlace básico")
   (embeds-many :regions "Regions"
                (text-field :code "Código")
-               (text-field :name "Nombre")))
+               (text-field :name "Nombre"))
+  (embeds-many :payment_system_options "Ajustes del sistema de pago"
+               (text-field :key "Llave")
+               (text-field :value "Valor")))
 
 ;; (defentity client
 ;;   (text-field :name)
