@@ -47,7 +47,7 @@
                                                                  [:div.alert.alert-sucsess "Lead with id "
                                                                   [:a {:href (str "#/lead/" id "/edit")} id]
                                                                   " was updated."])
-                                                   (aset js/window "location" "/#dashboard"))
+                                                   (u/redirect "#dashboard"))
                                      :error-handler #(case (:status %)
                                                        403 (js/alert "Access denied")
                                                        404 (js/alert "Lead not found")
@@ -61,7 +61,7 @@
                                               (session/put! :notification
                                                             [:div.alert.alert-sucsess "Lead created with id "
                                                              [:a {:href (str "#/lead/" id "/edit")} id]])
-                                                (aset js/window "location" "/#dashboard"))
+                                                (u/redirect "#dashboard"))
                                   :error-handler #(case (:status %)
                                                            403 (js/alert "Access denied")
                                                            500 (js/alert "Internal server error")

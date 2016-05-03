@@ -63,8 +63,8 @@
 ;;todo server request
 (defn refresh-table []
   (GET (str js/context "/payment-requests")
-                      {:handler #((reset! table-data (get % "payment-requests"))
-                                  nil)})())
+       {:handler #(reset! table-data (get % "payment-requests")
+                          nil)}))
 
 (defn create-payment-request [form-data]
   (POST (str js/context "/payment-requests") {:params form-data
@@ -89,7 +89,7 @@
                       :client_tel [[v/required :message "Client's phone number should be present"]]
                       :service [[v/required :message "Service name should be present"]]
                       :service_description [[v/required :message "Service description should be present"]]
-                      :own_client [[v/required :message "Client type should be specified"]]
+                      :own_client [[(fn [x] (or (true? x) (false? x))) :message "Client type should be specified"]]
                       :terms [[v/required :message "Youd should accept terms and conditions in order to send payment request"]]))
   (b/valid? data
             :client v/required

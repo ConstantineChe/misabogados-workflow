@@ -63,10 +63,10 @@ instance = Instance()
 
 #============ Tasks =============
 
-def production(website = 'CL'):
+def production(website = 'cl'):
     instance.production(website)
 
-def staging(website = 'CL'):
+def staging(website = 'cl'):
     instance.staging(website)
 
 

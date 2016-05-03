@@ -47,6 +47,11 @@
     (render "category.html" {:title (:name category)
                              :category category})))
 
+(defn show-lawyer [slug]
+  (let [lawyer (mc/find-one-as-map @db/db "lawyers" {:slug slug})]
+    (render "lawyers_profile.html" {:title  (:name lawyer)
+                                    :lawyer lawyer})))
+
 (defroutes home-routes
   (GET "/" [] home-page)
   (GET "/garantia" [] (render "guarantee.html" {:title "Garantía"}))
@@ -58,5 +63,7 @@
   (GET "/contact" [] (render "contact.html" {:title "Contactar"}))
   (POST "/contact" [] create-lead-from-contact)
   (GET "/exito-contratar" [] (render "contact-success.html" {:title "¡Has enviado tu mensaje!"}))
-  (GET "/abogado/alfredo-alcaino" [] (render "lawyers_profile.html" {:title "Alfredo Alcaíno"}))
+  (GET "/abogado-test/alfredo-alcaino" [] (render "lawyers_profile.html" {:title "Alfredo Alcaíno"}))
+  (GET "/abogado/:slug" [slug :as request] (show-lawyer slug))
+  (GET "/info_para_abogados" [] (render "info_para_abogados.html" {:title "Información para los Abogados"}))
   (GET "/categories_json" [] (map (fn [i] {:id (:slug i) :name (:name i)}) (mc/find-maps @db/db "categories"))))

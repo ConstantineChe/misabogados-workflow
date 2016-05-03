@@ -114,6 +114,7 @@
   (fn [[form options]]
     (let [options (get-in @options (->> cursor (filter keyword?) vec))
           [name cursor] (prepare-input cursor form)]
+      (when (nil? @cursor) (reset! cursor (second (first options))))
       [:div.form-group.col-xs-6 {:key name}
        [:label.control-label {:for name} label]
        (into [:select.form-control {:id name

@@ -44,6 +44,8 @@
 
 (defn text-field [name label] [name {:render-type :text :label label}])
 
+(defn field [type name label][name {:render-type type :label label}])
+
 (defn has-many [entity] {(key (first entity))
                          {:type :collection-refenence}})
 
@@ -87,14 +89,27 @@
                (markdown-field :text "Contents"))
   (embeds-many :posts "Posts"
                (text-field :name "Title")
-               (text-field :url "URL"))
-  )
+               (text-field :url "URL")))
 
 (defentity lawyer "Abogado"
   (text-field :name "Nombre")
   (text-field :email "Email")
   (text-field :phone "Teléfono")
   (text-field :address "Dirección"))
+  (text-field :years_of_experience "Years of experience")
+  (text-field :slug "Slug")
+  (checkbox-field :certified "Certified lawyer")
+  (field :textarea :description "Description")
+  (embeds-many :experience "Experience"
+               (text-field :place "Where")
+               (text-field :position "Position")
+               (text-field :from "From")
+               (text-field :to "To"))
+  (embeds-many :study "Study"
+               (text-field :place "Where")
+               (text-field :from "From")
+               (text-field :to "To")
+               (text-field :degree "Degree")))
 
 (defentity settings "Ajustes"
   (text-field :full_country_name "País")
