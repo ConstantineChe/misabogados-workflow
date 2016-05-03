@@ -11,8 +11,6 @@
             [clojure.walk :refer [keywordize-keys]]
             [secretary.core :as secretary :include-macros true])  )
 
-;; (def setings (r/atom nil))
-
 (defn save-settings [data]
   (PUT (str js/context "/admin/settings") {:params (update data :settings dissoc :_id)
                                            :handler #(do (u/redirect "#admin/settings"))
@@ -25,7 +23,7 @@
   (let [settings (r/atom nil)
         util (r/atom nil)
         options (r/atom nil)]
-     (GET (str js/context "/admin/settings") {:handler #(reset! settings (keywordize-keys %))
+    (GET (str js/context "/admin/settings") {:handler #(reset! settings {:settings (keywordize-keys %)})
                                               :error-handler #(case (:status %)
                                                                 403 (js/alert "Access denied")
                                                                 500 (js/alert "Internal server error")

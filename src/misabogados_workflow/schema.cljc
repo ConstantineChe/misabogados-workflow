@@ -97,10 +97,10 @@
   (text-field :address "Dirección"))
 
 (defentity settings "Ajustes"
-  (text-field :full-country-name "País")
-  (text-field :contact-phone "Teléfono")
+  (text-field :full_country_name "País")
+  (text-field :contact_phone "Teléfono")
   (text-field :country "Código del país")
-  (text-field :base-url "Enlace básico")
+  (text-field :base_url "Enlace básico")
   (embeds-many :regions "Regions"
                (text-field :code "Código")
                (text-field :name "Nombre")))

@@ -3,6 +3,7 @@
             [ring.util.response :refer [redirect response]]
             [monger.operators :refer :all]
             [misabogados-workflow.util :as util]
+            [misabogados-workflow.settings :as sttngs]
             [misabogados-workflow.schema :as s]
             [misabogados-workflow.access-control :as ac]
             [buddy.auth.accessrules :refer [restrict]]))
@@ -14,7 +15,7 @@
           :role (-> request :session :role)}})
 
 (defn get-settings [request]
-  (response {:settings {:country "cl"}}))
+  (response @sttngs/settings))
 
 (defn update-settings [request]
   (response {:status :updated}))
