@@ -61,7 +61,7 @@
         (let [updated-session (assoc (:session request) :identity (keyword (:email user)))]
           (-> (redirect "/")
               (assoc :session updated-session)
-              (assoc-in [:flash :messages :success :verified] "Your email was verified."))))
+              (assoc-in [:flash :messages :success :verified] "Su email se ha verificado."))))
       (redirect "/"))
     (-> (redirect "/")
         (assoc-in [:flash :messages :errors :invalid-code] "Código de virificación invalido"))))
@@ -69,7 +69,7 @@
 (defn forgot-password-page [request]
   (if (authenticated? request)
     (redirect "/")
-    (layout/render "forgot-password.html" (merge {:title "Forgot password"}
+    (layout/render "forgot-password.html" (merge {:title "Recuperar contraseña"}
                                                 (if-let [messages (-> request :flash :messages)]
                                                   {:messages messages})))))
 
@@ -82,18 +82,18 @@
           (future (email/reset-password-email user (str (util/base-path request) "/reset-password/" code)))
           (-> (redirect "/")
               (assoc-in [:flash :messages :success :reset-password-email]
-                        (str "Email with passwd reset link sent to " (:email params)))))
+                        (str "Se ha enviado un mail a " (:email params) " con instrucciones para recuperar su contraseña."))))
       (-> (redirect "/forgot-passowrd")
           (assoc-in (assoc-in [:flash :messages :errors :no-user]
-                              (str "User with email " (:email user) " doesn't exists.")))))))
+                              (str "El usuario con email " (:email user) " no existe.")))))))
 
 (defn reset-password-page [code request]
   (let [user (mc/find-one-as-map @db/db "users" {:reset-code code})]
     (if-not user
       (-> (redirect "/")
           (assoc-in [:flash :messages :errors :invalid-code]
-                       "Invalid passowrd reset code."))
-      (layout/render "reset-password.html" (merge {:title "Reset password"
+                       "El código de recuperación invalido."))
+      (layout/render "reset-password.html" (merge {:title "Actualizar contraseña"
                                                    :code code}
                                                   (if-let [messages (-> request :flash :messages)]
                                                   {:messages messages}))))))
