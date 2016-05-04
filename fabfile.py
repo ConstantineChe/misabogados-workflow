@@ -82,6 +82,8 @@ def deploy(branch="master"):
         run("git checkout " + branch)
         run("git pull")
         run("lein clean")
+        with settings(warn_only=True):
+            run("lein scss :production once")
         run("lein uberjar")
         if not files.exists(deploy_location+instance.directory):
             run("mkdir -p %s" % deploy_location + instance.directory)

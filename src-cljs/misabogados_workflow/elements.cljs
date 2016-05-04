@@ -4,6 +4,8 @@
             [clojure.string :as s]
             [misabogados-workflow.utils :as u]
             [markdown.core :refer [md->html]]
+            [clojure.walk :refer [keywordize-keys]]
+            [misabogados-workflow.ajax :refer [PUT]]
             [reagent-forms.datepicker
              :refer [parse-format format-date datepicker]])
 )
@@ -224,6 +226,25 @@
                                :padding :5px}
                        :dangerouslySetInnerHTML {:__html @preview}}]]])))
 
+(defn input-image
+  "Image input with preview"
+  [label path upload-url & filename-path]
+  (fn [[form _ util]]
+    (let [[name cursor] (prepare-input path form)]
+      (when-not (= (get-in @form (first filename-path)) @cursor)
+        (reset! cursor (get-in @form (first filename-path))))
+      [:div.form-group.col-xs-6 {:key name} ;(str @cursor)
+       [:form {:id (str name "-form")
+               :action upload-url
+               :enc-type "multipart/form-data"
+               :method "POST"}
+        [:label.control-label {:for "file"} "File to upload"]
+        [:input {:type :hidden :value @cursor}]
+        [:input {:id "file" :name "file" :type "file"
+                 :on-change #(do (if (empty? @cursor) (reset! cursor (.now js/Date)))
+                                 (-> js/$ (str "#" name "-form") .submit))}]]]))
+  )
+
 
 (defn data-table [data headers getters]
   [:table.table.table-hover.table-striped.panel-body
@@ -236,6 +257,25 @@
        (for [getter getters]
          [:td {:key (.indexOf (to-array getters) getter)}
           (getter item)])])]])
+
+(defn action-button [data attributes url return-url]
+  (let [{:keys [name action]} attributes
+        action-url (str url action)
+        submit (fn [e] (PUT (str js/context action-url)
+                           {:params @data
+                            :handler #(let [response (keywordize-keys %)
+                                            id (:id response)]
+                                        (session/put! :notification
+                                                      [:div.alert.alert-sucsess "Lead with id "
+                                                       [:a {:href (str "#/lead/" id "/edit")} id]
+                                                       " was updated."])
+                                        (u/redirect return-url))
+                            :error-handler #(case (:status %)
+                                              403 (js/alert "Access denied")
+                                              404 (js/alert "Lead not found")
+                                              500 (js/alert "Internal server error")
+                                              (js/alert (str %)))}))]
+    [:button.btn.btn-primary {:on-click submit} name]))
 
 (defn btn-new-fieldset [cursor label]
   (fn [[form]]
@@ -274,6 +314,7 @@
    :date-time input-datetimepicker
    :checkbox input-checkbox
    :markdown input-markdown
+   :image input-image
    :entity input-entity})
 
 
@@ -318,7 +359,6 @@
 
 (defmulti render-form
   (fn [[key schema] data path]
-;    (prn key ":" schema)
     (:render-type schema)))
 
 (defmethod render-form :collection [[key schema] data path]
@@ -342,8 +382,10 @@
             content))))
 
 (defmethod render-form :default [[key schema] data path]
-  (let [{type :render-type label :label} schema]
-    ((type input-types) (if label label (name key)) (conj path key))))
+  (let [{type :render-type label :label args :args} schema]
+    (if args
+      (apply (type input-types) (if label label (name key)) (conj path key) args)
+      ((type input-types) (if label label (name key)) (conj path key)))))
 
 
 (defmulti get-struct (fn [[key schema]] (:render-type schema)))

@@ -7,18 +7,23 @@
 
 (def table-data (r/atom {}))
 
+(def show-all (r/atom false))
+
+
 (defn get-actions [lead]
-  (list [:a {:key :edit
-             :class "btn btn-secondary"
-             :href (str "#/lead/" (get lead "_id") "/edit")} [:span.glyphicon.glyphicon-edit]]
-        [:a {:key :action
-             :class "btn btn-success"
-             :href (str "/lead/" (get lead "_id") "/action/" (get lead "step"))} [:span.glyphicon.glyphicon-play]]))
+  (let [step (if (get lead "step") (get lead "step") "check")]
+    (list [:a {:key :edit
+               :class "btn btn-secondary"
+               :href (str "#lead/" (get lead "_id") "/edit")} [:span.glyphicon.glyphicon-edit]]
+          [:a {:key :action
+               :class "btn btn-success"
+               :href (str "#lead/" (get lead "_id") "/action/" step)} [:span.glyphicon.glyphicon-play]])))
 
 (defn table []
   (let []
     [:div
      [:legend "Leads"]
+     [:button.btn.btn-default {:on-click #(swap! show-all not)} (if @show-all "Show less" "Show all")]
      (if-not (empty? @table-data)
        [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
         [:th "ID"]
@@ -36,7 +41,7 @@
         [:th "Enlaces"]
         [:th ""]
         [:tbody
-         (doall (for [lead @table-data
+         (doall (for [lead (if @show-all @table-data (take 10 @table-data))
                       :let [id (get lead "_id")
                             pending-action (util/remove-kebab (get lead "step"))
                             actions (get-actions lead)]]

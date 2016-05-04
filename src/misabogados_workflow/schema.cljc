@@ -44,7 +44,7 @@
 
 (defn text-field [name label] [name {:render-type :text :label label}])
 
-(defn field [type name label][name {:render-type type :label label}])
+(defn field [type name label & args][name {:render-type type :label label :args args}])
 
 (defn has-many [entity] {(key (first entity))
                          {:type :collection-refenence}})
@@ -81,6 +81,7 @@
   (text-field :name "Title")
   (text-field :quote "Quote")
   (text-field :slug "Slug")
+  (field :image :image "Image" "/categories/file" [:category :slug])
   (checkbox-field :persons "Persons")
   (checkbox-field :enterprises "Enterprises")
   (checkbox-field :showed_by_default "Showed by default")
