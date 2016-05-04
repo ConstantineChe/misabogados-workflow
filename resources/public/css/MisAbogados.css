@@ -8,7 +8,7 @@
 ---------------------------------------------*/
 /* Global Variables */
 /* Global Patterns */
-.section-padding, .static-content {
+.section-padding, .section-white, .section-blue, .static-content {
   padding-top: 60px;
   padding-bottom: 60px; }
 
@@ -22,12 +22,10 @@ body {
 @media (max-width: 1010px) {
   body {
     padding-top: 0px; } }
-
 /* Constraining display width on large screens */
 @media (min-width: 1200px) {
   .container {
     width: 1000px; } }
-
 h1, h2, h3, h4 {
   font-family: "Raleway", serif;
   font-weight: 300; }
@@ -39,7 +37,6 @@ h2 {
 @media (max-width: 992px) {
   h2 {
     font-size: 2.25em; } }
-
 p {
   font-size: 16px; }
 
@@ -56,7 +53,6 @@ p {
 @media (min-width: 1010px) {
   .jumbotron h1 {
     font-size: 3.25em; } }
-
 .glyphicon {
   vertical-align: middle;
   margin-top: -5px; }
@@ -76,7 +72,6 @@ p {
     height: 50px;
     margin: -50px 0 0;
     visibility: hidden; } }
-
 /* Alert styling */
 .alert-top {
   position: absolute;
@@ -90,54 +85,67 @@ p {
 @media (max-width: 1010px) {
   .alert-top {
     top: 70px; } }
-
 /* Helpers
 ---------------------------------------------*/
 /* 2 row navbar */
 @media (min-width: 768px) {
   .two-row .navbar-collapse {
     clear: left; } }
-
 /* Redefines navbar breakpoint */
 @media (max-width: 1010px) {
   .navbar-header {
     float: none; }
+
   .navbar-left, .navbar-right {
     float: none !important; }
+
   .navbar-toggle {
     display: block; }
+
   .navbar-collapse {
     border-top: 1px solid transparent;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1); }
+
   .navbar-fixed-top {
     top: 0;
     border-width: 0 0 1px; }
+
   .navbar-collapse.collapse {
     display: none !important; }
+
   .navbar-nav {
     float: none !important;
     margin-top: 7.5px; }
+
   .navbar-nav > li {
     float: none; }
+
   .navbar-nav > li > a {
     padding-top: 10px;
     padding-bottom: 10px; }
+
   .collapse.in {
     display: block !important; } }
-
 /* Adds a black overlay with transparency */
-.darken-bg {
-  background-color: rgba(0, 0, 34, 0.498039);
+.dark-bg {
+  background-color: rgba(0, 0, 34, 0.49804);
   padding-top: 30px;
   padding-bottom: 30px; }
+
+.darken-bg {
+  background-color: rgba(85, 85, 85, 0.49804);
+  margin-top: -60px;
+  margin-bottom: -60px;
+  padding-top: 60px;
+  padding-bottom: 60px; }
 
 /* Adds a blue overlay with transparency */
 .bluen-bg {
   background-color: rgba(40, 119, 215, 0.49804);
   margin-top: -60px;
   margin-bottom: -60px;
-  padding-top: 30px;
-  padding-bottom: 30px; }
+  padding-top: 60px;
+  padding-bottom: 60px; }
 
 /* Adds helper class for removing button background */
 .btn-no-fill {
@@ -162,17 +170,14 @@ p {
   .col-sm-5ths {
     width: 20%;
     float: left; } }
-
 @media (min-width: 992px) {
   .col-md-5ths {
     width: 20%;
     float: left; } }
-
 @media (min-width: 1200px) {
   .col-lg-5ths {
     width: 20%;
     float: left; } }
-
 /* Navbar
 ---------------------------------------------*/
 .navbar {
@@ -206,9 +211,9 @@ p {
     height: 50px;
     margin-left: 0px !important;
     padding: 9px 0px; }
+
   .navbar-logo {
     height: 33px; } }
-
 .navbar-ctl {
   height: 50px;
   float: right;
@@ -238,7 +243,6 @@ p {
 @media (min-width: 768px) {
   .country-selector {
     padding-top: 12px !important; } }
-
 .dropdown-toggle img {
   height: 25px; }
 
@@ -287,14 +291,17 @@ p {
 @media (min-width: 1011px) {
   .button-bar {
     height: 30px; }
+
   .navbar-button a {
     margin-top: 0px;
     padding-top: 7px !important;
     padding-bottom: 6px !important; }
+
   .navbar ul {
     padding-left: 0px;
     border-top: solid 1px #363636;
     width: 100%; }
+
   .navbar-button {
     width: 16.66666666666667%;
     border-left: solid 1px #363636;
@@ -309,6 +316,7 @@ p {
     /* For Opera 11.1 to 12.0 */
     background: -moz-linear-gradient(top, #2b2b2b, #262626);
     /* For Firefox 3.6 to 15 */ }
+
   .navbar-button button {
     margin-top: 4px;
     margin-left: 0px;
@@ -319,12 +327,13 @@ p {
     max-width: 175px;
     padding-top: 2px;
     padding-bottom: 2px; }
+
   .navbar-button button span {
     margin-top: -3px;
     font-weight: bold; }
+
   .navbar-button:last-of-type {
     border-right: solid 1px #363636; } }
-
 .navbar-toggle {
   margin-right: 5px; }
 
@@ -332,14 +341,13 @@ p {
   .navbar-toggle {
     margin-right: 5px;
     margin-left: 15px; } }
-
 @media (max-width: 1010px) {
   .navbar-collapse ul {
     padding-left: 20px; }
+
   .navbar-nav li a {
     padding-top: 6px;
     padding-bottom: 6px; } }
-
 /* Contact Form
 ---------------------------------------------*/
 .contact-form h4 {
@@ -421,7 +429,6 @@ p {
 @media (min-width: 1200px) {
   .footer-contact .container {
     width: 1200px; } }
-
 /* Footer: Contact Information */
 .footer-contact {
   background-color: #2877D7;
@@ -437,7 +444,6 @@ p {
   .footer-contact div {
     margin-top: 5px;
     margin-bottom: 5px; } }
-
 .footer-contact i {
   font-size: 18px;
   padding-right: 5px;
@@ -466,7 +472,6 @@ p {
 @media (max-width: 992px) {
   .cta h1 {
     margin-top: 1.25em; } }
-
 .cta p {
   font-size: 1.85em; }
 
@@ -478,7 +483,6 @@ p {
 @media (max-width: 992px) {
   .cta button {
     margin-bottom: 50px; } }
-
 .cta h6 {
   font-size: 1em;
   font-weight: bold;
@@ -512,7 +516,6 @@ p {
 @media (min-width: 992px) {
   .categories-section h2 {
     margin-bottom: 50px; } }
-
 .categories-section .input-group {
   margin-bottom: 50px;
   max-width: 350px;
@@ -525,7 +528,6 @@ p {
     padding-top: 40px;
     margin-bottom: 25px;
     float: left; } }
-
 .categories-list .thumbnail {
   position: relative;
   overflow: hidden;
@@ -538,7 +540,6 @@ p {
 @media (min-width: 992px) {
   .caption h5 {
     font-size: 1em; } }
-
 .caption-overlay {
   background-color: rgba(0, 0, 0, 0.55);
   position: absolute;
@@ -596,7 +597,6 @@ p {
     margin-left: auto;
     margin-right: auto;
     padding-left: 20px; } }
-
 .lawyer-list li {
   list-style-type: none;
   margin-bottom: 40px;
@@ -620,7 +620,6 @@ p {
 @media (max-width: 787px) {
   .lawyer-list h4 {
     font-size: 16px; } }
-
 /* Testimonies Section
 ---------------------------------------------*/
 .testimonies-section {
@@ -653,11 +652,12 @@ p {
 @media (max-width: 787px) {
   .testimonies-list {
     padding-left: 20px; }
+
   .testimonies-list h4 {
     font-size: 16px; }
+
   .testimonies-list blockquote {
     font-size: 14px; } }
-
 .testimony-video {
   margin-top: 10%;
   margin-left: auto;
@@ -666,7 +666,6 @@ p {
 @media (max-width: 992px) {
   .testimony-video {
     margin-top: 5%; } }
-
 /* Garantia Section
 ---------------------------------------------*/
 .garantia-section {
@@ -682,7 +681,6 @@ p {
 @media (max-width: 991px) {
   .garantia-section h2 {
     margin-top: 50px; } }
-
 .garantia-section li {
   font-size: 16px; }
 
@@ -702,7 +700,6 @@ p {
 @media (max-width: 992px) {
   .cta h2 {
     margin-top: 1.25em; } }
-
 /* Radio Agricultura Player
 ---------------------------------------------*/
 .radioAgriculturaPlayer {
@@ -743,7 +740,6 @@ p {
 @media (max-width: 992px) {
   .categoria-heading h1 {
     margin-top: 1.5em; } }
-
 .categoria-heading p {
   font-size: 1.5em; }
 
@@ -821,7 +817,6 @@ p {
 @media (max-width: 992px) {
   .contact-panel {
     margin-top: 20px; } }
-
 .team-photo {
   max-width: 250px;
   margin-top: 40px;
@@ -861,10 +856,8 @@ p {
 
 .next-steps h3 {
   text-align: center; }
-
 .next-steps img {
   margin-top: 10px; }
-
 .next-steps ul {
   padding-left: 0px; }
 
@@ -872,31 +865,25 @@ p {
   .next-steps img {
     max-width: 75px;
     margin-top: 5px; } }
-
 .extra-details {
   margin-top: 30px; }
 
 .mientras-tanto h3 {
   font-size: 28px;
   margin-top: 0px; }
-
 .mientras-tanto p {
   font-size: 18px; }
-
 .mientras-tanto ul {
   font-size: 16px; }
-
 .mientras-tanto button {
   margin-top: 10px; }
 
 .emergencia img {
   max-width: 100px; }
-
 .emergencia h3 {
   font-size: 28px;
   text-align: center;
   color: #b56f1d; }
-
 .emergencia p {
   font-size: 20px;
   text-align: center;
@@ -905,13 +892,44 @@ p {
 /*--------------------------------------------
  * Lawyers' Landing Page Sections            *
 ---------------------------------------------*/
+/* FOR GLOBAL */
+.section-white h1, .section-white h2, .section-white h3, .section-white h4, .section-white h5 {
+  color: #2877D7; }
+
+.section-blue {
+  background-color: #2877D7; }
+  .section-blue h1, .section-blue h2, .section-blue h3, .section-blue h4, .section-blue h5, .section-blue p {
+    color: #FFFFFF; }
+
+.info-para-abgados {
+  text-align: center; }
+
 /* CTA
 ---------------------------------------------*/
 .cta-main-lawyers {
   background: url(/img/lawyers-landing-page/looking-at-computer.jpg);
   background-size: cover;
-  background-position: 70% 100%;
+  background-position: 70% 95%;
   background-repeat: no-repeat; }
+
+/* Access New Clients
+---------------------------------------------*/
+.access-new-clients {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 60px; }
+  .access-new-clients p {
+    margin-top: 15px; }
+
+/* Grow Your Business With Technology
+---------------------------------------------*/
+.grow-with-technology h2 {
+  font-size: 3em;
+  margin-bottom: 80px; }
+.grow-with-technology p {
+  margin-top: 30px;
+  margin-bottom: 20px; }
 
 /* Hundreds of Lawyers use MisAbogados
 ---------------------------------------------*/
@@ -920,6 +938,12 @@ p {
   background-size: cover;
   background-position: 15% 0%;
   background-repeat: no-repeat; }
+  .social-proof h2 {
+    font-size: 2.75em;
+    margin-top: 100px;
+    margin-bottom: 30px; }
+  .social-proof p {
+    margin-bottom: 100px; }
 
 /* Client Break-down
 ---------------------------------------------*/
@@ -928,6 +952,14 @@ p {
   background-size: cover;
   background-position: 44% 0%;
   background-repeat: no-repeat; }
+  .client-break-down h2 {
+    margin-bottom: 40px; }
+  .client-break-down h3 {
+    margin-top: 10px; }
+
+.register-now button {
+  font-size: 20px;
+  margin-bottom: 50px; }
 
 /* Lawyers Profile Page
 ---------------------------------------------*/
@@ -1037,7 +1069,6 @@ p {
 @media (max-width: 765px) {
   .overview:first-of-type {
     margin-top: 0px; } }
-
 .recommendation {
   margin-top: 40px; }
   .recommendation h4 {
@@ -1055,9 +1086,9 @@ p {
 @media (max-width: 768px) {
   .recommendation {
     margin-top: 20px; }
+
   h3 {
     margin-top: 40px; } }
-
 /*--------------------------------------------
  * Static Page Sections                  *
 ---------------------------------------------*/
@@ -1096,3 +1127,5 @@ p {
 
 .guarantee-cta {
   margin-top: 60px; }
+
+/*# sourceMappingURL=MisAbogados.css.map */
