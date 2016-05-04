@@ -76,7 +76,7 @@
          {:develop    {:source-dir "resources/scss/"
                        :dest-dir   "resources/public/css/"
                        :executable "sassc"
-                       :args       ["-t" "nested"]}
+                       :args       ["-m" "-t" "nested"]}
           :production {:source-dir "scss/"
                        :dest-dir   "resources/public/css/"
                        :executable "sassc"
