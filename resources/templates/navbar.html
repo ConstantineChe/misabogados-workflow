@@ -24,10 +24,12 @@
                   {% ifunequal settings.country "mx" %}<li><a href="#"><img src="/img/flags/mx.png" alt="Mexico" />Mexico</a></li>{% endifunequal%}
                 </ul>
               </li>
-              {% if not logged-in? %}
-              <li><a href="/login">Iniciar sesión</a></li>
-              {% else %}
-              <li><a href="/app">Hola, {{user.name}}</a>
+              {% if not settings.private_app_disabled %}
+                {% if not logged-in? %}
+                  <li><a href="/login">Iniciar sesión</a></li>
+                {% else %}
+                  <li><a href="/app">Hola, {{user.name}}</a>
+                {% endif %}
               {% endif %}
             </ul>
           </div>
@@ -45,7 +47,9 @@
                 {% ifunequal settings.country "mx" %}<li><a href="#"><img src="/img/flags/mx.png" alt="Mexico" />Mexico</a></li>{% endifunequal%}
               </ul>
             </li>
-            <li class="hidden-md  hidden-lg  navbar-button"><a href="#">Iniciar sesión</a></li>
+            {% if not settings.private_app_disabled %}
+              <li class="hidden-md  hidden-lg  navbar-button"><a href="#">Iniciar sesión</a></li>
+            {% endif %}
             <li class="dropdown  navbar-button">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Personas <span class="caret"></span></a>
               <ul class="dropdown-menu  categoria-list">
