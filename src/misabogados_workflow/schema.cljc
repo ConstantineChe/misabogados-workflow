@@ -81,7 +81,7 @@
   (text-field :name "Title")
   (text-field :quote "Quote")
   (text-field :slug "Slug")
-  (field :image :image "Image" "/admin/categories/file" [:category :slug])
+  (field :image :image "Image" "/admin/categories/file")
   (checkbox-field :persons "Persons")
   (checkbox-field :enterprises "Enterprises")
   (checkbox-field :showed_by_default "Showed by default")
@@ -99,6 +99,7 @@
   (text-field :address "Dirección")
   (text-field :years_of_experience "Years of experience")
   (text-field :slug "Slug")
+  (field :image :profile_picture "Profile picture" "admin/lawyers/file")
   (checkbox-field :certified "Certified lawyer")
   (field :textarea :description "Description")
   (embeds-many :experience "Experience"

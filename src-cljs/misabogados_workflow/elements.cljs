@@ -253,11 +253,11 @@
   (fn [[form _ util]]
     (let [[name cursor] (prepare-input path form)
           status (r/cursor util (into [:file-status] path))]
-      [:div.form-group.col-xs-6 {:key name} (str @cursor)
+      [:div.form-group.col-xs-6 {:key name}
        [:form {:id (str name "-form")
                :enc-type "multipart/form-data"
                :method "POST"}
-        [:label.control-label {:for name} "File to upload"]
+        [:label.control-label {:for name} label]
         @status
         [:input {:type :hidden :name :__anti-forgery-token :value @csrf-token}]
         [:input {:id name :name "file" :type "file"
