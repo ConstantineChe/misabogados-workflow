@@ -49,7 +49,7 @@ body {
 }
 
 /* The paddding adjustment isn't necessary on mobile devices */
-@media (max-width: 1010px) {
+@media (max-width: 1090px) {
   body {
     padding-top: 0px;
   }
@@ -95,7 +95,7 @@ p {
   font-size: 2.25em;
 }
 
-@media (min-width: 1010px) {
+@media (min-width: 1090px) {
   .jumbotron h1 {
     font-size: 3.25em;
   }
@@ -137,7 +137,7 @@ p {
   margin-right: auto;
 }
 
-@media (max-width: 1010px) {
+@media (max-width: 1090px) {
   .alert-top {
     top: 70px;
   }
