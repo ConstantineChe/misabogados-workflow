@@ -64,9 +64,7 @@
 
 (defn update-lead-data [lead id]
   (let [lead (objectify-ids lead)]
-    (mc/update-by-id @db/db "leads" id {$set
-                                        (assoc lead
-                                               :date_updated (new java.util.Date))})))
+    (mc/update-by-id @db/db "leads" id {$set (assoc lead :date_updated (new java.util.Date))})))
 
 (defn update-lead-ajax [id request]
   (let [id (oid id)
@@ -84,16 +82,13 @@
   (let [id (oid id)
         lead (assoc  (dissoc (:lead params) :_id) :step action)
         step ((keyword action) steps)]
-      (prn params)
-      (prn lead)
       (cond (vector? (first step))
-            (do (prn "vector")
-                (update-lead-data lead id)
+            (do (update-lead-data lead id)
                 (response {:status "ok" :id id :step action}))
-            (ifn? (first step))
+            :default
             (do
-              ((first step) lead)
               (update-lead-data (assoc lead :step (second step)) id)
+              ((first step) (assoc lead :_id id))
                 (response {:status "ok" :id id :step (second step)})))))
 
 
