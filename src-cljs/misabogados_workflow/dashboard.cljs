@@ -2,7 +2,8 @@
   (:require [reagent.core :as r]
             [misabogados-workflow.ajax :refer [GET PUT]]
             [reagent.session :as session]
-            [misabogados-workflow.utils :as util]))
+            [misabogados-workflow.utils :as util]
+            [misabogados-workflow.flow-definition :refer [steps]]))
 
 
 (def table-data (r/atom {}))
@@ -14,10 +15,10 @@
   (let [step (if (get lead "step") (get lead "step") "check")]
     (list [:a {:key :edit
                :class "btn btn-secondary"
-               :href (str "#lead/" (get lead "_id") "/edit")} [:span.glyphicon.glyphicon-edit]]
+               :href (str "#lead/" (get lead "_id") "/edit")} [:span.glyphicon.glyphicon-edit] " Edit"]
           [:a {:key :action
                :class "btn btn-success"
-               :href (str "#lead/" (get lead "_id") "/action/" step)} [:span.glyphicon.glyphicon-play]])))
+               :href (str "#lead/" (get lead "_id") "/action/" step)} [:span.glyphicon.glyphicon-play] " " (util/remove-kebab step)])))
 
 (defn table []
   (let []

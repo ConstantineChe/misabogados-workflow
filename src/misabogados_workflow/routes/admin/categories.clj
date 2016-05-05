@@ -15,14 +15,31 @@
             [monger.joda-time]
             [monger.operators :refer :all]
             [ring.util.http-response :refer [ok]]
+            [config.core :refer [env]]
             [ring.util.response :refer [redirect response]]))
 
-(def files (atom #{}))
 
 (defn file-path [filename]
   (if (:production env)
     (str (:uploads-path env) "/category/" filename)
+    (str (.getPath (io/resource "public")) "/uploads/category/" filename)))
+
+(defn uploads-url [filename]
+  (if (:production env)
+    (str (:uploads-url env) "/category/" filename)
     (str "/uploads/category/" filename)))
+
+(defn save-file
+  "Move file temporary file."
+  [filename new-path]
+  (let [file (io/file (file-path new-path))]
+    (prn filename)
+    (io/make-parents file)
+    (io/copy (io/file filename) file)))
+
+(defn create-filename [id tmp]
+  (let [extension (re-find #"\.\w+$" tmp)]
+    (str id extension)))
 
 (defn access-error-handler [request value]
   {:status 403
@@ -44,14 +61,29 @@
 (defn update-category
   "Update category by id."
   [id {params :params}]
-  (mc/update-by-id @db/db "categories" (oid id) {$set (:category params)})
-  (response {:id id :status "updated"})
+  (let [tmp-filename (get-in params [:category :image :tmp-filename])
+        filename (create-filename id tmp-filename)
+        category (if tmp-filename
+                   (assoc (:category params) :image (uploads-url filename))
+                   (:category params))]
+    (when tmp-filename
+      (save-file (str "/tmp/" tmp-filename) filename)
+      (mc/update-by-id @db/db "categories" (oid id) {$set category}))
+    (response {:id id :status "updated"}))
   )
 
 (defn create-category
   "Create new category"
   [{params :params}]
-  (let [id (:_id (mc/insert-and-return @db/db "categories" (:category params)))]
+  (let [tmp-filename (get-in params [:category :image :tmp-filename])
+        id (:_id (mc/insert-and-return @db/db "categories" (:category params)))
+        filename (create-filename id tmp-filename)
+        category (if tmp-filename
+                   (assoc (:category params) :image (uploads-url filename))
+                   (:category params))]
+    (when tmp-filename
+      (save-file (str "/tmp/" tmp-filename) filename)
+      (mc/update-by-id @db/db "categories" id {$set  category}))
     (response {:id id :status "created"}))
   )
 
@@ -71,7 +103,6 @@
     (if (#{".jpg" "jpeg" ".png" ".img"} extension)
       (do (io/copy (:tempfile file-params)
                 (io/file (str "/tmp/" filename extension)))
-       (swap! files conj filename)
        (response {:filename (str filename extension)}))
       (response {:error "not an image file"}))))
 

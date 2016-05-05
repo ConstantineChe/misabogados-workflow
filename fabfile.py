@@ -44,6 +44,8 @@ class Instance:
         self.opts['PRODUCTION'] = 'true'
         self.opts['LOG_PATH'] = '/var/deploy/log/%s%s.log' % (self.directory, project)
         self.opts['PAYMENT_SYSTEM'] = Instance.websites[website]['psp']
+        self.opts['UPLOADS_URL'] = directory
+        self.opts['UPLOADS_PATH'] = "/var/deploy/uploads" + directory
 
     def staging(self, website):
         self.directory = "staging/" + Instance.websites[website]['directory']
@@ -53,6 +55,8 @@ class Instance:
         self.opts['PORT'] = str(3000 + Instance.websites[website]['port'])
         self.opts['LOG_PATH'] = '/var/deploy/log/%s%s.log' % (self.directory, project)
         self.opts['PAYMENT_SYSTEM'] = Instance.websites[website]['psp']
+        self.opts['UPLOADS_URL'] = directory
+        self.opts['UPLOADS_PATH'] = "/var/deploy/uploads" + directory
 
     def get_opts_string(self):
         return ' '.join(map(lambda (k, v): k+'='+v, self.opts.iteritems()))
