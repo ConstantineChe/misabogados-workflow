@@ -39,7 +39,7 @@ class Instance:
     def production(self, website):
         self.directory = "production/" + Instance.websites[website]['directory']
         self.opts['DATABASE_URL'] = 'mongodb://127.0.0.1/%s_%s_production' % (project, website)
-        self.opts['SETTINGS_DATABASE_URL'] = 'monbodb://127.0.0.1/%s_production_settings' % project
+        self.opts['SETTINGS_DATABASE_URL'] = 'mongodb://127.0.0.1/%s_production_settings' % project
         self.opts['PORT'] = str(8080 + Instance.websites[website]['port'])
         self.opts['PRODUCTION'] = 'true'
         self.opts['LOG_PATH'] = '/var/deploy/log/%s%s.log' % (self.directory, project)
@@ -51,7 +51,7 @@ class Instance:
         self.directory = "staging/" + Instance.websites[website]['directory']
         self.opts['PRODUCTION'] = 'true'
         self.opts['DATABASE_URL'] = 'mongodb://127.0.0.1/%s_%s_staging' % (project, website)
-        self.opts['SETTINGS_DATABASE_URL'] = 'monbodb://127.0.0.1/%s_staging_settings' % project
+        self.opts['SETTINGS_DATABASE_URL'] = 'mongodb://127.0.0.1/%s_staging_settings' % project
         self.opts['PORT'] = str(3000 + Instance.websites[website]['port'])
         self.opts['LOG_PATH'] = '/var/deploy/log/%s%s.log' % (self.directory, project)
         self.opts['PAYMENT_SYSTEM'] = Instance.websites[website]['psp']
