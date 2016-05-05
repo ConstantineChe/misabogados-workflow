@@ -16,7 +16,7 @@
             [misabogados-workflow.middleware :as mw]
             [misabogados-workflow.util :as util]
             [misabogados-workflow.email :as email]
-            [config.core :refer [env]]
+            [misabogados-workflow.settings :as settings]
             [clj-time.coerce :as c]
             [clj-time.core :as t]
             [monger.joda-time]))
@@ -36,7 +36,6 @@
                         ;; :amount "3"
                         :tax "0"
                         :taxReturnBase "0"
-                        :currency (:currency env)
                         ;; :signature "be2f083cb3391c84fdf5fd6176801278" 
                         :test "1"
                         :confirmationUrl "http://localhost:3000/payments/confirmation"
@@ -64,15 +63,16 @@
           {:payment-request (mc/find-one-as-map @db "payment_requests" {:code code})
            :payment-options payu-test-payment-data}))
 
-(defmulti get-payment-request-by-payment-code (fn [request] (:payment-system env)))
+(defmulti get-payment-request-by-payment-code (fn [request] (settings/fetch :payment_system)))
 
 (defmethod get-payment-request-by-payment-code "webpay" [request]
   (mc/find-one-as-map @db "payment_requests" {:payment_log {$elemMatch {"data.TBK_ORDEN_COMPRA" (-> request :params :TBK_ORDEN_COMPRA)}}}))
 
-(defmulti construct-payment-attempt-form (fn [request payment-request date] (:payment-system env)))
+(defmulti construct-payment-attempt-form (fn [request payment-request date] (settings/fetch :payment_system)))
 
 (defmethod construct-payment-attempt-form "payu" [request payment-request date]
   {:form-data (add-signature (merge payu-test-payment-data {:amount (:amount payment-request)
+                                                            :currency (settings/fetch :currency)
                                                             :referenceCode (util/generate-hash (:_id payment-request))
                                                             :description (:service payment-request)
                                                             :buyerEmail (:client_email payment-request)
@@ -87,7 +87,7 @@
                :TBK_ORDEN_COMPRA (util/generate-hash (:_id payment-request))}
    :form-path "http://payments.misabogados.com/cljpay/tbk_bp_pago.cgi"})
 
-(defmulti confirm-payment (fn [request] (:payment-system env)))
+(defmulti confirm-payment (fn [request] (settings/fetch :payment_system)))
 
 (defmethod confirm-payment "webpay" [request]
   (let [payment-request (get-payment-request-by-payment-code request)]
