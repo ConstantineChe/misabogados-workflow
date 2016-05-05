@@ -96,24 +96,6 @@
               (update-lead-data (assoc lead :step (second step)) id)
                 (response {:status "ok" :id id :step (second step)})))))
 
-(defn create-lead [{:keys [params]}]
-  (db/create-lead (assoc  (:lead (transform-keys ->snake_case_keyword params)) :step :check))
-  (redirect "/#dashboard"))
-
-(defn edit-lead [id]
-  (let [lead (db/get-lead id)]
-    (layout/blank-page "Form"
-                       (layout/render-form "Edit lead"
-                                           ["PUT" (str "/lead/" id)]
-                                           (list (.create-form (get-step "archive")  {:lead lead} :admin)
-                                                            [:button.btn.btn-secondary "Save"])))))
-
-(defn new-lead [params]
-  (layout/blank-page "Form"
-                     (layout/render-form "New lead"
-                                         ["POST" "/leads"]
-                                         (list (get-rendered-form [:lead :user :basic-info]  {:lead {}})
-                                               [:button.btn.btn-secondary "Save"]))))
 
 (defn get-leads [request]
   (let [role (-> request :session :role)
@@ -136,14 +118,11 @@
 
 
 (defroutes leads-routes
-  (GET "/lead/:id/edit" {{id :id} :params} (edit-lead id))
-  (GET "/leads/create" [] new-lead)
   (PUT "/lead/:id" [id :as request] (update-lead-ajax id request))
   (GET "/lead/:id/actions" [id :as request] (get-lead-actions id request))
   (PUT "/lead/:id/action/:action" [id action :as request]
          (if ((keyword action) steps) (do-action id action request)))
   (POST "/lead" [] create-lead-ajax)
-  (POST "/leads" [] create-lead)
   (GET "/leads" [] get-leads)
   (GET "/lead/:id" [id :as request] (response (db/get-lead id)))
   (GET "/leads/options" [] (get-options)))

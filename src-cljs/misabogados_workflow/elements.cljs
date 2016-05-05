@@ -3,12 +3,17 @@
             [reagent.session :as session]
             [clojure.string :as s]
             [misabogados-workflow.utils :as u]
+            [goog.events :as gev]
             [markdown.core :refer [md->html]]
             [clojure.walk :refer [keywordize-keys]]
-            [misabogados-workflow.ajax :refer [PUT]]
+            [misabogados-workflow.ajax :refer [PUT csrf-token]]
             [reagent-forms.datepicker
              :refer [parse-format format-date datepicker]])
-)
+  (:import goog.net.IframeIo
+           goog.net.EventType
+           [goog.events EventType]))
+
+(def file (r/atom nil))
 
 (defn gen-name [cursor] (->> cursor (into []) (map #(if (keyword? %) (name %) %)) (interpose "-") (apply str)))
 
@@ -17,6 +22,22 @@
 
 (defn prepare-input [cursor form]
   ((juxt gen-name #(r/cursor form (into [] %))) cursor))
+
+
+(defn upload-file! [upload-form-id status name url]
+  (reset! status nil)
+  (reset! status [:p "Uploading..."])
+  (let [io (IframeIo.)]
+    (gev/listen io goog.net.EventType.SUCCESS
+                #(do
+                   (reset! name {:tmp-filename (.-filename (.getResponseJson io))})
+                   (reset! status [:p "File uploaded successfully"])))
+    (gev/listen io goog.net.EventType.ERROR
+                #(reset! status [:p "Error uploading"]))
+    (.setErrorChecker io #(= "error" (.getResponseText io)))
+    (.sendFromForm io
+                   (.getElementById js/document upload-form-id)
+                   url)))
 
 (defn typeahead [form options util label cursor min-chars & addons]
   (let [f-opts (r/cursor util (into [:typeahead] cursor))
@@ -227,22 +248,20 @@
                        :dangerouslySetInnerHTML {:__html @preview}}]]])))
 
 (defn input-image
-  "Image input with preview"
-  [label path upload-url & filename-path]
+  "Image input with preview."
+  [label path upload-url]
   (fn [[form _ util]]
-    (let [[name cursor] (prepare-input path form)]
-      (when-not (= (get-in @form (first filename-path)) @cursor)
-        (reset! cursor (get-in @form (first filename-path))))
-      [:div.form-group.col-xs-6 {:key name} ;(str @cursor)
+    (let [[name cursor] (prepare-input path form)
+          status (r/cursor util (into [:file-status] path))]
+      [:div.form-group.col-xs-6 {:key name} (str @cursor)
        [:form {:id (str name "-form")
-               :action upload-url
                :enc-type "multipart/form-data"
                :method "POST"}
-        [:label.control-label {:for "file"} "File to upload"]
-        [:input {:type :hidden :value @cursor}]
-        [:input {:id "file" :name "file" :type "file"
-                 :on-change #(do (if (empty? @cursor) (reset! cursor (.now js/Date)))
-                                 (-> js/$ (str "#" name "-form") .submit))}]]]))
+        [:label.control-label {:for name} "File to upload"]
+        @status
+        [:input {:type :hidden :name :__anti-forgery-token :value @csrf-token}]
+        [:input {:id name :name "file" :type "file"
+                 :on-change #(upload-file! (str name "-form") status cursor upload-url)}]]]))
   )
 
 
@@ -331,8 +350,8 @@
      [:span.clearfix {:key (str legend "-cf")}]
      [:fieldset {:key legend}
       [:legend legend (if @hidden
-                        [:button.btn.btn-default {:on-click #(do (swap! hidden not) nil)} "show"]
-                        [:button.btn.btn-default {:on-click #(do (swap! hidden not) nil)} "hide"])]
+                        [:span.glyphicon.glyphicon-plus {:on-click #(do (swap! hidden not) nil)}]
+                        [:span.glyphicon.glyphicon-minus {:on-click #(do (swap! hidden not) nil)}])]
       (if-not @hidden
         [:div
          (doall (for [field fields
