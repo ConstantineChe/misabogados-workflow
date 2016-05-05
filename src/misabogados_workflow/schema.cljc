@@ -44,7 +44,7 @@
 
 (defn text-field [name label] [name {:render-type :text :label label}])
 
-(defn field [type name label][name {:render-type type :label label}])
+(defn field [type name label & args][name {:render-type type :label label :args args}])
 
 (defn has-many [entity] {(key (first entity))
                          {:type :collection-refenence}})
@@ -81,6 +81,7 @@
   (text-field :name "Title")
   (text-field :quote "Quote")
   (text-field :slug "Slug")
+  (field :image :image "Image" "/admin/categories/file")
   (checkbox-field :persons "Persons")
   (checkbox-field :enterprises "Enterprises")
   (checkbox-field :showed_by_default "Showed by default")
@@ -89,16 +90,16 @@
                (markdown-field :text "Contents"))
   (embeds-many :posts "Posts"
                (text-field :name "Title")
-               (text-field :url "URL"))
-  )
+               (text-field :url "URL")))
 
 (defentity lawyer "Abogado"
   (text-field :name "Nombre")
   (text-field :email "Email")
-  (text-field :phone "Phone")
-  (text-field :address "Address")
+  (text-field :phone "Teléfono")
+  (text-field :address "Dirección")
   (text-field :years_of_experience "Years of experience")
   (text-field :slug "Slug")
+  (field :image :profile_picture "Profile picture" "admin/lawyers/file")
   (checkbox-field :certified "Certified lawyer")
   (field :textarea :description "Description")
   (embeds-many :experience "Experience"
@@ -111,6 +112,20 @@
                (text-field :from "From")
                (text-field :to "To")
                (text-field :degree "Degree")))
+
+(defentity settings "Ajustes"
+  (text-field :full_country_name "País")
+  (text-field :contact_phone "Teléfono")
+  (text-field :country "Código del país")
+  (text-field :base_url "Enlace básico")
+  (checkbox-field :private_app_disabled "Private app disabled")
+  (text-field :payment_system "Payment system")
+  (embeds-many :regions "Regions"
+               (text-field :code "Code")
+               (text-field :name "Name"))
+  (embeds-many :payment_system_options "Payment system options"
+               (text-field :key "Key")
+               (text-field :value "Value")))
 
 ;; (defentity client
 ;;   (text-field :name)

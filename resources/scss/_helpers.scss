@@ -47,10 +47,27 @@
 }
 
 /* Adds a black overlay with transparency */
-.darken-bg {
+.dark-bg {
   background-color: rgba(0, 0, 34, 0.498039);
   padding-top: 30px;
   padding-bottom: 30px;
+}
+
+.darken-bg {
+  background-color: rgba(85, 85, 85, 0.498039);
+  margin-top: -60px;
+  margin-bottom: -60px;
+  padding-top: 60px;
+  padding-bottom: 60px;
+}
+
+/* Adds a blue overlay with transparency */
+.bluen-bg {
+  background-color: rgba(40, 119, 215, 0.498039);
+  margin-top: -60px;
+  margin-bottom: -60px;
+  padding-top: 60px;
+  padding-bottom: 60px;
 }
 
 /* Adds helper class for removing button background */

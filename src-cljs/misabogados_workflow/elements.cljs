@@ -3,10 +3,17 @@
             [reagent.session :as session]
             [clojure.string :as s]
             [misabogados-workflow.utils :as u]
+            [goog.events :as gev]
             [markdown.core :refer [md->html]]
+            [clojure.walk :refer [keywordize-keys]]
+            [misabogados-workflow.ajax :refer [PUT csrf-token]]
             [reagent-forms.datepicker
              :refer [parse-format format-date datepicker]])
-)
+  (:import goog.net.IframeIo
+           goog.net.EventType
+           [goog.events EventType]))
+
+(def file (r/atom nil))
 
 (defn gen-name [cursor] (->> cursor (into []) (map #(if (keyword? %) (name %) %)) (interpose "-") (apply str)))
 
@@ -15,6 +22,22 @@
 
 (defn prepare-input [cursor form]
   ((juxt gen-name #(r/cursor form (into [] %))) cursor))
+
+
+(defn upload-file! [upload-form-id status name url]
+  (reset! status nil)
+  (reset! status [:p "Uploading..."])
+  (let [io (IframeIo.)]
+    (gev/listen io goog.net.EventType.SUCCESS
+                #(do
+                   (reset! name {:tmp-filename (.-filename (.getResponseJson io))})
+                   (reset! status [:p "File uploaded successfully"])))
+    (gev/listen io goog.net.EventType.ERROR
+                #(reset! status [:p "Error uploading"]))
+    (.setErrorChecker io #(= "error" (.getResponseText io)))
+    (.sendFromForm io
+                   (.getElementById js/document upload-form-id)
+                   url)))
 
 (defn typeahead [form options util label cursor min-chars & addons]
   (let [f-opts (r/cursor util (into [:typeahead] cursor))
@@ -224,6 +247,23 @@
                                :padding :5px}
                        :dangerouslySetInnerHTML {:__html @preview}}]]])))
 
+(defn input-image
+  "Image input with preview."
+  [label path upload-url]
+  (fn [[form _ util]]
+    (let [[name cursor] (prepare-input path form)
+          status (r/cursor util (into [:file-status] path))]
+      [:div.form-group.col-xs-6 {:key name}
+       [:form {:id (str name "-form")
+               :enc-type "multipart/form-data"
+               :method "POST"}
+        [:label.control-label {:for name} label]
+        @status
+        [:input {:type :hidden :name :__anti-forgery-token :value @csrf-token}]
+        [:input {:id name :name "file" :type "file"
+                 :on-change #(upload-file! (str name "-form") status cursor upload-url)}]]]))
+  )
+
 
 (defn data-table [data headers getters]
   [:table.table.table-hover.table-striped.panel-body
@@ -237,12 +277,31 @@
          [:td {:key (.indexOf (to-array getters) getter)}
           (getter item)])])]])
 
+(defn action-button [data attributes url return-url]
+  (let [{:keys [name action]} attributes
+        action-url (str url action)
+        submit (fn [e] (PUT (str js/context action-url)
+                           {:params @data
+                            :handler #(let [response (keywordize-keys %)
+                                            id (:id response)]
+                                        (session/put! :notification
+                                                      [:div.alert.alert-sucsess "Lead with id "
+                                                       [:a {:href (str "#/lead/" id "/edit")} id]
+                                                       " was updated."])
+                                        (u/redirect return-url))
+                            :error-handler #(case (:status %)
+                                              403 (js/alert "Access denied")
+                                              404 (js/alert "Lead not found")
+                                              500 (js/alert "Internal server error")
+                                              (js/alert (str %)))}))]
+    [:button.btn.btn-primary {:on-click submit} name]))
+
 (defn btn-new-fieldset [cursor label]
   (fn [[form]]
     (let [[name cursor] (prepare-input cursor form)]
       [:button.btn.btn-secondary
        {:key (str "add-" label)
-        :on-click #(swap! cursor conj {})}
+        :on-click #(swap! cursor (fnil conj []) {})}
        label])))
 
 (defn btn-remove-fieldset [cursor index label]
@@ -274,6 +333,7 @@
    :date-time input-datetimepicker
    :checkbox input-checkbox
    :markdown input-markdown
+   :image input-image
    :entity input-entity})
 
 
@@ -290,8 +350,8 @@
      [:span.clearfix {:key (str legend "-cf")}]
      [:fieldset {:key legend}
       [:legend legend (if @hidden
-                        [:button.btn.btn-default {:on-click #(do (swap! hidden not) nil)} "show"]
-                        [:button.btn.btn-default {:on-click #(do (swap! hidden not) nil)} "hide"])]
+                        [:span.glyphicon.glyphicon-plus {:on-click #(do (swap! hidden not) nil)}]
+                        [:span.glyphicon.glyphicon-minus {:on-click #(do (swap! hidden not) nil)}])]
       (if-not @hidden
         [:div
          (doall (for [field fields
@@ -318,7 +378,6 @@
 
 (defmulti render-form
   (fn [[key schema] data path]
-;    (prn key ":" schema)
     (:render-type schema)))
 
 (defmethod render-form :collection [[key schema] data path]
@@ -342,15 +401,17 @@
             content))))
 
 (defmethod render-form :default [[key schema] data path]
-  (let [{type :render-type label :label} schema]
-    ((type input-types) (if label label (name key)) (conj path key))))
+  (let [{type :render-type label :label args :args} schema]
+    (if args
+      (apply (type input-types) (if label label (name key)) (conj path key) args)
+      ((type input-types) (if label label (name key)) (conj path key)))))
 
 
 (defmulti get-struct (fn [[key schema]] (:render-type schema)))
 
 (defmethod get-struct :collection [[key schema]]
   (let [{content :field-definitions} schema]
-    {key [(apply merge  (map get-struct content))]}))
+    {key []}))
 
 (defmethod get-struct :entity [[key schema]]
   (let [{content :field-definitions} schema

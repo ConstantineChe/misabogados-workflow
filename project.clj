@@ -58,11 +58,32 @@
 
   :plugins [[lein-environ "1.0.1"]
             [lein-cljsbuild "1.1.1"]
-            [lein-uberwar "0.1.0"]]
+            [lein-uberwar "0.1.0"]
+            [lein-sass "0.3.0"]
+            [lein-scss "0.2.0"]]
+
   :uberwar {:handler misabogados-workflow.handler/app
             :init misabogados-workflow.handler/init
             :destroy misabogados-workflow.handler/destroy
             :name "misabogados-workflow.war"}
+
+  :sass {:src "resources/scss"
+         :output-directory "resources/public/css"
+
+         :source-maps true
+         :style :nested
+         }
+
+  :scss {:builds
+         {:develop    {:source-dir "resources/scss/"
+                       :dest-dir   "resources/public/css/"
+                       :executable "sassc"
+                       :args       ["-m" "-t" "nested"]}
+          :production {:source-dir "scss/"
+                       :dest-dir   "resources/public/css/"
+                       :executable "sassc"
+                       :args       ["-I" "resources/scss/" "-t" "compressed"]}}}
+
   :clean-targets ^{:protect false} [:target-path [:cljsbuild :builds :app :compiler :output-dir] [:cljsbuild :builds :app :compiler :output-to]]
   :cljsbuild
   {:builds
@@ -135,12 +156,14 @@
                                (require 'spyscope.core)]
                   ;;when :nrepl-port is set the application starts the nREPL server on load
                   :env {:dev        true
+                        :country "cl"
                         :port       3000
                         :nrepl-port 7000
-                        :payment-system "webpay"
-                        :currency "CLP"
+                        :payment-system "payu"
+                        :currency "COP"
                         :log-path "log/misabogados.log"
-                        :database-url "mongodb://127.0.0.1/misabogados_workflow_dev"}
+                        :database-url "mongodb://127.0.0.1/misabogados_workflow_dev"
+                        :settings-database-url "mongodb://127.0.0.1/misabogados_workflow_settings_dev"}
                   }
    :project/test {:env {:test       true
                         :port       3001

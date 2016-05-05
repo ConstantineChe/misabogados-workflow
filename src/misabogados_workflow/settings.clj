@@ -1,9 +1,37 @@
 (ns misabogados-workflow.settings
-  (:require [misabogados-workflow.db.core :as db]
+  (:require [monger.core :as mg]
+            [monger.operators :refer :all]
             [monger.collection :as mc]
             [config.core :refer [env]]))
 
-(def settings (atom {}))
+(defonce settings (atom {}))
 
-(defn init! [] (reset! settings 
-                       (mc/find-one-as-map @db/db "settings" {:country (or (:country env) "Chile")})))
+(defonce db (atom nil))
+
+(defn get-country []
+  (or (:country env) "cl"))
+
+(defn connect! []
+  (reset! db (-> (:settings-database-url env)
+                 mg/connect-via-uri :db)))
+
+(defn disconnect! []
+  (when-let [conn @db]
+    (mg/disconnect conn)
+    (reset! db nil)))
+
+(defn reload! [] 
+  (let [data (mc/find-one-as-map @db "settings" {:country (get-country)})] 
+    (reset! settings data)))
+
+(defn save! [data] 
+  (mc/update @db "settings" 
+             {:country (get-country)} 
+             {$set (dissoc data :country)})
+  (reload!))
+
+(defn init! [] (do (connect!)
+                   (reload!)))
+
+
+

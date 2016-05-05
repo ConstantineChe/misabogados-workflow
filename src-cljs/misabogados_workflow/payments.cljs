@@ -25,7 +25,8 @@
     (aset form "method" method)
     (aset form "enctype" "multipart/form-data")
     (doall (map #(.appendChild form (create-hidden-input %)) params))
-    (.submit form)))
+    (js/console.log (.-innerHTML form))
+    ))
 
 (.addEventListener
   js/window
@@ -116,7 +117,6 @@
            [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]
           [:h3.modal-title "Create Payment Request"]]
          [:div.modal-body
-          (str @data)
           (el/form "" [data options utils] (into (if (= "lawyer" (session/get-in [:user :role]))
                               ["Payment Request"]
                               ["Payment Request"

@@ -17,7 +17,7 @@
             [clojure.walk :as walk]
             [clj-time.local :as l]
             [misabogados-workflow.schema :as s]
-            [misabogados-workflow.flow :refer [get-rendered-form dataset PManual PAutomatic]]
+            [misabogados-workflow.flow :as flow]
             [misabogados-workflow.flow-definition :refer [steps]])
   (:import [misabogados-workflow.model.Lead]
            [misabogados-workflow.model.User]
@@ -62,18 +62,18 @@
         lead (mc/insert-and-return @db/db "leads" (assoc params :date_created (new java.util.Date)))]
     (response {:staus "ok" :id (:_id lead)})))
 
+(defn update-lead-data [lead id]
+  (let [lead (objectify-ids lead)]
+    (mc/update-by-id @db/db "leads" id {$set
+                                        (assoc lead
+                                               :date_updated (new java.util.Date))})))
+
 (defn update-lead-ajax [id request]
   (let [id (oid id)
         params (:params request)
-        allowed? (allowed-to-edit id request)
-        lead (objectify-ids (:lead params))]
-    (prn "params request" (:params request))
-    (prn "params upd " params)
-    (prn lead)
-    (if (true? allowed?)
-      (do (mc/update-by-id @db/db "leads" id {$set
-                                              (assoc lead
-                                                     :date_updated (new java.util.Date))})
+        allowed? (allowed-to-edit id request)]
+    (if allowed?
+      (do (update-lead-data (:lead params) id)
           (actions/do-lead-actions (:actions params) (db/get-lead (str id)))
           (response {:lead {:update id} :status "ok" :role (-> request :session :role)}))
       {:status 403
@@ -81,35 +81,21 @@
        :body {:error (:message allowed?)}})))
 
 (defn do-action [id action {:keys [params]}]
-  (let [lead (assoc  (:lead (select-keys (transform-keys ->snake_case_keyword params) [:lead])) :step action)
+  (let [id (oid id)
+        lead (assoc  (dissoc (:lead params) :_id) :step action)
         step ((keyword action) steps)]
-    (db/update-lead id lead)
-    (cond (satisfies? PManual step)
-          (redirect "/#dashboard")
-          (satisfies? PAutomatic step)
-          (do
-            (.do-action step lead)
-            (db/update-lead id {:step (:action step)})
-            (redirect "/#dashboard")))))
+      (prn params)
+      (prn lead)
+      (cond (vector? (first step))
+            (do (prn "vector")
+                (update-lead-data lead id)
+                (response {:status "ok" :id id :step action}))
+            (ifn? (first step))
+            (do
+              ((first step) lead)
+              (update-lead-data (assoc lead :step (second step)) id)
+                (response {:status "ok" :id id :step (second step)})))))
 
-(defn create-lead [{:keys [params]}]
-  (db/create-lead (assoc  (:lead (transform-keys ->snake_case_keyword params)) :step :check))
-  (redirect "/#dashboard"))
-
-(defn edit-lead [id]
-  (let [lead (db/get-lead id)]
-    (layout/blank-page "Form"
-                       (layout/render-form "Edit lead"
-                                           ["PUT" (str "/lead/" id)]
-                                           (list (.create-form (get-step "archive")  {:lead lead} :admin)
-                                                            [:button.btn.btn-secondary "Save"])))))
-
-(defn new-lead [params]
-  (layout/blank-page "Form"
-                     (layout/render-form "New lead"
-                                         ["POST" "/leads"]
-                                         (list (get-rendered-form [:lead :user :basic-info]  {:lead {}})
-                                               [:button.btn.btn-secondary "Save"]))))
 
 (defn get-leads [request]
   (let [role (-> request :session :role)
@@ -124,20 +110,19 @@
     :client_id (map #((juxt (fn [x] (str (:name x) " (" (:email x) ")")) :_id) %) (mc/find-maps @db/db "clients"))
     :matches {:lawyer_id (map #((juxt (fn [x] (str (:name x) " (" (:email x) ")")) :_id) %) (mc/find-maps @db/db "lawyers"))}}))
 
+(defn get-lead-actions [id request]
+  (let [lead (db/get-lead id)
+        step (if (:step lead) (keyword (:step lead)) :check)
+        actions (filter #((:roles %) (-> request :session :role)) (second (step steps)))]
+    (response {:id id :actions actions})))
+
+
 (defroutes leads-routes
-  (GET "/lead/:id/edit" {{id :id} :params} (edit-lead id))
-  (GET "/leads/create" [] new-lead)
   (PUT "/lead/:id" [id :as request] (update-lead-ajax id request))
-  (GET "/lead/:id/action/:action" {{id :id action :action} :params {role :role} :session}
-       (if (contains? steps (keyword action))
-         (layout/render-form action ["PUT" (str "/lead/" id)]
-                             (.create-form (get-step action)
-                                           {:lead (db/get-lead id)}
-                                           role))))
+  (GET "/lead/:id/actions" [id :as request] (get-lead-actions id request))
   (PUT "/lead/:id/action/:action" [id action :as request]
-       (if (contains? steps (keyword action)) (do-action id action request)))
+         (if ((keyword action) steps) (do-action id action request)))
   (POST "/lead" [] create-lead-ajax)
-  (POST "/leads" [] create-lead)
   (GET "/leads" [] get-leads)
   (GET "/lead/:id" [id :as request] (response (db/get-lead id)))
   (GET "/leads/options" [] (get-options)))

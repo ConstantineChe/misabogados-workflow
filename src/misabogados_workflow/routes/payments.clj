@@ -21,11 +21,17 @@
             [clj-time.core :as t]
             [monger.joda-time]))
 
+;; payu co
+;; Api key: MZS7GwxB7mxdyVCfb7R7Vig6c8 Api login:cjhH8yIfa9gOC8F Public key:PK6437ce6m5Ohcgl76647q68ch Merchant Id:562342 Accout Id: 564865
+
 (def payu-test-payment-data {
-                        :merchantId "500238"
-                        :ApiKey "6u39nqhq8ftd0hlvnjfs66eh8c"
+                        ;; :merchantId "500238"
+                        :merchantId "562342"
+                        ;; :ApiKey "6u39nqhq8ftd0hlvnjfs66eh8c"
+                        :ApiKey "MZS7GwxB7mxdyVCfb7R7Vig6c8"
                         :referenceCode "TestPayU"
-                        :accountId "500537"
+                        ;; :accountId "500537"
+                             :accountId "564865"
                         ;; :description "Test PAYU"
                         ;; :amount "3"
                         :tax "0"
@@ -67,11 +73,11 @@
 
 (defmethod construct-payment-attempt-form "payu" [request payment-request date]
   {:form-data (add-signature (merge payu-test-payment-data {:amount (:amount payment-request)
-                                                            :referenceCode (str (:_id payment-request) "-" (c/to-long date))
+                                                            :referenceCode (util/generate-hash (:_id payment-request))
                                                             :description (:service payment-request)
                                                             :buyerEmail (:client_email payment-request)
                                                        }))
-   :form-path "https://stg.gateway.payulatam.com/ppp-web-gateway/"})
+   :form-path "https://sandbox.gateway.payulatam.com/ppp-web-gateway/"})
 
 (defmethod construct-payment-attempt-form "webpay" [request payment-request date]
   {:form-data {:TBK_URL_EXITO (util/full-path request "/payments/success")

@@ -8,7 +8,7 @@
 ---------------------------------------------*/
 /* Global Variables */
 /* Global Patterns */
-.section-padding, .static-content {
+.section-padding, .section-white, .section-blue, .static-content {
   padding-top: 60px;
   padding-bottom: 60px; }
 
@@ -127,10 +127,25 @@ p {
   .collapse.in {
     display: block !important; } }
 /* Adds a black overlay with transparency */
-.darken-bg {
+.dark-bg {
   background-color: rgba(0, 0, 34, 0.49804);
   padding-top: 30px;
   padding-bottom: 30px; }
+
+.darken-bg {
+  background-color: rgba(85, 85, 85, 0.49804);
+  margin-top: -60px;
+  margin-bottom: -60px;
+  padding-top: 60px;
+  padding-bottom: 60px; }
+
+/* Adds a blue overlay with transparency */
+.bluen-bg {
+  background-color: rgba(40, 119, 215, 0.49804);
+  margin-top: -60px;
+  margin-bottom: -60px;
+  padding-top: 60px;
+  padding-bottom: 60px; }
 
 /* Adds helper class for removing button background */
 .btn-no-fill {
@@ -374,7 +389,7 @@ p {
   border-bottom: 1px solid; }
 
 .footer-main {
-  background-color: #2b2b2b;
+  background-color: black;
   padding-top: 30px;
   padding-bottom: 40px; }
 
@@ -484,9 +499,9 @@ p {
 ---------------------------------------------*/
 .cta-main {
   background: url(/img/main-cta/cta-bg.jpg);
-  background-repeat: no-repeat;
+  background-size: cover;
   background-position: 35% 25%;
-  background-size: cover; }
+  background-repeat: no-repeat; }
 
 /* Categories Section
 ---------------------------------------------*/
@@ -694,6 +709,13 @@ p {
   margin-top: 10px;
   margin-bottom: 20px; }
 
+.home-page-anchor {
+  position: absolute;
+  top: -100px; }
+
+.jumbotron {
+  position: relative; }
+
 /*--------------------------------------------
  * Categories Page Sections                  *
 ---------------------------------------------*/
@@ -866,6 +888,78 @@ p {
   font-size: 20px;
   text-align: center;
   margin-bottom: 0px; }
+
+/*--------------------------------------------
+ * Lawyers' Landing Page Sections            *
+---------------------------------------------*/
+/* FOR GLOBAL */
+.section-white h1, .section-white h2, .section-white h3, .section-white h4, .section-white h5 {
+  color: #2877D7; }
+
+.section-blue {
+  background-color: #2877D7; }
+  .section-blue h1, .section-blue h2, .section-blue h3, .section-blue h4, .section-blue h5, .section-blue p {
+    color: #FFFFFF; }
+
+.info-para-abgados {
+  text-align: center; }
+
+/* CTA
+---------------------------------------------*/
+.cta-main-lawyers {
+  background: url(/img/lawyers-landing-page/looking-at-computer.jpg);
+  background-size: cover;
+  background-position: 70% 95%;
+  background-repeat: no-repeat; }
+
+/* Access New Clients
+---------------------------------------------*/
+.access-new-clients {
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 60px; }
+  .access-new-clients p {
+    margin-top: 15px; }
+
+/* Grow Your Business With Technology
+---------------------------------------------*/
+.grow-with-technology h2 {
+  font-size: 3em;
+  margin-bottom: 80px; }
+.grow-with-technology p {
+  margin-top: 30px;
+  margin-bottom: 20px; }
+
+/* Hundreds of Lawyers use MisAbogados
+---------------------------------------------*/
+.social-proof {
+  background: url(/img/lawyers-landing-page/guy-with-phone.jpg);
+  background-size: cover;
+  background-position: 15% 0%;
+  background-repeat: no-repeat; }
+  .social-proof h2 {
+    font-size: 2.75em;
+    margin-top: 100px;
+    margin-bottom: 30px; }
+  .social-proof p {
+    margin-bottom: 100px; }
+
+/* Client Break-down
+---------------------------------------------*/
+.client-break-down {
+  background: url(/img/lawyers-landing-page/desk-with-objects.png);
+  background-size: cover;
+  background-position: 44% 0%;
+  background-repeat: no-repeat; }
+  .client-break-down h2 {
+    margin-bottom: 40px; }
+  .client-break-down h3 {
+    margin-top: 10px; }
+
+.register-now button {
+  font-size: 20px;
+  margin-bottom: 50px; }
 
 /* Lawyers Profile Page
 ---------------------------------------------*/

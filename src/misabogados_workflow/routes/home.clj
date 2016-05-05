@@ -65,4 +65,5 @@
   (GET "/exito-contratar" [] (render "contact-success.html" {:title "¡Has enviado tu mensaje!"}))
   (GET "/abogado-test/alfredo-alcaino" [] (render "lawyers_profile.html" {:title "Alfredo Alcaíno"}))
   (GET "/abogado/:slug" [slug :as request] (show-lawyer slug))
+  (GET "/info_para_abogados" [] (render "info_para_abogados.html" {:title "Información para los Abogados"}))
   (GET "/categories_json" [] (map (fn [i] {:id (:slug i) :name (:name i)}) (mc/find-maps @db/db "categories"))))

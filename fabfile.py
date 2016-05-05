@@ -44,6 +44,8 @@ class Instance:
         self.opts['PRODUCTION'] = 'true'
         self.opts['LOG_PATH'] = '/var/deploy/log/%s%s.log' % (self.directory, project)
         self.opts['PAYMENT_SYSTEM'] = Instance.websites[website]['psp']
+        self.opts['UPLOADS_URL'] = directory
+        self.opts['UPLOADS_PATH'] = "/var/deploy/uploads" + directory
 
     def staging(self, website):
         self.directory = "staging/" + Instance.websites[website]['directory']
@@ -53,6 +55,8 @@ class Instance:
         self.opts['PORT'] = str(3000 + Instance.websites[website]['port'])
         self.opts['LOG_PATH'] = '/var/deploy/log/%s%s.log' % (self.directory, project)
         self.opts['PAYMENT_SYSTEM'] = Instance.websites[website]['psp']
+        self.opts['UPLOADS_URL'] = directory
+        self.opts['UPLOADS_PATH'] = "/var/deploy/uploads" + directory
 
     def get_opts_string(self):
         return ' '.join(map(lambda (k, v): k+'='+v, self.opts.iteritems()))
@@ -82,6 +86,8 @@ def deploy(branch="master"):
         run("git checkout " + branch)
         run("git pull")
         run("lein clean")
+        with settings(warn_only=True):
+            run("lein scss :production once")
         run("lein uberjar")
         if not files.exists(deploy_location+instance.directory):
             run("mkdir -p %s" % deploy_location + instance.directory)
