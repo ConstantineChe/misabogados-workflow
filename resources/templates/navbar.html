@@ -14,12 +14,14 @@
           </a>
           <div class="navbar-ctl  hidden-xs">
             <ul>
-              <li><a href="tel:+56229402121"><span class="glyphicon  glyphicon-earphone  glyphicon-left"></span>+56(2)29402121</a></li>
-              <li class="dropdown  country-selector">
-                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="/img/flags/Chile.png" alt="Chile" /></a>
+              <!-- <li><a href="tel:+56229402121"><span class="glyphicon  glyphicon-earphone  glyphicon-left"></span>+56(2)29402121</a></li> -->
+              <li><a href="tel:{{settings.contact_phone}}"><span class="glyphicon  glyphicon-earphone  glyphicon-left"></span>{{settings.contact_phone}}</a></li>
+              <li class="dropdown country-selector">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="/img/flags/{{settings.country}}.png" alt="{{settings.full_country_name}}" /></a>
                 <ul class="dropdown-menu">
-                  <li><a href="#"><img src="/img/flags/Colombia.png" alt="Colombia" />Colombia</a></li>
-                  <li><a href="#"><img src="/img/flags/Mexico.png" alt="Mexico" />Mexico</a></li>
+                  {% ifunequal settings.country "cl" %}<li><a href="#"><img src="/img/flags/cl.png" alt="Chile" />Chile</a></li>{% endifunequal%}
+                  {% ifunequal settings.country "co" %}<li><a href="#"><img src="/img/flags/co.png" alt="Colombia" />Colombia</a></li>{% endifunequal%}
+                  {% ifunequal settings.country "mx" %}<li><a href="#"><img src="/img/flags/mx.png" alt="Mexico" />Mexico</a></li>{% endifunequal%}
                 </ul>
               </li>
               {% if not logged-in? %}
@@ -34,12 +36,13 @@
         <!-- Collect the nav links, forms, and other content for toggling -->
         <div class="collapse  navbar-collapse" id="bs-example-navbar-collapse-1">
           <ul class="nav  navbar-nav  button-bar">
-            <li class="hidden-sm  hidden-md  hidden-lg  navbar-button"><a href="tel:+56226569866"><span class="glyphicon  glyphicon-earphone  glyphicon-left"></span>+56 (2) 2656 9866</a></li>
+            <li class="hidden-sm  hidden-md  hidden-lg  navbar-button"><a href="tel:{{settings.contact_phone}}"><span class="glyphicon  glyphicon-earphone  glyphicon-left"></span>{{settings.contact_phone}}</a></li>
             <li class="hidden-sm  hidden-md  hidden-lg  dropdown  country-selector  navbar-button">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="/img/flags/Chile.png" alt="Chile" /></a>
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="/img/flags/{{settings.country}}.png" alt="{{settings.full_country_name}}" /></a>
               <ul class="dropdown-menu">
-                <li><a href="#"><img src="/img/flags/Colombia.png" alt="Colombia" />Colombia</a></li>
-                <li><a href="#"><img src="/img/flags/Mexico.png" alt="Mexico" />Mexico</a></li>
+                {% ifunequal settings.country "cl" %}<li><a href="#"><img src="/img/flags/cl.png" alt="Chile" />Chile</a></li>{% endifunequal%}
+                {% ifunequal settings.country "co" %}<li><a href="#"><img src="/img/flags/co.png" alt="Colombia" />Colombia</a></li>{% endifunequal%}
+                {% ifunequal settings.country "mx" %}<li><a href="#"><img src="/img/flags/mx.png" alt="Mexico" />Mexico</a></li>{% endifunequal%}
               </ul>
             </li>
             <li class="hidden-md  hidden-lg  navbar-button"><a href="#">Iniciar sesión</a></li>

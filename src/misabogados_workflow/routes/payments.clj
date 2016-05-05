@@ -145,7 +145,6 @@
 
 (defroutes payments-routes
   (GET "/payments/pay/:code" [code :as request] (get-payment code request))
-  ;; (POST "/payments/pay" [code :as request] (pay code request))
   (POST "/payments/pay" []
         start-payment-attempt))
 
