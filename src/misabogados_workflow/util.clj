@@ -7,7 +7,8 @@
   (if str (str/capitalize (str/replace str "-" " "))))
 
 (defn check-recaptcha [params]
-  (c/verify "6Lc92P4SAAAAAMydKZy-wL7PAUTJghmVU7sXfehY" (:g-recaptcha-response params)))
+  ;; (c/verify "6Lc92P4SAAAAAMydKZy-wL7PAUTJghmVU7sXfehY" (:g-recaptcha-response params))
+  (c/verify "6Lco-wsTAAAAAILKmwTLCAXu2WWwSXHPs3VyK1l5" (:g-recaptcha-response params)))
 
 (defn generate-hash [something]
   (let [hash-bytes
