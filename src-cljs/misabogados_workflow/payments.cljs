@@ -90,7 +90,8 @@
                       :service [[v/required :message "Service name should be present"]]
                       :service_description [[v/required :message "Service description should be present"]]
                       :own_client [[(fn [x] (or (true? x) (false? x))) :message "Client type should be specified"]]
-                      :terms [[v/required :message "Youd should accept terms and conditions in order to send payment request"]]))
+;                      :terms [[v/required :message "Youd should accept terms and conditions in order to send payment request"]]
+                      ))
   (b/valid? data
             :client v/required
             :amount v/required
@@ -99,7 +100,8 @@
             :service v/required
             :service_description v/required
             :own_client v/required
-            :terms v/required))
+ ;           :terms v/required
+            ))
 
 
 
