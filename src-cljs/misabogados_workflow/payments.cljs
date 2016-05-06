@@ -128,7 +128,8 @@
                                                       (el/input-textarea "Descripción del servicio*" [:service_description])
                                                       (el/input-number "Amount*" [:amount])
                                                       (el/input-dropdown "Cliente tipo" [:own_client])
-                                                      (el/input-checkbox "Acepto los Términos y condiciones Transacciones" [:terms])]))]
+                                                      ;; (el/input-checkbox "Acepto los Términos y condiciones Transacciones" [:terms])
+                                                      ]))]
          [:div.modal-footer
           [:div.validation-messages
            (doall (for [message (first @validation-message)]
@@ -170,7 +171,8 @@
                                                        (el/input-textarea "Descripción del servicio*" [:service_description])
                                                        (el/input-number "Amount*" [:amount])
                                                        (el/input-dropdown "Cliente tipo*" [:own_client])
-                                                       (el/input-checkbox "Acepto los Términos y condiciones Transacciones" [:terms])]))
+                                                       ;; (el/input-checkbox "Acepto los Términos y condiciones Transacciones" [:terms])
+                                                       ]))
                               [:div.modal-footer
                 (doall (for [message (first @validation-message)]
                          [:p {:key (key message)} (str (first (val message)))]))
