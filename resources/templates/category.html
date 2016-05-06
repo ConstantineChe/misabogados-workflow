@@ -7,7 +7,7 @@
 {% block page %}
 
 <!-- Main CTA -->
-<div class="jumbotron  categoria-heading" style="background: url({{category.image}})">
+<div class="jumbotron  categoria-heading" {% if lawyer.category %} style="background: url({{category.image}})"{% endif %}>
   <div class="darken-bg">
     <div class="container">
       <h1>{{category.name}}</h1>

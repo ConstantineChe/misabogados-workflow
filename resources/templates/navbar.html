@@ -22,7 +22,7 @@
                   {% ifunequal settings.country "mx" %}<li><a href="http://mx.misabogados.com"><img src="/img/flags/mx.png" alt="Mexico" />Mexico</a></li>{% endifunequal%}
                 </ul>
               </li>
-              <li><a href="tel:{{settings.contact_phone}}"><span class="glyphicon  glyphicon-earphone  glyphicon-left"></span>{{settings.contact_phone}}</a></li>
+              <li><a href="tel:{{settings.contact_phone|remove:\"()- \"}}"><span class="glyphicon  glyphicon-earphone  glyphicon-left"></span>{{settings.contact_phone}}</a></li>
               {% if not settings.private_app_disabled %}
                 {% if not logged-in? %}
                   <li><a href="/login">Iniciar sesión</a></li>
@@ -45,7 +45,7 @@
                 {% ifunequal settings.country "mx" %}<li><a href="#"><img src="/img/flags/mx.png" alt="Mexico" />Mexico</a></li>{% endifunequal%}
               </ul>
             </li>
-            <li class="hidden-sm  hidden-md  hidden-lg  navbar-button"><a href="tel:{{settings.contact_phone}}"><span class="glyphicon  glyphicon-earphone  glyphicon-left"></span>{{settings.contact_phone}}</a></li>
+            <li class="hidden-sm  hidden-md  hidden-lg  navbar-button"><a href="tel:{{settings.contact_phone|remove:\"()- \"}}"><span class="glyphicon  glyphicon-earphone  glyphicon-left"></span>{{settings.contact_phone}}</a></li>
 
             {% if not settings.private_app_disabled %}
               <li class="hidden-sm  hidden-md  hidden-lg  navbar-button"><a href="#">Iniciar sesión</a></li>
