@@ -116,7 +116,10 @@
 (defentity settings "Ajustes"
   (text-field :full_country_name "País")
   (text-field :contact_phone "Teléfono")
-  (text-field :country "Código del país")
+  (text-field :contact_email "Email")
+  (text-field :whatsapp "Whatsapp")
+  (text-field :phone_code "Código de telefono")
+  ;; (text-field :country "Código del país")
   (text-field :base_url "Enlace básico")
   (checkbox-field :private_app_disabled "Private app disabled")
   (text-field :payment_system "Payment system")
