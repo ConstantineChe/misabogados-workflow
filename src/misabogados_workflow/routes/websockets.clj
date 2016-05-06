@@ -10,7 +10,7 @@
 (defn- current-time []
   (quot (System/currentTimeMillis) 1000))
 
-(defn write [x]
+(defn write-transit [x]
   (let [baos (ByteArrayOutputStream.)
         w    (t/writer baos :json)
         _    (t/write w x)
@@ -20,7 +20,7 @@
 
 
 
-(defn read [msg]
+(defn read-transit [msg]
   (let [bytes (.getBytes msg)
         bios  (ByteArrayInputStream. bytes)
         r     (t/reader bios :json)
@@ -28,7 +28,6 @@
     (.reset bios)
     ret))
 
-(read (write [1 2 3]))
 
 (defonce sessions
   (atom {}))
@@ -36,30 +35,30 @@
 (defonce channels (atom #{}))
 
 (defn process-message [request channel msg]
-  (let [session (:value (get (:cookies request) "JSESSIONID"))]
+  (let [session (:value (get (:cookies request) "JSESSIONID"))
+        message (read-transit msg)]
     (case (:code message)
       :extend (swap! sessions assoc-in [(keyword session) :timeout]
-                     (+ 30 (current-time)))
-      :default
+                     (+ 600 (current-time)))
       (doseq [channel @channels]
-        (prn channel)
         (async/send! (:chan channel) msg)))))
 
 (defn connect! [request channel]
   (let [session (:value (get (:cookies request) "JSESSIONID"))]
-    (log/info "channel open for session " session)
+    (log/debug "channel open for session " session)
     (swap! channels conj {:session session
                           :chan channel})
     (when-not ((keyword session) @sessions)
-        (swap! sessions assoc (keyword session) {:timeout (+ 30 (current-time))}))))
+        (swap! sessions assoc (keyword session) {:timeout (+ 600 (current-time))}))))
 
 (defn disconnect! [request channel {:keys [code reason]}]
   (let [session (:value (get (:cookies request) "JSESSIONID"))]
     (log/info "close code:" code "reason:" reason)
     (swap! channels #(remove #{{:chan channel :session session}} %))))
 
-(defn websocket-callbacks [request]
+(defn websocket-callbacks
   "WebSocket callback functions"
+  [request]
   {:on-open (partial connect! request)
    :on-close (partial disconnect! request)
    :on-message (partial process-message request)})
@@ -69,7 +68,7 @@
 
 (defn ws-msg [request]
   (let [params (:params request)]
-    (notify-clients! request 1 (write {:message "Hi"}))
+    (process-message request 1 (write-transit {:message "Hi"}))
     (response {:status "ok"})))
 
 (defn check-sessions []
@@ -77,12 +76,13 @@
     (let [session ((keyword (:session channel)) @sessions)
           timeout (:timeout session)]
       (if (> (current-time) timeout)
-        (async/send! (:chan channel) (write {:message "session timed out"}))))))
+        (async/send! (:chan channel) (write-transit {:code :timeout
+                                                     :message "session timed out"}))))))
 
 (defn start-sessions-checker! []
   (go-loop [i 0]
     (<! (a/timeout 10000))
-    (notify-clients! nil 1 (write {:message i}))
+    (process-message nil 1 (write-transit {:message i :code :count}))
     (check-sessions)
     (recur (inc i))))
 

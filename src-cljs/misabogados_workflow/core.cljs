@@ -102,7 +102,19 @@
              (doall (map (fn [item]  (apply nav-link item)) (:nav-links @ac/components)))
              )
        (into [:ul.nav.navbar-nav.navbar-right]
-             (doall (map (fn [item]  (apply nav-link item)) (:nav-links-right @ac/components))))]]]))
+             (doall (map (fn [item]  (apply nav-link item)) (:nav-links-right @ac/components))))]]
+     [:div.modal.fade {:role :dialog :id "session-timeout"}
+               [:div.modal-dialog.modal-lg
+                [:div.modal-content
+                 [:div.modal-header
+                  [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
+                   [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]]
+                 [:div.modal-body
+                  [:p "Session timed out"]]
+                 [:div.modal-footer
+                  [:button.btn.btn-default {:type :button
+                                            :data-dismiss :modal
+                                            :aria-label "Close"} "Close"]]]]]]))
 
 
 (defn about-page []
@@ -242,9 +254,14 @@
 
 
 
-(defn update-messages! [{:keys [message]}]
-  (swap! messages #(vec (take 10 (conj % message))))
-  (prn message))
+(defn process-messages [{:keys [message code] :as msg}]
+  (case code
+    :timeout (when-not (empty? (session/get :user))
+               (do (u/show-modal "session-timeout")
+                   (session/put! :user {})
+                   (ac/reset-access!)))
+    :count nil
+    (prn "unknown code " code "message " msg)))
 
 ;; -------------------------
 ;; History
@@ -266,7 +283,7 @@
   (r/render [#'page] (.getElementById js/document "app")))
 
 (defn init! []
-  (ws/make-websocket! (str "ws://" (.-host js/location) "/ws") update-messages!)
+  (ws/make-websocket! (str "ws://" (.-host js/location) "/ws") process-messages)
   (get-session!)
   (update-csrf-token!)
   (hook-browser-navigation!)
