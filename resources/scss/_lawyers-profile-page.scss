@@ -28,7 +28,7 @@
   }
 
   p {
-    margin-top: 30px;
+    margin-top: 10px;
     margin-bottom: 20px;
   }
 
@@ -57,7 +57,7 @@
     }
 
     p {
-      margin-top: 25px;
+      margin-top: 10px;
       margin-bottom: 0px;
     }
 
@@ -96,6 +96,8 @@
 
   @media (max-width: 400px) {
     .profile-img {
+      max-width: 100px;
+      max-height: 100px;
       margin-right: -15px;
       margin-top: 25px;
     }
@@ -134,12 +136,14 @@
 }
 
 .overview {
-  height: 45px;
+  margin-top: 20px;
+  min-height: 35px;
 
   .icon-box {
     width: 20%;
     float: left;
     text-align: center;
+    overflow: hidden;
   }
 
   i {
@@ -153,12 +157,13 @@
 
   .description-box {
     width: 80%;
-    float: right;
     padding-left: 10px;
+    overflow: hidden;
   }
 
   p {
     font-size: $base-font-size - 2;
+    margin-bottom: 0px;
   }
 
 }

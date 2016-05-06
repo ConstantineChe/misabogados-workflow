@@ -120,6 +120,7 @@
   (text-field :base_url "Enlace básico")
   (checkbox-field :private_app_disabled "Private app disabled")
   (text-field :payment_system "Payment system")
+  (text-field :currency "Currency")
   (embeds-many :regions "Regions"
                (text-field :code "Code")
                (text-field :name "Name"))

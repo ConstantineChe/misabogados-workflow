@@ -9,7 +9,8 @@
               [clojure.walk :refer [keywordize-keys]]
               [secretary.core :as secretary :include-macros true]
               [json-html.core :refer [edn->hiccup]]
-              [misabogados-workflow.schema :as s])
+              [misabogados-workflow.schema :as s]
+              [misabogados-workflow.flow-definition :refer [steps]])
     )
 
 (defn create-client! [data id-cursor options text]
@@ -69,6 +70,20 @@
 
 (defn get-client [id client]
   (if id (GET (str js/context "/users/client/" id) {:handler #(reset! client {:edit-client (keywordize-keys %)})}) client))
+
+(defn step-description [step]
+  [:div.modal.fade {:role :dialog :id "step-description"}
+               [:div.modal-dialog.modal-lg
+                [:div.modal-content
+                 [:div.modal-header
+                  [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
+                   [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]]
+                 [:div.modal-body
+                  [:p (get ((keyword step) steps) 2)]]
+                 [:div.modal-footer
+                  [:button.btn.btn-default {:type :button
+                                            :data-dismiss :modal
+                                            :aria-label "Close"} "Close"]]]]])
 
 (defn create-client [client-data options id-cursor text]
   (r/create-class
@@ -144,19 +159,21 @@
                                                               (reset! step-actions (:actions response)))})
     (fn []
       [:div.container
-       (str "lead data: " @lead-data) [:br]
+;       (str "lead data: " @lead-data) [:br]
 ;       (str "step actions: " @step-actions) [:br]
 ;       (str "options: " (dissoc @options :lead)) [:br]
-;       (str "actions: " @actions)
-       (el/form action [lead-data options util]
+                                        ;       (str "actions: " @actions)
+       (step-description action)
+       (el/form [:div [:h1 (u/remove-kebab action)] [:a {:on-click #(u/show-modal "step-description")}  " Description"]]
+                [lead-data options util]
                 (into ["Lead"
-                              (el/input-entity "Client Id" [:lead :client_id]
-                                               (edit-client selected-client
-                                                            (r/cursor options [:lead :client_id])
-                                                            (get-in @lead-data [:lead :client_id]))
-                                               (create-client (r/atom {}) (r/cursor options [:lead :client_id])
-                                                              (r/cursor lead-data [:lead :client_id])
-                                                              (r/cursor util (into [:typeahead-t] [:lead :client_id]))))
+                       (el/input-entity "Client Id" [:lead :client_id]
+                                        (edit-client selected-client
+                                                     (r/cursor options [:lead :client_id])
+                                                     (get-in @lead-data [:lead :client_id]))
+                                        (create-client (r/atom {}) (r/cursor options [:lead :client_id])
+                                                       (r/cursor lead-data [:lead :client_id])
+                                                       (r/cursor util (into [:typeahead-t] [:lead :client_id]))))
                        (el/input-text "Region" [:lead :region_name])
                        (el/input-text "City" [:lead :city])
                        (el/input-typeahead "Category" [:lead :category_id])
@@ -165,6 +182,7 @@
                        (el/input-text "Referrer" [:lead :refer])
                        (el/input-number "NPS" [:lead :nps])
                        (el/input-text "Adwords url" [:lead :adwords_url])
+                       (el/input-number "Amount" [:lead :amount])
                        (el/input-textarea "Problem" [:lead :problem])]
                         (map-indexed (fn [i match]
                                        (reduce conj ["Match"
@@ -231,6 +249,7 @@
                  (el/input-text "Referrer" [:lead :refer])
                  (el/input-number "NPS" [:lead :nps])
                  (el/input-text "Adwords url" [:lead :adwords_url])
+                 (el/input-number "Amount" [:lead :amount])
                  (el/input-textarea "Problem" [:lead :problem])
                  ["Match"
                   (el/input-typeahead "Lawyer" [:lead :matches :lawyer_id])
@@ -292,6 +311,7 @@
                        (el/input-text "Referrer" [:lead :refer])
                        (el/input-number "NPS" [:lead :nps])
                        (el/input-text "Adwords url" [:lead :adwords_url])
+                       (el/input-number "Amount" [:lead :amount])
                        (el/input-textarea "Problem" [:lead :problem])]
                         (map-indexed (fn [i match]
                                        (reduce conj ["Match"

@@ -4,7 +4,7 @@
             [monger.collection :as mc]
             [config.core :refer [env]]))
 
-(defonce settings (atom {}))
+(defonce settings (atom nil))
 
 (defonce db (atom nil))
 
@@ -33,5 +33,7 @@
 (defn init! [] (do (connect!)
                    (reload!)))
 
-
+(defn fetch [key]
+  (if (not @settings) (init!)) 
+  (get @settings key))
 
