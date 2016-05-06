@@ -48,8 +48,7 @@
                                               :password password}
                                      :handler (fn [response]
                                                 (if (= (get response "status") "ok")
-                                                  (do (session/put! :user {:identity (get response "identity")
-                                                                           :role (get response "role")})
+                                                  (do (get-session!)
                                                       (ac/reset-access!)
                                                       (u/redirect "#dashboard")
                                                       (update-csrf-token!))
@@ -93,7 +92,7 @@
       [:div.navbar-header
        [:button#navbar-hamburger.navbar-toggle.collapsed {:data-toggle "collapse" :data-target "#navbar-body" :aria-expanded "false"}
         [:span.sr-only "Toggle navigation"] [:span.icon-bar][:span.icon-bar][:span.icon-bar]]
-       [:a.navbar-brand {:href "#/"}  "Misabogados Workflow"]
+;       [:a.navbar-brand {:href "#/"}  "Misabogados Workflow"]
 ]
 
       [:div#navbar-body.navbar-collapse.collapse

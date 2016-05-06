@@ -51,7 +51,7 @@
                    [:td pending-action]
                    [:td (get-in lead ["lead_type" 0 "name"])]
                    [:td (get-in lead ["client" 0 "name"])]
-                   [:td (get lead "client_email")]
+                   [:td (get-in lead ["client"  0 "email"])]
                    [:td (get-in lead ["category" 0 "name"])]
                    [:td (get-in lead ["client" 0 "phone"])]
                    [:td (get lead "problem")]

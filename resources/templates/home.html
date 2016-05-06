@@ -9,23 +9,9 @@
     {% block content %}
     {% endblock %}
 
-
-    <!-- scripts and styles -->
-    {% script "https://code.jquery.com/jquery-2.2.0.min.js" %}
-    {% style "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" %}
-    {% script "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" %}
-    {% style "/assets/font-awesome/css/font-awesome.min.css" %}
-    {% style "/css/screen.css" %}
-    
-
     <script type="text/javascript">
         var context = "{{servlet-context}}";
     </script>
-    {% script "/js/app.js" %}
 
   </body>
 </html>
-
-
-
-
