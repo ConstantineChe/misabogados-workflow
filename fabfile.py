@@ -41,11 +41,12 @@ class Instance:
         self.opts['DATABASE_URL'] = 'mongodb://127.0.0.1/%s_%s_production' % (project, website)
         self.opts['SETTINGS_DATABASE_URL'] = 'mongodb://127.0.0.1/%s_production_settings' % project
         self.opts['PORT'] = str(8080 + Instance.websites[website]['port'])
+        self.opts['COUNTRY'] = website
         self.opts['PRODUCTION'] = 'true'
         self.opts['LOG_PATH'] = '/var/deploy/log/%s%s.log' % (self.directory, project)
         self.opts['PAYMENT_SYSTEM'] = Instance.websites[website]['psp']
         self.opts['UPLOADS_URL'] = self.directory
-        self.opts['UPLOADS_PATH'] = "/var/deploy/uploads" + self.directory
+        self.opts['UPLOADS_PATH'] = "/var/deploy/uploads/" + self.directory
 
     def staging(self, website):
         self.directory = "staging/" + Instance.websites[website]['directory']
@@ -53,10 +54,11 @@ class Instance:
         self.opts['DATABASE_URL'] = 'mongodb://127.0.0.1/%s_%s_staging' % (project, website)
         self.opts['SETTINGS_DATABASE_URL'] = 'mongodb://127.0.0.1/%s_staging_settings' % project
         self.opts['PORT'] = str(3000 + Instance.websites[website]['port'])
+        self.opts['COUNTRY'] = website
         self.opts['LOG_PATH'] = '/var/deploy/log/%s%s.log' % (self.directory, project)
         self.opts['PAYMENT_SYSTEM'] = Instance.websites[website]['psp']
         self.opts['UPLOADS_URL'] = self.directory
-        self.opts['UPLOADS_PATH'] = "/var/deploy/uploads" + self.directory
+        self.opts['UPLOADS_PATH'] = "/var/deploy/uploads/" + self.directory
 
     def get_opts_string(self):
         return ' '.join(map(lambda (k, v): k+'='+v, self.opts.iteritems()))
@@ -92,7 +94,8 @@ def deploy(branch="master"):
         if not files.exists(deploy_location+instance.directory):
             run("mkdir -p %s" % deploy_location + instance.directory)
         if not files.exists(instance.opts['LOG_PATH']):
-            sudo("mkdir -p %s" % "/var/log/" + instance.directory)
+            sudo("mkdir -p %s" % "/var/deploy/log/" + instance.directory)
+            sudo("chown -R deploy:deploy %s" % "/var/deploy/log/")
         file_name = "%s_%s.jar" % (project, datetime.today().isoformat())
         run("cp target/uberjar/%s %s" % (project+".jar", deploy_location + instance.directory + file_name))
         with cd(deploy_location + instance.directory):
