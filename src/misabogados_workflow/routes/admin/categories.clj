@@ -33,7 +33,6 @@
   "Move file temporary file."
   [filename new-path]
   (let [file (io/file (file-path new-path))]
-    (prn filename)
     (io/make-parents file)
     (io/copy (io/file filename) file)))
 

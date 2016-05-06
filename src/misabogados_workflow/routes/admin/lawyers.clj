@@ -32,7 +32,6 @@
   "Move file temporary file."
   [filename new-path]
   (let [file (io/file (file-path new-path))]
-    (prn filename)
     (io/make-parents file)
     (io/copy (io/file filename) file)))
 
@@ -63,7 +62,7 @@
   (let [tmp-filename (get-in params [:lawyer :profile_picture :tmp-filename])
         filename (create-filename id tmp-filename)
         lawyer (if tmp-filename
-                   (assoc (:lawyer params) :image (uploads-url filename))
+                   (assoc (:lawyer params) :profile_picture (uploads-url filename))
                    (:lawyer params))]
     (when tmp-filename
       (save-file (str "/tmp/" tmp-filename) filename))
@@ -78,7 +77,7 @@
         tmp-filename (get-in params [:lawyer :profile_picture :tmp-filename])
         filename (create-filename id tmp-filename)
         lawyer (if tmp-filename
-                   (assoc (:lawyer params) :image (uploads-url filename))
+                   (assoc (:lawyer params) :profile_picture (uploads-url filename))
                    (:lawyer params))]
     (when tmp-filename
         (save-file (str "/tmp/" tmp-filename) filename)
