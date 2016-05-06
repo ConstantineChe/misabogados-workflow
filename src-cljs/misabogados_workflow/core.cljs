@@ -17,12 +17,14 @@
             [reagent.session :as session]
             [secretary.core :as secretary :include-macros true]
             [cljsjs.jquery]
-            [cljsjs.bootstrap])
+            [cljsjs.bootstrap]
+            [misabogados-workflow.websockets :as ws])
   (:import goog.History))
 
 (defn https? []
   (= "https:" (.-protocol js/location)))
 
+(defonce messages (r/atom []))
 
 (defn signup! [signup-form]
   (POST (str js/context "/signup") {:params signup-form
@@ -91,7 +93,8 @@
       [:div.navbar-header
        [:button#navbar-hamburger.navbar-toggle.collapsed {:data-toggle "collapse" :data-target "#navbar-body" :aria-expanded "false"}
         [:span.sr-only "Toggle navigation"] [:span.icon-bar][:span.icon-bar][:span.icon-bar]]
-       [:a.navbar-brand {:href "#/"} "Misabogados Workflow"]]
+       [:a.navbar-brand {:href "#/"}  "Misabogados Workflow"]
+]
 
       [:div#navbar-body.navbar-collapse.collapse
 
@@ -99,21 +102,20 @@
              (doall (map (fn [item]  (apply nav-link item)) (:nav-links @ac/components)))
              )
        (into [:ul.nav.navbar-nav.navbar-right]
-             (doall (map (fn [item]  (apply nav-link item)) (:nav-links-right @ac/components))))]]]))
+             (doall (map (fn [item]  (apply nav-link item)) (:nav-links-right @ac/components))))]]
+     [:div.modal.fade {:role :dialog :id "session-timeout"}
+               [:div.modal-dialog.modal-lg
+                [:div.modal-content
+                 [:div.modal-header
+                  [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
+                   [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]]
+                 [:div.modal-body
+                  [:p "Session timed out"]]
+                 [:div.modal-footer
+                  [:button.btn.btn-default {:type :button
+                                            :data-dismiss :modal
+                                            :aria-label "Close"} "Close"]]]]]]))
 
-(comment (defn debug []
-    (let [request (r/atom nil)
-          _ (GET (str js/context "/request") {:handler (fn [resp]
-                                                         (do
-                                                           (reset! request (str resp)))
-                                                         nil)})
-          _ (ac/reset-access!)]
-      (fn []
-        [:div.container
-         [:legend "Debug"]
-         [:h3 "request"] [:p @request]
-         [:h3 "ac"] [:p (str (ac/get-access))]
-         [:h3 "session"] [:p (str (dissoc @session/state :docs))]]))))
 
 (defn about-page []
   [:div.container
@@ -248,6 +250,20 @@
   (session/put! :page :admin))
 
 ;; -------------------------
+;; Websockets
+
+
+
+(defn process-messages [{:keys [message code] :as msg}]
+  (case code
+    :timeout (when-not (empty? (session/get :user))
+               (do (u/show-modal "session-timeout")
+                   (session/put! :user {})
+                   (ac/reset-access!)))
+    :count nil
+    (prn "unknown code " code "message " msg)))
+
+;; -------------------------
 ;; History
 ;; must be called after routes have been defined
 (defn hook-browser-navigation! []
@@ -267,6 +283,7 @@
   (r/render [#'page] (.getElementById js/document "app")))
 
 (defn init! []
+  (ws/make-websocket! (str "ws://" (.-host js/location) "/ws") process-messages)
   (get-session!)
   (update-csrf-token!)
   (hook-browser-navigation!)
