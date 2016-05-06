@@ -8,7 +8,7 @@
 ---------------------------------------------*/
 /* Global Variables */
 /* Global Patterns */
-.section-padding, .section-white, .section-blue, .static-content {
+.section-padding, .page-section, .static-content {
   padding-top: 60px;
   padding-bottom: 60px; }
 
@@ -893,6 +893,15 @@ p {
  * Lawyers' Landing Page Sections            *
 ---------------------------------------------*/
 /* FOR GLOBAL */
+.page-section h2 {
+  font-size: 3em; }
+@media (max-width: 992px) {
+  .page-section h2 {
+    font-size: 2.25em; } }
+@media (max-width: 767px) {
+  .page-section .col-xs-12 {
+    margin-bottom: 40px; } }
+
 .section-white h1, .section-white h2, .section-white h3, .section-white h4, .section-white h5 {
   color: #2877D7; }
 
@@ -901,8 +910,9 @@ p {
   .section-blue h1, .section-blue h2, .section-blue h3, .section-blue h4, .section-blue h5, .section-blue p {
     color: #FFFFFF; }
 
-.info-para-abgados {
-  text-align: center; }
+@media (max-width: 767px) {
+  .img-description h3 {
+    margin-top: 10px; } }
 
 /* CTA
 ---------------------------------------------*/
@@ -925,7 +935,6 @@ p {
 /* Grow Your Business With Technology
 ---------------------------------------------*/
 .grow-with-technology h2 {
-  font-size: 3em;
   margin-bottom: 80px; }
 .grow-with-technology p {
   margin-top: 30px;
@@ -939,7 +948,6 @@ p {
   background-position: 15% 0%;
   background-repeat: no-repeat; }
   .social-proof h2 {
-    font-size: 2.75em;
     margin-top: 100px;
     margin-bottom: 30px; }
   .social-proof p {
@@ -959,6 +967,9 @@ p {
 
 /* Register now section
 ---------------------------------------------*/
+@media (max-width: 992px) {
+  .register-now h1 {
+    font-size: 34px; } }
 .register-now button {
   font-size: 20px;
   margin-bottom: 50px; }
@@ -978,8 +989,8 @@ p {
   opacity: 0.9; }
 
 #lawyer_registration_form {
-  width: 70%;
-  margin: 20px auto; }
+  max-width: 400px;
+  margin: 15px auto; }
 
 /* Lawyers Profile Page
 ---------------------------------------------*/
