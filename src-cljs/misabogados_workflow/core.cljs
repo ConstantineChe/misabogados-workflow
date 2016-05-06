@@ -93,10 +93,8 @@
       [:div.navbar-header
        [:button#navbar-hamburger.navbar-toggle.collapsed {:data-toggle "collapse" :data-target "#navbar-body" :aria-expanded "false"}
         [:span.sr-only "Toggle navigation"] [:span.icon-bar][:span.icon-bar][:span.icon-bar]]
-       [:a.navbar-brand {:href "#/"} (str @messages "Misabogados Workflow")]
-       [:button.btn {:on-click #(ws/send-transit-msg!
-                                 {:message "hi"})} "ws snd"]
-       [:button.btn {:on-click #(POST (str js/context "/msg") {:params {:message "Hi"}})} "ajax snd"]]
+       [:a.navbar-brand {:href "#/"}  "Misabogados Workflow"]
+]
 
       [:div#navbar-body.navbar-collapse.collapse
 
@@ -106,19 +104,6 @@
        (into [:ul.nav.navbar-nav.navbar-right]
              (doall (map (fn [item]  (apply nav-link item)) (:nav-links-right @ac/components))))]]]))
 
-(comment (defn debug []
-    (let [request (r/atom nil)
-          _ (GET (str js/context "/request") {:handler (fn [resp]
-                                                         (do
-                                                           (reset! request (str resp)))
-                                                         nil)})
-          _ (ac/reset-access!)]
-      (fn []
-        [:div.container
-         [:legend "Debug"]
-         [:h3 "request"] [:p @request]
-         [:h3 "ac"] [:p (str (ac/get-access))]
-         [:h3 "session"] [:p (str (dissoc @session/state :docs))]]))))
 
 (defn about-page []
   [:div.container
@@ -258,7 +243,8 @@
 
 
 (defn update-messages! [{:keys [message]}]
-  (swap! messages #(vec (take 10 (conj % message)))))
+  (swap! messages #(vec (take 10 (conj % message))))
+  (prn message))
 
 ;; -------------------------
 ;; History
