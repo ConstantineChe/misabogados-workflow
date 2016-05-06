@@ -76,10 +76,11 @@
   [{params :params}]
   (let [tmp-filename (get-in params [:category :image :tmp-filename])
         id (:_id (mc/insert-and-return @db/db "categories" (:category params)))
-        filename (create-filename id tmp-filename)
+        filename (if tmp-filename (create-filename id tmp-filename))
         category (if tmp-filename
                    (assoc (:category params) :image (uploads-url filename))
                    (:category params))]
+    (prn "tmpfile" tmp-filename)
     (when tmp-filename
       (save-file (str "/tmp/" tmp-filename) filename)
       (mc/update-by-id @db/db "categories" id {$set  category}))

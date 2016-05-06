@@ -75,13 +75,13 @@
   [{params :params}]
   (let [id (:_id (mc/insert-and-return @db/db "lawyers" (:lawyer params)))
         tmp-filename (get-in params [:lawyer :profile_picture :tmp-filename])
-        filename (create-filename id tmp-filename)
+        filename (if tmp-filename (create-filename id tmp-filename))
         lawyer (if tmp-filename
                    (assoc (:lawyer params) :profile_picture (uploads-url filename))
                    (:lawyer params))]
     (when tmp-filename
         (save-file (str "/tmp/" tmp-filename) filename)
-        (mc/update-by-id @db/db "lawyers" (oid id) {$set lawyer}))
+        (mc/update-by-id @db/db "lawyers" id {$set lawyer}))
     (response {:id id :status "created"}))
   )
 
