@@ -12,7 +12,9 @@
 (declare ^:dynamic *app-context*)
 (parser/set-resource-path!  (clojure.java.io/resource "templates"))
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
-(parser/add-tag! :recaptcha-field (fn [_ _] (c/render "6Lc92P4SAAAAAOBC3sqUSW0glBwwaueafC4zPxKj")))
+(parser/add-tag! :recaptcha-field (fn [_ _] 
+                                    ;; (c/render "6Lc92P4SAAAAAOBC3sqUSW0glBwwaueafC4zPxKj")
+                                    (c/render "6Lco-wsTAAAAAKJL86ESJT8W7s4Fb2aOnrZxwJdu")))
 (filters/add-filter! :markdown (fn [content] [:safe (md-to-html-string content)]))
 
 (defn render

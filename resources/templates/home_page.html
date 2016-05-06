@@ -11,7 +11,7 @@
   <div class="dark-bg">
     <div class="container-fluid">
       <h1>LA FORMA INTELIGENTE DE CONTRATAR ABOGADOS</h1>
-      <p>Recomendamos abogados confiables, en tu rango de precios y con facilidades de pago.</p>
+      <p>{% ifequal settings.country "co" %}Te conectamos con{% else %}Recomendamos{% endifequal %} abogados confiables, en tu rango de precios y con facilidades de pago.</p>
       <p><button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#contactForm">Comienza ahora <span class="glyphicon  glyphicon-menu-right"></span></button></p>
     </div>
 
