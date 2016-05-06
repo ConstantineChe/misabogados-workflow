@@ -12,7 +12,7 @@
     <div class="container-fluid">
       <h1>Haz crecer tu negocio</h1>
       <p>Únete al marketplace de abogados más importante de Latinoamérica</p>
-      <p><button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#lawyerContactForm">Regístrate aquí</button></p>
+      <p><button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#lawyerRegistrationForm">Regístrate aquí</button></p>
     </div>
   </div>
 </div>
@@ -139,7 +139,42 @@
 <div class="section-white  info-para-abgados  register-now">
   <div class="container-fluid">
     <h1>Regístrate en Misabogados.com</h1>
-    <button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#lawyerContactForm">Regístrate aquí</button>
+    <button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#lawyerRegistrationForm">Regístrate aquí</button>
+  </div>
+</div>
+
+
+
+<!-- Lawyer Registration Form -->
+<div id="lawyerRegistrationForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="lawyerRegistrationForm">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h2 class="modal-title">Se parte de nuestra red</h2>
+      </div>
+      <div class="modal-body">
+        <form id="lawyer_registration_form" method="POST" action="">
+          <div class="form-group">
+            <label class="control-label" for="lawyer_name">Nombre:</label>
+            <input class="form-control" type="text" name="lawyer_name" placeholder="Nombre" required value="{{lawyer_name}}"/>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="lawyer_email">Email:</label>
+            <input class="form-control" type="email" name="lawyer_email" placeholder="Email" required value="{{lawyer_email}}"/>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="lawyer-password">Contraseña:</label>
+            <input class="form-control" type="password" name="lawyer-password" placeholder="Contraseña">
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="lawyer-password-confirm">Confirmar Contraseña:</label>
+            <input class="form-control" type="password" name="lawyer-password-confirm" placeholder="Confirmar Contraseña">
+          </div>
+          <button class="btn  btn-lg  btn-block  btn-success" data-loading-text="Cargando...">Registráme Ahora</button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
