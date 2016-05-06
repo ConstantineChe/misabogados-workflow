@@ -10,6 +10,7 @@
             [clojure.pprint :refer [pprint]]
             [misabogados-workflow.layout :refer [render]]
             [misabogados-workflow.email :as email]
+            [misabogados-workflow.settings :as settings]
             [buddy.auth :refer [authenticated?]]
             [misabogados-workflow.schema :as s]
             ))
@@ -54,8 +55,8 @@
 
 (defroutes home-routes
   (GET "/" [] home-page)
-  (GET "/garantia" [] (render "guarantee.html" {:title "Garantía"}))
-  (GET "/terminos-y-condiciones" [] (render "terms_and_conditions.html" {:title "Términos y Condiciones"}))
+  (GET "/garantia" [] (render (str "guarantee_" (settings/fetch :country) ".html") {:title "Garantía"}))
+  (GET "/terminos-y-condiciones" [] (render (str "terms_and_conditions_" (settings/fetch :country) ".html")  {:title "Términos y Condiciones"}))
   (GET "/politica-de-privacidad" [] (render "privacy.html" {:title "Politica de privacidad"}))
   (GET "/categoria/:slug" [slug :as request] (show-category slug))
   (GET "/app" [] app-page)

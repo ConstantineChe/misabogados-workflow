@@ -12,7 +12,7 @@
     <div class="container-fluid">
       <h1>Haz crecer tu negocio</h1>
       <p>Únete al marketplace de abogados más importante de Latinoamérica</p>
-      <p><button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#lawyerContactForm">Regístrate aquí</button></p>
+      <p><button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#lawyerRegistrationForm">Regístrate aquí</button></p>
     </div>
   </div>
 </div>
@@ -20,19 +20,15 @@
 
 
 <!-- Access New Clients -->
-<div class="section-white  info-para-abgados">
+<div class="page-section  section-white  text-center">
   <div class="container">
-    <div class="row">
-      <div class="col-lg-12  col-md-12  col-sm-12  col-xs-12">
-        <div class="access-new-clients">
-          <h2>Accede a nuevos clientes</h2>
-          <p>
-            Clientes de todo latinoamérica usan Misabogados.com para contratar abogados especialistas que se ajusten a sus necesidades
-          </p>
-        </div>
-      </div>
+    <div class="access-new-clients">
+      <h2>Accede a nuevos clientes</h2>
+      <p>
+        Clientes de todo latinoamérica usan Misabogados.com para contratar abogados especialistas que se ajusten a sus necesidades
+      </p>
     </div>
-    <div class="row">
+    <div class="row  img-description">
       <div class="col-lg-4  col-md-4  col-sm-4  col-xs-12">
         <img src="/img/lawyers-landing-page/handshake.png"  class="img-responsive  center-block" alt="Gráfico apretón de manos" />
         <h3>Conoce nuevos clientes</h3>
@@ -61,12 +57,12 @@
 
 
 <!-- Grow Your Business With Technology -->
-<div class="section-blue  info-para-abgados  grow-with-technology">
+<div class="page-section  section-blue  text-center  grow-with-technology">
   <div class="container">
     <h2>Usamos tecnología para hacer crecer tu negocio</h2>
     <div class="row">
       <div class="col-lg-6  col-md-6  col-sm-6  col-xs-12">
-        <img src="/img/lawyers-landing-page/macbook-pro-con-pantalla.png" class="img-responsive" alt="Laptop con captura de pantalla de MisAbogados" />
+        <img src="/img/lawyers-landing-page/macbook-pro-con-pantalla.png" class="img-responsive  center-block" alt="Laptop con captura de pantalla de MisAbogados" />
       </div>
       <div class="col-lg-6  col-md-6  col-sm-6  col-xs-12">
         <p class="lead">
@@ -83,7 +79,7 @@
 
 
 <!-- Hundreds of Lawers Use MisAbogados -->
-<div class="section-blue  info-para-abgados  social-proof">
+<div class="page-section  section-blue  text-center  social-proof">
   <div class="darken-bg">
     <div class="container">
       <div class="row">
@@ -102,7 +98,7 @@
 
 
 <!-- Client Break-down -->
-<div class="section-blue  info-para-abgados  client-break-down">
+<div class="page-section  section-blue  text-center  client-break-down">
   <div class="bluen-bg">
     <div class="container">
       <h2>¿Qué clientes usan Misabogados.com?</h2>
@@ -136,10 +132,45 @@
 
 
 <!-- Register Now -->
-<div class="section-white  info-para-abgados  register-now">
+<div class="page-section  section-white  text-center  register-now">
   <div class="container-fluid">
     <h1>Regístrate en Misabogados.com</h1>
-    <button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#lawyerContactForm">Regístrate aquí</button>
+    <button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#lawyerRegistrationForm">Regístrate aquí</button>
+  </div>
+</div>
+
+
+
+<!-- Lawyer Registration Form -->
+<div id="lawyerRegistrationForm" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="lawyerRegistrationForm">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h2 class="modal-title">Se parte de nuestra red</h2>
+      </div>
+      <div class="modal-body">
+        <form id="lawyer_registration_form" method="POST" action="">
+          <div class="form-group">
+            <label class="control-label" for="lawyer_name">Nombre:</label>
+            <input class="form-control" type="text" name="lawyer_name" placeholder="Nombre" required value="{{lawyer_name}}"/>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="lawyer_email">Email:</label>
+            <input class="form-control" type="email" name="lawyer_email" placeholder="Email" required value="{{lawyer_email}}"/>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="lawyer-password">Contraseña:</label>
+            <input class="form-control" type="password" name="lawyer-password" placeholder="Contraseña">
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="lawyer-password-confirm">Confirmar Contraseña:</label>
+            <input class="form-control" type="password" name="lawyer-password-confirm" placeholder="Confirmar Contraseña">
+          </div>
+          <button class="btn  btn-lg  btn-block  btn-success" data-loading-text="Cargando...">Registráme Ahora</button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
 {% endblock %}
