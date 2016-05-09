@@ -256,9 +256,11 @@
 (defn process-messages [{:keys [message code] :as msg}]
   (case code
     :timeout (when-not (empty? (session/get :user))
-               (do (u/show-modal "session-timeout")
+               (let [logged-in? (get-session!)]
+                 (when-not @logged-in?
+                   (u/show-modal "session-timeout")
                    (session/put! :user {})
-                   (ac/reset-access!)))
+                   (ac/reset-access!))))
     :count nil
     (prn "unknown code " code "message " msg)))
 
@@ -282,7 +284,7 @@
   (r/render [#'page] (.getElementById js/document "app")))
 
 (defn init! []
-  (ws/make-websocket! (str "ws://" (.-host js/location) "/ws") process-messages)
+  (ws/make-websocket! (str (if (https?) "wss://" "ws://") (.-host js/location) "/ws") process-messages)
   (get-session!)
   (update-csrf-token!)
   (hook-browser-navigation!)

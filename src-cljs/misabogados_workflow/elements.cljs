@@ -39,7 +39,7 @@
                    (.getElementById js/document upload-form-id)
                    url)))
 
-(defn typeahead [form options util label cursor min-chars & addons]
+(defn typeahead [form options util label cursor readonly min-chars & addons]
   (let [f-opts (r/cursor util (into [:typeahead] cursor))
         text (r/cursor util (into [:typeahead-t] cursor))
         dropdown-class (r/cursor util (into [:typeahead-c] cursor))
@@ -61,10 +61,11 @@
                           (if @f-opts @f-opts options))
         input [:input.form-control
                {:type :text
+                :read-only readonly
                 :key :input
                 :value @text
                 :on-click #(.setSelectionRange (.-target %) 0 (count @text))
-                :on-focus #(js/setTimeout (fn [_] (reset! dropdown-class "open")) 100)
+                :on-focus #(if-not readonly (js/setTimeout (fn [_] (reset! dropdown-class "open")) 100))
                 :on-blur #(js/setTimeout (fn [_] (do (reset! dropdown-class "")
                                              (reset! text (match @cursor)))) 100)
                 :on-change #(do (reset! text (-> % .-target .-value))
@@ -97,7 +98,7 @@
                                                         options)))
       [:div.form-group.col-xs-6 {:id (str name "-g") :key name}
        [:label.control-label {:for name} label]
-       (if addons [:div.input-group input addons]
+       (if (and addons (not readonly)) [:div.input-group input addons]
          input)
        [:div.dropdown {:class @dropdown-class}
         (if (< (count @text) min-chars)
@@ -112,45 +113,52 @@
                 dropdown-items
                 ))]]))
 
-(defn input [type label cursor]
+(defn input [type label cursor & attrs]
   (fn [[form]]
-    (let [[name cursor] (prepare-input cursor form)]
+    (let [[name cursor] (prepare-input cursor form)
+          {:keys [readonly]} (first attrs)]
       [:div.form-group.col-xs-6 {:key name}
        [:label.control-label {:for name} label]
        [:input.form-control {:type type
+                             :read-only readonly
                              :id name
                              :value @cursor
                              :on-change #(reset! cursor (-> % .-target .-value))
                              }]])))
 
-(defn input-checkbox [label cursor]
+(defn input-checkbox [label cursor & attrs]
   (fn [[form]]
-    (let [[name cursor] (prepare-input cursor form)]
+    (let [[name cursor] (prepare-input cursor form)
+          {:keys [readonly]} (first attrs)]
       [:div.form-group.col-xs-6 {:key name}
        [:label.control-label {:for name} label]
        [:input.form-control (merge {:type :checkbox
+                                    :read-only readonly
                                     :on-change #(swap! cursor not)
                                     :id name}
                                    (if @cursor {:checked :true}))]])))
 
-(defn input-dropdown [label cursor]
+(defn input-dropdown [label cursor & attrs]
   (fn [[form options]]
     (let [options (get-in @options (->> cursor (filter keyword?) vec))
-          [name cursor] (prepare-input cursor form)]
+          [name cursor] (prepare-input cursor form)
+          {:keys [readonly]} (first attrs)]
       (when (nil? @cursor) (reset! cursor (second (first options))))
       [:div.form-group.col-xs-6 {:key name}
        [:label.control-label {:for name} label]
        (into [:select.form-control {:id name
                                     :value @cursor
-                                    :on-change #(reset! cursor (-> % .-target .-value))}]
+                                    :read-only readonly
+                                    :on-change #(if-not readonly (reset! cursor (-> % .-target .-value)))}]
              (map (fn [[label value]] [:option {:key value :value value} label]) options))])))
 
-(defn input-typeahead [label cursor]
-  (fn [[form options util]]
-    (typeahead form options util label cursor 0)))
+(defn input-typeahead [label cursor & attrs]
+  (let [{:keys [readonly]} (first attrs)]
+    (fn [[form options util]]
+            (typeahead form options util label cursor readonly 0))))
 
 
-(defn input-datetimepicker [label cursor]
+(defn input-datetimepicker [label cursor & attrs]
   (fn [[form _ util]]
     (let [r-key cursor
           time (r/cursor util (into [:time] cursor))
@@ -163,7 +171,8 @@
           day (or (:day selected-date) (.getDate today))
           [hour minute] (if @cursor (let [time (second (s/split @cursor #"T"))]
                               (s/split time #":")))
-          expanded? (r/cursor util (into [:date-extended?] r-key))]
+          expanded? (r/cursor util (into [:date-extended?] r-key))
+          {:keys [readonly]} (first attrs)]
       (when (and (not @time) @cursor) (reset! time (str hour ":" minute)))
       [:div {:key r-key}
        [:div.datepicker-wrapper.col-xs-3
@@ -198,19 +207,21 @@
                                               (reset! time value))}]]])))
 
 
-(defn input-textarea [label cursor]
+(defn input-textarea [label cursor & attrs]
   (fn [[form]]
-    (let [[name cursor] (prepare-input cursor form)]
+    (let [[name cursor] (prepare-input cursor form)
+          {:keys [readonly]} (first attrs)]
       [:div.form-group.col-xs-12 {:key name}
        [:label.control-label {:for name} label]
        [:textarea.form-control {:type type
-                             :id name
-                             :value @cursor
-                             :on-change #(reset! cursor (-> % .-target .-value))
+                                :id name
+                                :read-only readonly
+                                :value @cursor
+                                :on-change #(reset! cursor (-> % .-target .-value))
                                 }]])))
 
 
-(defn input-entity [label cursor edit create]
+(defn input-entity [label cursor edit create & attrs]
   (fn [[form options util]]
     (let [id "lead-client_id"
           plus [:span.input-group-addon {:key :add
@@ -218,24 +229,27 @@
                 [:i.glyphicon.glyphicon-plus]]
           pencil [:span.input-group-addon {:key :edit
                                            :on-click #(u/show-modal (str id "-edit"))}
-                  [:i.glyphicon.glyphicon-pencil]]]
-      [:div {:key id} (typeahead form options util label cursor 3 plus pencil)
+                  [:i.glyphicon.glyphicon-pencil]]
+          {:keys [readonly]} (first attrs)]
+      [:div {:key id} (typeahead form options util label cursor readonly 3 plus pencil)
        [edit]
        [create]
        ])))
 
 (defn input-markdown
   "textarea with markdown->html preview."
-  [label path]
+  [label path & attrs]
   (fn [[form _ util]]
     (let [preview (r/cursor util (into [:preview] path))
-          [name cursor] (prepare-input path form)]
+          [name cursor] (prepare-input path form)
+          {:keys [readonly]} (first attrs)]
       (when (and @cursor (not @preview)) (reset! preview (md->html @cursor)))
       [:div.col-xs-12 {:key name}
        [:div.form-group.col-xs-6
          [:label.control-label {:for name} label]
          [:textarea.form-control
           {:type type
+           :read-only readonly
            :id name
            :value @cursor
            :on-change #(do (reset! cursor (-> % .-target .-value))

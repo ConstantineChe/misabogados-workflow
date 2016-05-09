@@ -40,3 +40,10 @@
                           :subject "Verification email"
                           :body [{:type "text/html; charset=utf-8"
                                   :content (parser/render-file "reset-password_email.html" (merge user {:reset-link link}))}]}))
+
+(defn send-email [{:keys [email subject template data]}]
+  (send-message settings {:from "no-reply@misabogados.com"
+                          :to email
+                          :subject subject
+                          :body [{:type "text/html; charset=utf-8"
+                                  :content (parser/render-file template data)}]}))

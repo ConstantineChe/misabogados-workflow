@@ -1,7 +1,7 @@
 (ns misabogados-workflow.flow-definition
-  #?(:clj (:require [misabogados-workflow.auto-actions :refer [change-lawyer]])))
+  #?(:clj (:require [misabogados-workflow.auto-actions :refer [change-lawyer schedule-meeting]])))
 
-#?(:cljs (declare change-lawyer))
+#?(:cljs (declare change-lawyer schedule-meeting))
 
 
 (def steps {:check  [[:lead :user :basic-info] [{:name "Finalize"
@@ -28,11 +28,12 @@
                                                                             :action :change-lawyer
                                                                             :roles #{:admin :operator}}
                                                                            {:name "Done"
-                                                                            :action :archive
+                                                                            :action :schedule-meeting
                                                                             :roles #{:admin :operator}}]
                               "Arrange meeting description"]
             :archive [[:lead :user :basic-info [:match :meeting]] [{:name "Reopen"
                                                                     :action :check
                                                                     :roles #{:admin}}]
                       "Archive description"]
-            :change-lawyer [change-lawyer :find-lawyer]})
+            :change-lawyer [change-lawyer :find-lawyer]
+            :schedule-meeting [schedule-meeting :archive]})
