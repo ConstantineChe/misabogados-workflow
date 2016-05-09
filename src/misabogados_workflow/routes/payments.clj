@@ -37,8 +37,8 @@
                         :tax "0"
                         :taxReturnBase "0"
                         ;; :signature "be2f083cb3391c84fdf5fd6176801278" 
-                        :test "1"
-                        :confirmationUrl "http://localhost:3000/payments/confirmation"
+                        :test "0"
+                        :confirmationUrl "http://misabogados.com.co/payments/confirm"
                         ;; :buyerEmail "test@test.com"
                         })
 
@@ -77,7 +77,7 @@
                                                             :description (:service payment-request)
                                                             :buyerEmail (:client_email payment-request)
                                                        }))
-   :form-path "https://sandbox.gateway.payulatam.com/ppp-web-gateway/"})
+   :form-path "https://gateway.payulatam.com/ppp-web-gateway/"})
 
 (defmethod construct-payment-attempt-form "webpay" [request payment-request date]
   {:form-data {:TBK_URL_EXITO (util/full-path request "/payments/success")
