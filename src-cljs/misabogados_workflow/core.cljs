@@ -282,7 +282,7 @@
   (r/render [#'page] (.getElementById js/document "app")))
 
 (defn init! []
-  (ws/make-websocket! (str "ws://" (.-host js/location) "/ws") process-messages)
+  ;; (ws/make-websocket! (str "ws://" (.-host js/location) "/ws") process-messages)
   (get-session!)
   (update-csrf-token!)
   (hook-browser-navigation!)
