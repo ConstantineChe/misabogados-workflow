@@ -25,6 +25,7 @@
     (aset form "method" method)
     (aset form "enctype" "multipart/form-data")
     (doall (map #(.appendChild form (create-hidden-input %)) params))
+    ;; (js/console.log form)
     (.submit form)
     ))
 
