@@ -38,6 +38,6 @@
                  (t/with-identity (t/key "triggers.1"))
                  (t/start-now)
                  (t/with-schedule (schedule
-                                   (cron-schedule "15 * * ? * *"))))]
+                                   (cron-schedule "0 */5 * ? * *"))))]
     (qs/schedule s job trigger))
   )

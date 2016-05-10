@@ -13,6 +13,8 @@
            goog.net.EventType
            [goog.events EventType]))
 
+(declare create-form)
+
 (def file (r/atom nil))
 
 (defn gen-name [cursor] (->> cursor (into []) (map #(if (keyword? %) (name %) %)) (interpose "-") (apply str)))
@@ -25,7 +27,6 @@
 
 
 (defn upload-file! [upload-form-id status name url]
-  (reset! status nil)
   (reset! status [:p "Uploading..."])
   (let [io (IframeIo.)]
     (gev/listen io goog.net.EventType.SUCCESS
@@ -112,8 +113,6 @@
                   :style {:height :auto :max-height :200px :overflow-x :hidden}}]
                 dropdown-items
                 ))]]))
-
-(declare create-form)
 
 (defn create-entity-modal
   "Create entity form modal"
@@ -500,7 +499,7 @@
   (fn [[key schema] data path]
     (:render-type schema)))
 
-(defmethod render-form :collection [[key schema] data path]
+(defmethod render-form :collection [[key schema] data path attributes]
   (let [{label :label content :field-definitions} schema
         label (if label label (name key))
         collection {:render-type :entity
@@ -508,19 +507,19 @@
                     :field-definitions content}]
     (into [label]
           (conj (vec (for [i (range (count (get-in data (conj path key))))]
-                       (render-form [i collection] data (conj path key) key) ))
+                       (render-form [i collection] data (conj path key) key attributes)))
                 (btn-new-fieldset (conj path key) (str "New " (:entity-label schema)))))))
 
-(defmethod render-form :entity [[key schema] data path]
+(defmethod render-form :entity [[key schema] data path attributes]
   (let [{label :label content :field-definitions} schema
         label (if label label (name key))
-        content (map #(render-form % data (conj path key)) content)]
+        content (map #(render-form % data (conj path key) attributes) content)]
     (into [label]
           (if (number? key)
             (conj (vec content) (btn-remove-fieldset path key (str "Remove " label)))
             content))))
 
-(defmethod render-form :default [[key schema] data path]
+(defmethod render-form :default [[key schema] data path attributes]
   (let [{type :render-type label :label args :args} schema]
     (if args
       (apply (type input-types) (if label label (name key)) (conj path key) args)
@@ -548,6 +547,8 @@
 
 (defn create-form
   "Create form from schema."
-  [legend schema atoms]
-  (apply form legend atoms (map #(render-form % @(first atoms) []) schema))
+  ([legend schema atoms]
+   (apply form legend atoms (map #(render-form % @(first atoms) [] :all) schema)))
+  ([legend schema atoms attributes]
+   (apply form legend atoms (map #(render-form % @(first atoms) [] attributes) schema)))
   )

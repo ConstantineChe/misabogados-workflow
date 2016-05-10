@@ -258,9 +258,9 @@
     :timeout (when-not (empty? (session/get :user))
                (let [done (r/atom false)
                      logged-in? (get-session! done)]
-                 (when-not @done
+                 (when (and @done (not @logged-in?))
                    (u/show-modal "session-timeout")
-;                   (session/put! :user {})
+                   (session/put! :user {})
                    (ac/reset-access!))))
     :count nil
     (prn "unknown code " code "message " msg)))

@@ -49,7 +49,7 @@
                   [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
                    [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]]
                  [:div.modal-body
-                  [:p (get ((keyword step) steps) 2)]]
+                  [:p (:description ((keyword step) steps))]]
                  [:div.modal-footer
                   [:button.btn.btn-default {:type :button
                                             :data-dismiss :modal
@@ -70,14 +70,14 @@
     (GET (str js/context "/lead/" id "/actions") {:handler #(let [response (keywordize-keys %)]
                                                               (reset! step-actions (:actions response)))})
     (fn []
-      [:div.container
+      [:div.container-fluid
 ;       (str "lead data: " @lead-data) [:br]
 ;       (str "step actions: " @step-actions) [:br]
 ;       (str "options: " (dissoc @options :lead)) [:br]
                                         ;       (str "actions: " @actions)
        (step-description action)
        (el/create-form [:div [:h1 (u/remove-kebab action)] [:a {:on-click #(u/show-modal "step-description")}  " Description"]]
-                        s/lead [lead-data options util])
+                       s/lead [lead-data options util] (:render-attributes ((keyword action) steps)))
        (into [:div.btn-group [:button.btn.btn-primary {:type :button
                                          :on-click #(if true ;;(validate-lead-form @lead-data)
                                                       (do (update-lead (session/get :current-lead-id) (:lead @lead-data) @actions)
@@ -94,7 +94,7 @@
         selected-client (r/atom nil)]
     (GET (str js/context "/leads/options") {:handler #(reset! options {:lead (keywordize-keys %)})})
     (fn []
-      [:div.container
+      [:div.container-fluid
 ;       (str "form data: " @lead-data) [:br]
 ;       (str "clients: " (:client_id (:lead @options)))
        (el/create-form "New Lead" s/lead [lead-data options util])
@@ -130,7 +130,7 @@
     (GET (str js/context "/leads/options") {:handler (fetch options)})
     (GET (str js/context "lead/" id) {:handler (fetch lead-data)})
     (fn []
-      [:div.container
+      [:div.container-fluid
 ;       (str "form data: " @lead-data) [:br]
 ;       (str "options: " (dissoc @options :lead)) [:br]
 ;       (str "actions: " @actions)
