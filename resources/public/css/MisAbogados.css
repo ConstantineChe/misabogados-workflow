@@ -8,13 +8,35 @@
 ---------------------------------------------*/
 /* Global Variables */
 /* Global Patterns */
-.section-padding, .page-section, .static-content {
+.section-padding, .section, .static-content {
   padding-top: 60px;
   padding-bottom: 60px; }
+
+.section h2 {
+  font-size: 3em; }
+@media (max-width: 992px) {
+  .section h2 {
+    font-size: 2.25em; } }
+@media (max-width: 767px) {
+  .section .col-xs-12 {
+    margin-bottom: 40px; } }
+
+.section-white h1, .section-white h2, .section-white h3, .section-white h4, .section-white h5 {
+  color: #2877D7; }
+
+.section-blue {
+  background-color: #2877D7; }
+  .section-blue h1, .section-blue h2, .section-blue h3, .section-blue h4, .section-blue h5, .section-blue p {
+    color: #FFFFFF; }
+
+@media (max-width: 767px) {
+  .img-description h3 {
+    margin-top: 10px; } }
 
 /* Resets */
 body {
   font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-weight: 300;
   /* Move down content because we have a fixed navbar */
   padding-top: 70px; }
 
@@ -38,7 +60,7 @@ h2 {
   h2 {
     font-size: 2.25em; } }
 p {
-  font-size: 16px; }
+  font-size: 18px; }
 
 .btn-lg {
   margin-top: 20px; }
@@ -229,7 +251,7 @@ p {
 
 .navbar-ctl a {
   color: #FFFFFF !important;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   text-decoration: none; }
 
@@ -588,7 +610,7 @@ p {
   color: #FFFFFF; }
 
 .lawyers-section li {
-  font-size: 16px; }
+  font-size: 18px; }
 
 @media (max-width: 768px) {
   .lawyer-list {
@@ -619,7 +641,7 @@ p {
 
 @media (max-width: 787px) {
   .lawyer-list h4 {
-    font-size: 16px; } }
+    font-size: 18px; } }
 /* Testimonies Section
 ---------------------------------------------*/
 .testimonies-section {
@@ -643,7 +665,7 @@ p {
   font-weight: bold; }
 
 .testimonies-list blockquote {
-  font-size: 16px;
+  font-size: 18px;
   font-style: italic;
   padding: 0px;
   margin-bottom: 0px;
@@ -654,7 +676,7 @@ p {
     padding-left: 20px; }
 
   .testimonies-list h4 {
-    font-size: 16px; }
+    font-size: 18px; }
 
   .testimonies-list blockquote {
     font-size: 14px; } }
@@ -682,7 +704,7 @@ p {
   .garantia-section h2 {
     margin-top: 50px; } }
 .garantia-section li {
-  font-size: 16px; }
+  font-size: 18px; }
 
 /* Second CTA
 ---------------------------------------------*/
@@ -722,7 +744,7 @@ p {
 /* Heading
 ---------------------------------------------*/
 .categoria-heading {
-  padding-top: 0px;
+  padding-top: 50px;
   padding-bottom: 0px;
   color: #FFFFFF;
   text-align: center;
@@ -751,7 +773,7 @@ p {
 /* Content
 ---------------------------------------------*/
 .categoria-body {
-  padding-top: 50px;
+  margin-top: 75px;
   padding-bottom: 50px; }
 
 .faq a {
@@ -838,7 +860,7 @@ p {
 
 .contact-panel-form textarea {
   resize: vertical;
-  font-size: 16px; }
+  font-size: 18px; }
 
 .contact-panel-form-btn {
   margin-top: 10px;
@@ -872,9 +894,9 @@ p {
   font-size: 28px;
   margin-top: 0px; }
 .mientras-tanto p {
-  font-size: 18px; }
+  font-size: 20px; }
 .mientras-tanto ul {
-  font-size: 16px; }
+  font-size: 18px; }
 .mientras-tanto button {
   margin-top: 10px; }
 
@@ -885,35 +907,13 @@ p {
   text-align: center;
   color: #b56f1d; }
 .emergencia p {
-  font-size: 20px;
+  font-size: 22px;
   text-align: center;
   margin-bottom: 0px; }
 
 /*--------------------------------------------
  * Lawyers' Landing Page Sections            *
 ---------------------------------------------*/
-/* FOR GLOBAL */
-.page-section h2 {
-  font-size: 3em; }
-@media (max-width: 992px) {
-  .page-section h2 {
-    font-size: 2.25em; } }
-@media (max-width: 767px) {
-  .page-section .col-xs-12 {
-    margin-bottom: 40px; } }
-
-.section-white h1, .section-white h2, .section-white h3, .section-white h4, .section-white h5 {
-  color: #2877D7; }
-
-.section-blue {
-  background-color: #2877D7; }
-  .section-blue h1, .section-blue h2, .section-blue h3, .section-blue h4, .section-blue h5, .section-blue p {
-    color: #FFFFFF; }
-
-@media (max-width: 767px) {
-  .img-description h3 {
-    margin-top: 10px; } }
-
 /* CTA
 ---------------------------------------------*/
 .cta-main-lawyers {
@@ -945,6 +945,7 @@ p {
 .social-proof {
   background: url(/img/lawyers-landing-page/guy-with-phone.jpg);
   background-size: cover;
+  background-attachment: fixed;
   background-position: 15% 0%;
   background-repeat: no-repeat; }
   .social-proof h2 {
@@ -971,7 +972,7 @@ p {
   .register-now h1 {
     font-size: 34px; } }
 .register-now button {
-  font-size: 20px;
+  font-size: 22px;
   margin-bottom: 50px; }
 
 /* Registration form
@@ -1012,7 +1013,7 @@ p {
     font-weight: bold;
     margin-bottom: 5px; }
   .lawyer-profile-header .qualifier {
-    font-size: 18px; }
+    font-size: 20px; }
   .lawyer-profile-header p {
     margin-top: 10px;
     margin-bottom: 20px; }
@@ -1045,15 +1046,15 @@ p {
       margin-top: 15px; }
     .lawyer-profile-header h1 {
       margin-top: 30px;
-      font-size: 30px; }
+      font-size: 32px; }
     .lawyer-profile-header .qualifier {
-      font-size: 14px; }
+      font-size: 16px; }
     .lawyer-profile-header p {
-      font-size: 14px;
+      font-size: 16px;
       margin-top: 5px;
       margin-bottom: 0px; }
     .lawyer-profile-header h3 {
-      font-size: 20px; } }
+      font-size: 22px; } }
   @media (max-width: 400px) {
     .lawyer-profile-header .profile-img {
       max-width: 100px;
@@ -1073,7 +1074,7 @@ p {
   .lawyer-profile h5:first-of-type {
     margin-top: 5px; }
   .lawyer-profile h5 {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 400;
     margin-top: 30px;
     margin-bottom: 5px; }
@@ -1099,7 +1100,7 @@ p {
     padding-left: 10px;
     overflow: hidden; }
   .overview p {
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 0px; }
 
 @media (max-width: 765px) {
@@ -1110,13 +1111,13 @@ p {
   .recommendation h4 {
     font-weight: bold;
     text-align: center;
-    font-size: 16px; }
+    font-size: 18px; }
   .recommendation .progress {
     margin-bottom: 5px; }
   .recommendation .progress-bar {
     background-color: #4ccf5c; }
   .recommendation p {
-    font-size: 14px;
+    font-size: 16px;
     text-align: center; }
 
 @media (max-width: 768px) {
@@ -1153,7 +1154,7 @@ p {
 ---------------------------------------------*/
 .version {
   color: #6f6f6f;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: normal; }
 
 /* Garantía
