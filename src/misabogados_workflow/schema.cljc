@@ -10,7 +10,7 @@
   [name (merge mixin {:field-definitions  (apply array-map (apply concat fields))})])
 
 (defn entity
-  "Defines an entity. The data provided here is enough to tell what is the possible structure of stored entity and where it is stored. It is also enough to generate scaffold form to edit this entity"
+  "Creates entity schema structure"
   [name label & fields]
   (apply array-map
          (entity-schema (keyword name)
@@ -92,6 +92,11 @@
                (text-field :name "Title")
                (text-field :url "URL")))
 
+(defentity client "Cliente"
+  (text-field :name "Nombre")
+  (field :email :email "Email")
+  (text-field :phone "Teléfono"))
+
 (defentity lawyer "Abogado"
   (text-field :name "Nombre")
   (text-field :email "Email")
@@ -131,20 +136,27 @@
                (text-field :key "Key")
                (text-field :value "Value")))
 
-;; (defentity client
-;;   (text-field :name)
-;;   (text-field :phone)
-;;   (text-field :email))
-
-;; (defentity lead
-;;   (has-one client)
-;;   (text-field :problem)
-;;   (simple-dict-field :lead-type)
-;;   (embeds-one :match
-;;                (has-one lawyer)
-;;                (embeds-many :meeting
-;;                            (simple-dict-field :meeting-type)
-;;                            (datetime-field :time))))
+(defentity lead "Lead"
+  (field :input-entity :client_id "Client" {:url "/users/client"
+                                            :create-legend "Create Client"
+                                            :edit-legend "Edit Client"
+                                            :label-fn (fn [entity] (str (:name entity) " (" (:email entity) ")"))
+                                            :schema client})
+  (text-field :region_name "Region")
+  (text-field :city "City")
+  (field :typeahead :category_id "Category")
+  (field :dropdown :lead_type_code "Lead Type")
+  (field :dropdown :lead_source_code "Lead Source")
+  (text-field :refer "Referrer")
+  (field :number :nps "NPS")
+  (text-field :adwords_url "Adowrds url")
+  (field :number :amount "Amount")
+  (field :textarea :problem "Problem")
+  (embeds-many :matches "Matches"
+               (field :typeahead :lawyer_id "Lawyer")
+               (embeds-many :meetings "Meetings"
+                            (text-field :type "Type")
+                            (field :date-time :time ["Date" "Time"]))))
 
 ;; This is what entity definitions should be expanded to. This data structures holds all information abount entity and it's fields in format easily digestable programmatically.
 
