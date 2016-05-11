@@ -384,6 +384,11 @@ p {
 .bold {
   font-weight: bold; }
 
+.contact-form form {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto; }
+
 .form-group {
   margin-bottom: 10px; }
 
@@ -974,24 +979,6 @@ p {
 .register-now button {
   font-size: 22px;
   margin-bottom: 50px; }
-
-/* Registration form
----------------------------------------------*/
-#lawyerRegistrationForm .modal-header {
-  background-color: #2877D7;
-  color: #FFFFFF; }
-#lawyerRegistrationForm .modal-title {
-  text-align: center;
-  font-size: 2.25em; }
-#lawyerRegistrationForm .close {
-  color: #FFFFFF;
-  opacity: 0.6; }
-#lawyerRegistrationForm .close:hover {
-  opacity: 0.9; }
-
-#lawyer_registration_form {
-  max-width: 400px;
-  margin: 15px auto; }
 
 /* Lawyers Profile Page
 ---------------------------------------------*/
