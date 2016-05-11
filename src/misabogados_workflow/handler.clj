@@ -15,6 +15,7 @@
             [misabogados-workflow.middleware :as middleware]
             [misabogados-workflow.settings :as settings]
             [misabogados-workflow.db.indexes :as indexes]
+            [misabogados-workflow.scheduler :as scheduler]
             [ring.middleware.json :as json]
             [clojure.tools.logging :as log]
             [compojure.route :as route]
@@ -33,6 +34,7 @@
   (logger/init env)
   (db/connect!)
   (indexes/setup-indexes)
+  (scheduler/init-mail-scheduler!)
   (settings/init!)
   (doseq [component (:started (mount/start))]
     (log/info component "started"))

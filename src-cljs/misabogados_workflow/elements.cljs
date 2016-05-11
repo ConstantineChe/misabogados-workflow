@@ -6,12 +6,14 @@
             [goog.events :as gev]
             [markdown.core :refer [md->html]]
             [clojure.walk :refer [keywordize-keys]]
-            [misabogados-workflow.ajax :refer [PUT csrf-token]]
+            [misabogados-workflow.ajax :refer [GET POST PUT csrf-token]]
             [reagent-forms.datepicker
              :refer [parse-format format-date datepicker]])
   (:import goog.net.IframeIo
            goog.net.EventType
            [goog.events EventType]))
+
+(declare create-form)
 
 (def file (r/atom nil))
 
@@ -25,7 +27,6 @@
 
 
 (defn upload-file! [upload-form-id status name url]
-  (reset! status nil)
   (reset! status [:p "Uploading..."])
   (let [io (IframeIo.)]
     (gev/listen io goog.net.EventType.SUCCESS
@@ -39,7 +40,7 @@
                    (.getElementById js/document upload-form-id)
                    url)))
 
-(defn typeahead [form options util label cursor min-chars & addons]
+(defn typeahead [form options util label cursor readonly min-chars & addons]
   (let [f-opts (r/cursor util (into [:typeahead] cursor))
         text (r/cursor util (into [:typeahead-t] cursor))
         dropdown-class (r/cursor util (into [:typeahead-c] cursor))
@@ -61,10 +62,11 @@
                           (if @f-opts @f-opts options))
         input [:input.form-control
                {:type :text
+                :read-only readonly
                 :key :input
                 :value @text
                 :on-click #(.setSelectionRange (.-target %) 0 (count @text))
-                :on-focus #(js/setTimeout (fn [_] (reset! dropdown-class "open")) 100)
+                :on-focus #(if-not readonly (js/setTimeout (fn [_] (reset! dropdown-class "open")) 100))
                 :on-blur #(js/setTimeout (fn [_] (do (reset! dropdown-class "")
                                              (reset! text (match @cursor)))) 100)
                 :on-change #(do (reset! text (-> % .-target .-value))
@@ -97,7 +99,7 @@
                                                         options)))
       [:div.form-group.col-xs-6 {:id (str name "-g") :key name}
        [:label.control-label {:for name} label]
-       (if addons [:div.input-group input addons]
+       (if (and addons (not readonly)) [:div.input-group input addons]
          input)
        [:div.dropdown {:class @dropdown-class}
         (if (< (count @text) min-chars)
@@ -112,45 +114,141 @@
                 dropdown-items
                 ))]]))
 
-(defn input [type label cursor]
+(defn create-entity-modal
+  "Create entity form modal"
+  [title id schema data options opt util cursor cursor-label create-fn]
+  (r/create-class
+   {:render (fn []
+              [:div.modal.fade {:role :dialog :id id}
+               [:div.modal-dialog.modal-lg
+                [:div.modal-content
+                 [:div.modal-header
+                  [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
+                   [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]]
+                 [:div.modal-body
+                  (create-form title schema [data opt util])]
+                 [:div.modal-footer
+                  [:button.btn.btn-default {:type :button
+                                            :data-dismiss :modal
+                                            :aria-label "Close"} "Close"]
+                  [:button.btn.btn-primary {:type :button
+                                            :data-dismiss :modal
+                                            :aria-label "Create"
+                                            :on-click #(create-fn @data cursor options cursor-label)} "Create"]]]]])
+    :component-did-mount (fn [this] (let [modal (-> this r/dom-node js/jQuery)]
+                                     (.attr modal "tabindex" "-1")
+                                     (.on  modal "hide.bs.modal"
+                                           #(js/setTimeout (fn [] (reset! data nil)) 100))))}))
+
+(defn edit-entity-modal
+  "Edit entity form modal"
+  [title id schema data options opt util entity-id edit-fn root-key get-entity-fn]
+  (r/create-class
+   {:render (fn []
+              (when (and entity-id (not= entity-id (-> @data root-key :_id))) (get-entity-fn entity-id data))
+              [:div.modal.fade {:role :dialog :id id}
+               [:div.modal-dialog.modal-lg
+                [:div.modal-content
+                 [:div.modal-header
+                  [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
+                   [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]]
+                 [:div.modal-body
+                  (create-form title schema [data opt util])]
+                 [:div.modal-footer
+                  [:button.btn.btn-default {:type :button
+                                            :data-dismiss :modal
+                                            :aria-label "Close"} "Close"]
+                  [:button.btn.btn-primary {:type :button
+                                            :data-dismiss :modal
+                                            :aria-label "Update"
+                                            :on-click #(edit-fn @data options entity-id)} "Update"]]]]])
+    :component-did-mount (fn [this] (let [modal (-> this r/dom-node js/jQuery)]
+                                     (.attr modal "tabindex" "-1")
+                                     (.on  modal "hide.bs.modal"
+                                           #(js/setTimeout (fn [] (reset! data nil)) 100))))}))
+
+(defn get-entity [url root-key]
+  (fn [id data]
+    (if id (GET (str js/context url "/" id) {:handler #(reset! data {root-key (keywordize-keys %)})}) data)))
+
+(defn create-entity [url root-key label-fn]
+  (fn [data cursor options cursor-label]
+    (POST (str js/context url) {:params {:data (root-key data)}
+                                :handler #(let [entity (keywordize-keys %)
+                                                label (label-fn entity)]
+                                            (reset! cursor-label label)
+                                            (swap! options conj
+                                                   [label (:_id entity)])
+                                            (reset! cursor (:_id (keywordize-keys %))))
+                                :error-handler #(case (:status %)
+                                                           403 (js/alert "Access denied")
+                                                           500 (js/alert "Internal server error")
+                                                           404 (js/alert "Client not found")
+                                                           (js/alert (str %)))})))
+
+(defn edit-entity [url root-key label-fn]
+  (fn [data options id]
+    (PUT (str js/context url) {:params {:id id
+                                                    :data (dissoc (root-key data) :_id)}
+                                           :handler #(let [entity (keywordize-keys %)]
+                                                       (swap! options
+                                                              (fn [x]
+                                                                (for [[label id] x]
+                                                                  (if (= id (:_id entity))
+                                                                    [(label-fn entity) id]
+                                                                    [label id])))))
+                                           :error-handler #(case (:status %)
+                                                             403 (js/alert "Access denied")
+                                                             500 (js/alert "Internal server error")
+                                                             404 (js/alert "Client not found")
+                                                             (js/alert (str %)))})))
+
+(defn input [type label cursor & attrs]
   (fn [[form]]
-    (let [[name cursor] (prepare-input cursor form)]
+    (let [[name cursor] (prepare-input cursor form)
+          {:keys [readonly]} (first attrs)]
       [:div.form-group.col-xs-6 {:key name}
        [:label.control-label {:for name} label]
        [:input.form-control {:type type
+                             :read-only readonly
                              :id name
                              :value @cursor
                              :on-change #(reset! cursor (-> % .-target .-value))
                              }]])))
 
-(defn input-checkbox [label cursor]
+(defn input-checkbox [label cursor & attrs]
   (fn [[form]]
-    (let [[name cursor] (prepare-input cursor form)]
+    (let [[name cursor] (prepare-input cursor form)
+          {:keys [readonly]} (first attrs)]
       [:div.form-group.col-xs-6 {:key name}
        [:label.control-label {:for name} label]
        [:input.form-control (merge {:type :checkbox
+                                    :read-only readonly
                                     :on-change #(swap! cursor not)
                                     :id name}
                                    (if @cursor {:checked :true}))]])))
 
-(defn input-dropdown [label cursor]
+(defn input-dropdown [label cursor & attrs]
   (fn [[form options]]
     (let [options (get-in @options (->> cursor (filter keyword?) vec))
-          [name cursor] (prepare-input cursor form)]
+          [name cursor] (prepare-input cursor form)
+          {:keys [readonly]} (first attrs)]
       (when (nil? @cursor) (reset! cursor (second (first options))))
       [:div.form-group.col-xs-6 {:key name}
        [:label.control-label {:for name} label]
        (into [:select.form-control {:id name
                                     :value @cursor
-                                    :on-change #(reset! cursor (-> % .-target .-value))}]
+                                    :read-only readonly
+                                    :on-change #(if-not readonly (reset! cursor (-> % .-target .-value)))}]
              (map (fn [[label value]] [:option {:key value :value value} label]) options))])))
 
-(defn input-typeahead [label cursor]
-  (fn [[form options util]]
-    (typeahead form options util label cursor 0)))
+(defn input-typeahead [label cursor & attrs]
+  (let [{:keys [readonly]} (first attrs)]
+    (fn [[form options util]]
+            (typeahead form options util label cursor readonly 0))))
 
 
-(defn input-datetimepicker [label cursor]
+(defn input-datetimepicker [label cursor & attrs]
   (fn [[form _ util]]
     (let [r-key cursor
           time (r/cursor util (into [:time] cursor))
@@ -163,7 +261,8 @@
           day (or (:day selected-date) (.getDate today))
           [hour minute] (if @cursor (let [time (second (s/split @cursor #"T"))]
                               (s/split time #":")))
-          expanded? (r/cursor util (into [:date-extended?] r-key))]
+          expanded? (r/cursor util (into [:date-extended?] r-key))
+          {:keys [readonly]} (first attrs)]
       (when (and (not @time) @cursor) (reset! time (str hour ":" minute)))
       [:div {:key r-key}
        [:div.datepicker-wrapper.col-xs-3
@@ -198,44 +297,64 @@
                                               (reset! time value))}]]])))
 
 
-(defn input-textarea [label cursor]
+(defn input-textarea [label cursor & attrs]
   (fn [[form]]
-    (let [[name cursor] (prepare-input cursor form)]
+    (let [[name cursor] (prepare-input cursor form)
+          {:keys [readonly]} (first attrs)]
       [:div.form-group.col-xs-12 {:key name}
        [:label.control-label {:for name} label]
        [:textarea.form-control {:type type
-                             :id name
-                             :value @cursor
-                             :on-change #(reset! cursor (-> % .-target .-value))
+                                :id name
+                                :read-only readonly
+                                :value @cursor
+                                :on-change #(reset! cursor (-> % .-target .-value))
                                 }]])))
 
 
-(defn input-entity [label cursor edit create]
+(defn input-entity [label path & attrs]
   (fn [[form options util]]
-    (let [id "lead-client_id"
+    (let [[id cursor] (prepare-input path form)
           plus [:span.input-group-addon {:key :add
                                          :on-click #(u/show-modal (str id "-create"))}
                 [:i.glyphicon.glyphicon-plus]]
           pencil [:span.input-group-addon {:key :edit
                                            :on-click #(u/show-modal (str id "-edit"))}
-                  [:i.glyphicon.glyphicon-pencil]]]
-      [:div {:key id} (typeahead form options util label cursor 3 plus pencil)
-       [edit]
-       [create]
+                  [:i.glyphicon.glyphicon-pencil]]
+          {:keys [readonly edit-legend create-legend schema url label-fn]} (first attrs)
+          selected-entity (r/cursor util (into [:entity] path))
+          entity-options (r/cursor options path)
+          entity-id @cursor
+          entity-label (r/cursor util (into [:typeahead-t] path))
+          root-key-create (keyword (str "new-" (name (first (keys schema)))))
+          root-key-edit (keyword (str "edit-" (name (first (keys schema)))))
+          create-schema {root-key-create ((first (keys schema)) schema)}
+          edit-schema {root-key-edit ((first (keys schema)) schema)}
+          get-entity-fn (get-entity url root-key-edit)
+          create-fn (create-entity url root-key-create label-fn)
+          edit-fn (edit-entity url root-key-edit label-fn)
+          opts (r/atom {})
+          utl (r/atom {})]
+      [:div {:key id} (typeahead form options util label path readonly 3 plus pencil)
+       [(edit-entity-modal edit-legend (str id "-edit") edit-schema selected-entity
+                           entity-options opts utl entity-id edit-fn root-key-edit get-entity-fn)]
+       [(create-entity-modal edit-legend (str id "-create") create-schema selected-entity
+                             entity-options opts utl cursor entity-label create-fn) ]
        ])))
 
 (defn input-markdown
   "textarea with markdown->html preview."
-  [label path]
+  [label path & attrs]
   (fn [[form _ util]]
     (let [preview (r/cursor util (into [:preview] path))
-          [name cursor] (prepare-input path form)]
+          [name cursor] (prepare-input path form)
+          {:keys [readonly]} (first attrs)]
       (when (and @cursor (not @preview)) (reset! preview (md->html @cursor)))
       [:div.col-xs-12 {:key name}
        [:div.form-group.col-xs-6
          [:label.control-label {:for name} label]
          [:textarea.form-control
           {:type type
+           :read-only readonly
            :id name
            :value @cursor
            :on-change #(do (reset! cursor (-> % .-target .-value))
@@ -329,12 +448,12 @@
    :number input-number
    :dropdown input-dropdown
    :textarea input-textarea
-   :typeahead input-textarea
+   :typeahead input-typeahead
    :date-time input-datetimepicker
    :checkbox input-checkbox
    :markdown input-markdown
    :image input-image
-   :entity input-entity})
+   :input-entity input-entity})
 
 
 
@@ -380,7 +499,7 @@
   (fn [[key schema] data path]
     (:render-type schema)))
 
-(defmethod render-form :collection [[key schema] data path]
+(defmethod render-form :collection [[key schema] data path attributes]
   (let [{label :label content :field-definitions} schema
         label (if label label (name key))
         collection {:render-type :entity
@@ -388,19 +507,19 @@
                     :field-definitions content}]
     (into [label]
           (conj (vec (for [i (range (count (get-in data (conj path key))))]
-                       (render-form [i collection] data (conj path key) key) ))
+                       (render-form [i collection] data (conj path key) key attributes)))
                 (btn-new-fieldset (conj path key) (str "New " (:entity-label schema)))))))
 
-(defmethod render-form :entity [[key schema] data path]
+(defmethod render-form :entity [[key schema] data path attributes]
   (let [{label :label content :field-definitions} schema
         label (if label label (name key))
-        content (map #(render-form % data (conj path key)) content)]
+        content (map #(render-form % data (conj path key) attributes) content)]
     (into [label]
           (if (number? key)
             (conj (vec content) (btn-remove-fieldset path key (str "Remove " label)))
             content))))
 
-(defmethod render-form :default [[key schema] data path]
+(defmethod render-form :default [[key schema] data path attributes]
   (let [{type :render-type label :label args :args} schema]
     (if args
       (apply (type input-types) (if label label (name key)) (conj path key) args)
@@ -428,6 +547,8 @@
 
 (defn create-form
   "Create form from schema."
-  [legend schema atoms]
-  (apply form legend atoms (map #(render-form % @(first atoms) []) schema))
+  ([legend schema atoms]
+   (apply form legend atoms (map #(render-form % @(first atoms) [] :all) schema)))
+  ([legend schema atoms attributes]
+   (apply form legend atoms (map #(render-form % @(first atoms) [] attributes) schema)))
   )

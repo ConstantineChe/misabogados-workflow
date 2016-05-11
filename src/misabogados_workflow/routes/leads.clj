@@ -82,14 +82,12 @@
   (let [id (oid id)
         lead (assoc  (dissoc (:lead params) :_id) :step action)
         step ((keyword action) steps)]
-      (cond (vector? (first step))
-            (do (update-lead-data lead id)
-                (response {:status "ok" :id id :step action}))
-            :default
-            (do
-              (update-lead-data (assoc lead :step (second step)) id)
-              ((first step) (assoc lead :_id id))
-                (response {:status "ok" :id id :step (second step)})))))
+      (case (:type step)
+            :manual (do (update-lead-data lead id)
+                        (response {:status "ok" :id id :step action}))
+            :auto (do (update-lead-data (assoc lead :step (:endpoint step)) id)
+                      ((:auto-action step) (assoc lead :_id id))
+                      (response {:status "ok" :id id :step (:endpoint step)})))))
 
 
 (defn get-leads [request]
@@ -108,7 +106,7 @@
 (defn get-lead-actions [id request]
   (let [lead (db/get-lead id)
         step (if (:step lead) (keyword (:step lead)) :check)
-        actions (filter #((:roles %) (-> request :session :role)) (second (step steps)))]
+        actions (filter #((:roles %) (-> request :session :role)) (:actions (step steps)))]
     (response {:id id :actions actions})))
 
 
