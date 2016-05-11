@@ -496,7 +496,7 @@
 
 
 (defmulti render-form
-  (fn [[key schema] data path]
+  (fn [[key schema] data path attributes]
     (:render-type schema)))
 
 (defmethod render-form :collection [[key schema] data path attributes]
@@ -504,16 +504,32 @@
         label (if label label (name key))
         collection {:render-type :entity
                     :label (:entity-label schema)
-                    :field-definitions content}]
+                    :field-definitions content}
+        attributes (if (not attributes) :all attributes)]
     (into [label]
           (conj (vec (for [i (range (count (get-in data (conj path key))))]
-                       (render-form [i collection] data (conj path key) key attributes)))
+                       (render-form [i collection] data (conj path key) attributes)))
                 (btn-new-fieldset (conj path key) (str "New " (:entity-label schema)))))))
 
 (defmethod render-form :entity [[key schema] data path attributes]
-  (let [{label :label content :field-definitions} schema
+  (let [{label :label fields :field-definitions} schema
         label (if label label (name key))
-        content (map #(render-form % data (conj path key) attributes) content)]
+        child-attributes (if-not (= :all attributes)
+                           (if (keyword? key)
+                             (key attributes) attributes)
+                           attributes)
+        schema-to-render (filter #(not (nil? %))
+                                 (map #(if (not (#{:entity :collection} (:render-type (second %))))
+                                         (cond (= :all (:fields child-attributes)) %
+                                               (= :readonly (:fields child-attributes))
+                                               (assoc-in % [1 :args] (if-let [args (get-in % [1 :args])]
+                                                                       [(assoc (first args) :readonly true)]
+                                                                       [{:readonly true}])))
+                                         (if ((first %) child-attributes) %)) fields))
+        content (map #(render-form % data (conj path key) ((first %) child-attributes))
+                     (if (= :all child-attributes)
+                       fields
+                       schema-to-render))]
     (into [label]
           (if (number? key)
             (conj (vec content) (btn-remove-fieldset path key (str "Remove " label)))

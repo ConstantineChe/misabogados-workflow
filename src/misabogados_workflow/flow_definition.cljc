@@ -5,7 +5,7 @@
 
 
 (def steps {:check  {:type :manual
-                     :render-attributes [:lead]
+                     :render-attributes {:lead {:fields :all}}
                      :actions [{:name "Finalize"
                                 :action :archive
                                 :roles #{:admin :operator}}
@@ -20,7 +20,7 @@
                                 :roles #{:admin :operator}}]
                      :description "Check description"}
             :find-lawyer {:type :manual
-                          :render-attributes [:lead [:matches]]
+                          :render-attributes {:lead {:fields :readonly :matches {:fields :all}}}
                           :actions [{:name "Done"
                                        :action :arrange-meeting
                                        :roles #{:admin :operator}}
@@ -29,7 +29,7 @@
                                        :roles #{:admin :operator}}]
                           :description "Find lawyer description"}
             :arrange-meeting {:type :manual
-                              :render-attributes [:lead [:matches :meetings]]
+                              :render-attributes {:lead {:fields :readonly :matches {:fields :readonly :meetings {:fields :all}}}}
                               :actions [{:name "Change lawyer"
                                          :action :change-lawyer
                                          :roles #{:admin :operator}}
@@ -38,7 +38,7 @@
                                          :roles #{:admin :operator}}]
                               :description "Arrange meeting description"}
             :archive {:type :manual
-                      :render-attributes [:lead [:match :meetings]]
+                      :render-attributes :all
                       :actions [{:name "Reopen"
                                  :action :check
                                  :roles #{:admin}}]
