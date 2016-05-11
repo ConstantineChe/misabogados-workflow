@@ -26,14 +26,15 @@
 
 (defn signup [request]
   (let [params (:params request)
-        session (:session request)]
+        session (:session request)
+        role (if (:lawyer params) :lawyer :client)]
     (if-not (= (:password params) (:confirm-password params))
       (-> (redirect "/signup")
           (assoc-in [:flash :messages :errors :error] "La contraseña y su confirmación no coinciden")
           (assoc-in [:flash :params] params))
       (try (when-let [user (db/create-user (into {:verification-code (-> params :email util/generate-hash)
                                               :password (-> params :password encrypt)
-                                              :role :client}
+                                              :role role}
                                              (filter #(permitted  (key %))
                                                      (:params request))))]
              (future (email/verification-email (assoc user :verification-url
@@ -42,8 +43,13 @@
                (-> (response {:identity (-> request :params :email)
                               :role (-> request :params :role)})
                    (assoc :session (assoc session :identity (-> request :params :email keyword))))
-               (-> (redirect "/")
-                   (assoc :session (assoc session :identity (-> request :params :email keyword))))))
+               (do (when (= :lawyer role)
+                     (let [lawyer-profile (mc/insert-and-return @db/db "lawyers" {:email (:email params)
+                                                                                  :name (:name params)})]
+                       (mc/update @db/db "users" {:email (:email params)} {$set {:lawyer_profile (:_id lawyer-profile)}})))
+                   (-> (redirect "/")
+                       (assoc :session (assoc session :identity (-> request :params :email keyword)
+                                              :role role))))))
 
            (catch com.mongodb.DuplicateKeyException e
              (if (= "application/transit+json; charset=UTF-8" (:content-type request))
