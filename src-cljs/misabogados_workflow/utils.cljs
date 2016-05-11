@@ -21,17 +21,26 @@
    (js/jQuery (str "#" id))
    (.modal "hide")))
 
-(defn get-session! []
-  (let [logged-in? (r/atom nil)]
-    (GET (str js/context "/session")
-         {:handler (fn [response]
-                     (reset! logged-in? (nil? (get response "identity")))
-                     (if-not @logged-in?
-                       (session/put! :user {:identity (get response "identity" )
-                                            :role (get response "role")}))
-                     (ac/reset-access!)
-                     nil)})
-    logged-in?))
+(defn get-session!
+  ([]
+   (let [logged-in? (r/atom nil)]
+     (GET (str js/context "/session")
+          {:handler (fn [response]
+                      (reset! logged-in? (nil? (get response "identity")))
+                      (if-not @logged-in?
+                        (session/put! :user {:identity (get response "identity" )
+                                             :role (get response "role")}))
+                      (ac/reset-access!)
+                      nil)})
+     logged-in?))
+  ([done]
+   (let [logged-in? (r/atom nil)]
+     (GET (str js/context "/session")
+          {:handler (fn [response]
+                      (reset! logged-in? (nil? (get response "identity")))
+                      (reset! done true)
+                      nil)})
+     logged-in?)))
 
 (defn redirect [url]
   (aset js/window "location" url)

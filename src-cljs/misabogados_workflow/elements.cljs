@@ -6,12 +6,14 @@
             [goog.events :as gev]
             [markdown.core :refer [md->html]]
             [clojure.walk :refer [keywordize-keys]]
-            [misabogados-workflow.ajax :refer [PUT csrf-token]]
+            [misabogados-workflow.ajax :refer [GET POST PUT csrf-token]]
             [reagent-forms.datepicker
              :refer [parse-format format-date datepicker]])
   (:import goog.net.IframeIo
            goog.net.EventType
            [goog.events EventType]))
+
+(declare create-form)
 
 (def file (r/atom nil))
 
@@ -25,7 +27,6 @@
 
 
 (defn upload-file! [upload-form-id status name url]
-  (reset! status nil)
   (reset! status [:p "Uploading..."])
   (let [io (IframeIo.)]
     (gev/listen io goog.net.EventType.SUCCESS
@@ -112,6 +113,95 @@
                   :style {:height :auto :max-height :200px :overflow-x :hidden}}]
                 dropdown-items
                 ))]]))
+
+(defn create-entity-modal
+  "Create entity form modal"
+  [title id schema data options opt util cursor cursor-label create-fn]
+  (r/create-class
+   {:render (fn []
+              [:div.modal.fade {:role :dialog :id id}
+               [:div.modal-dialog.modal-lg
+                [:div.modal-content
+                 [:div.modal-header
+                  [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
+                   [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]]
+                 [:div.modal-body
+                  (create-form title schema [data opt util])]
+                 [:div.modal-footer
+                  [:button.btn.btn-default {:type :button
+                                            :data-dismiss :modal
+                                            :aria-label "Close"} "Close"]
+                  [:button.btn.btn-primary {:type :button
+                                            :data-dismiss :modal
+                                            :aria-label "Create"
+                                            :on-click #(create-fn @data cursor options cursor-label)} "Create"]]]]])
+    :component-did-mount (fn [this] (let [modal (-> this r/dom-node js/jQuery)]
+                                     (.attr modal "tabindex" "-1")
+                                     (.on  modal "hide.bs.modal"
+                                           #(js/setTimeout (fn [] (reset! data nil)) 100))))}))
+
+(defn edit-entity-modal
+  "Edit entity form modal"
+  [title id schema data options opt util entity-id edit-fn root-key get-entity-fn]
+  (r/create-class
+   {:render (fn []
+              (when (and entity-id (not= entity-id (-> @data root-key :_id))) (get-entity-fn entity-id data))
+              [:div.modal.fade {:role :dialog :id id}
+               [:div.modal-dialog.modal-lg
+                [:div.modal-content
+                 [:div.modal-header
+                  [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
+                   [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]]
+                 [:div.modal-body
+                  (create-form title schema [data opt util])]
+                 [:div.modal-footer
+                  [:button.btn.btn-default {:type :button
+                                            :data-dismiss :modal
+                                            :aria-label "Close"} "Close"]
+                  [:button.btn.btn-primary {:type :button
+                                            :data-dismiss :modal
+                                            :aria-label "Update"
+                                            :on-click #(edit-fn @data options entity-id)} "Update"]]]]])
+    :component-did-mount (fn [this] (let [modal (-> this r/dom-node js/jQuery)]
+                                     (.attr modal "tabindex" "-1")
+                                     (.on  modal "hide.bs.modal"
+                                           #(js/setTimeout (fn [] (reset! data nil)) 100))))}))
+
+(defn get-entity [url root-key]
+  (fn [id data]
+    (if id (GET (str js/context url "/" id) {:handler #(reset! data {root-key (keywordize-keys %)})}) data)))
+
+(defn create-entity [url root-key label-fn]
+  (fn [data cursor options cursor-label]
+    (POST (str js/context url) {:params {:data (root-key data)}
+                                :handler #(let [entity (keywordize-keys %)
+                                                label (label-fn entity)]
+                                            (reset! cursor-label label)
+                                            (swap! options conj
+                                                   [label (:_id entity)])
+                                            (reset! cursor (:_id (keywordize-keys %))))
+                                :error-handler #(case (:status %)
+                                                           403 (js/alert "Access denied")
+                                                           500 (js/alert "Internal server error")
+                                                           404 (js/alert "Client not found")
+                                                           (js/alert (str %)))})))
+
+(defn edit-entity [url root-key label-fn]
+  (fn [data options id]
+    (PUT (str js/context url) {:params {:id id
+                                                    :data (dissoc (root-key data) :_id)}
+                                           :handler #(let [entity (keywordize-keys %)]
+                                                       (swap! options
+                                                              (fn [x]
+                                                                (for [[label id] x]
+                                                                  (if (= id (:_id entity))
+                                                                    [(label-fn entity) id]
+                                                                    [label id])))))
+                                           :error-handler #(case (:status %)
+                                                             403 (js/alert "Access denied")
+                                                             500 (js/alert "Internal server error")
+                                                             404 (js/alert "Client not found")
+                                                             (js/alert (str %)))})))
 
 (defn input [type label cursor & attrs]
   (fn [[form]]
@@ -221,19 +311,34 @@
                                 }]])))
 
 
-(defn input-entity [label cursor edit create & attrs]
+(defn input-entity [label path & attrs]
   (fn [[form options util]]
-    (let [id "lead-client_id"
+    (let [[id cursor] (prepare-input path form)
           plus [:span.input-group-addon {:key :add
                                          :on-click #(u/show-modal (str id "-create"))}
                 [:i.glyphicon.glyphicon-plus]]
           pencil [:span.input-group-addon {:key :edit
                                            :on-click #(u/show-modal (str id "-edit"))}
                   [:i.glyphicon.glyphicon-pencil]]
-          {:keys [readonly]} (first attrs)]
-      [:div {:key id} (typeahead form options util label cursor readonly 3 plus pencil)
-       [edit]
-       [create]
+          {:keys [readonly edit-legend create-legend schema url label-fn]} (first attrs)
+          selected-entity (r/cursor util (into [:entity] path))
+          entity-options (r/cursor options path)
+          entity-id @cursor
+          entity-label (r/cursor util (into [:typeahead-t] path))
+          root-key-create (keyword (str "new-" (name (first (keys schema)))))
+          root-key-edit (keyword (str "edit-" (name (first (keys schema)))))
+          create-schema {root-key-create ((first (keys schema)) schema)}
+          edit-schema {root-key-edit ((first (keys schema)) schema)}
+          get-entity-fn (get-entity url root-key-edit)
+          create-fn (create-entity url root-key-create label-fn)
+          edit-fn (edit-entity url root-key-edit label-fn)
+          opts (r/atom {})
+          utl (r/atom {})]
+      [:div {:key id} (typeahead form options util label path readonly 3 plus pencil)
+       [(edit-entity-modal edit-legend (str id "-edit") edit-schema selected-entity
+                           entity-options opts utl entity-id edit-fn root-key-edit get-entity-fn)]
+       [(create-entity-modal edit-legend (str id "-create") create-schema selected-entity
+                             entity-options opts utl cursor entity-label create-fn) ]
        ])))
 
 (defn input-markdown
@@ -343,12 +448,12 @@
    :number input-number
    :dropdown input-dropdown
    :textarea input-textarea
-   :typeahead input-textarea
+   :typeahead input-typeahead
    :date-time input-datetimepicker
    :checkbox input-checkbox
    :markdown input-markdown
    :image input-image
-   :entity input-entity})
+   :input-entity input-entity})
 
 
 
@@ -394,7 +499,7 @@
   (fn [[key schema] data path]
     (:render-type schema)))
 
-(defmethod render-form :collection [[key schema] data path]
+(defmethod render-form :collection [[key schema] data path attributes]
   (let [{label :label content :field-definitions} schema
         label (if label label (name key))
         collection {:render-type :entity
@@ -402,19 +507,19 @@
                     :field-definitions content}]
     (into [label]
           (conj (vec (for [i (range (count (get-in data (conj path key))))]
-                       (render-form [i collection] data (conj path key) key) ))
+                       (render-form [i collection] data (conj path key) key attributes)))
                 (btn-new-fieldset (conj path key) (str "New " (:entity-label schema)))))))
 
-(defmethod render-form :entity [[key schema] data path]
+(defmethod render-form :entity [[key schema] data path attributes]
   (let [{label :label content :field-definitions} schema
         label (if label label (name key))
-        content (map #(render-form % data (conj path key)) content)]
+        content (map #(render-form % data (conj path key) attributes) content)]
     (into [label]
           (if (number? key)
             (conj (vec content) (btn-remove-fieldset path key (str "Remove " label)))
             content))))
 
-(defmethod render-form :default [[key schema] data path]
+(defmethod render-form :default [[key schema] data path attributes]
   (let [{type :render-type label :label args :args} schema]
     (if args
       (apply (type input-types) (if label label (name key)) (conj path key) args)
@@ -442,6 +547,8 @@
 
 (defn create-form
   "Create form from schema."
-  [legend schema atoms]
-  (apply form legend atoms (map #(render-form % @(first atoms) []) schema))
+  ([legend schema atoms]
+   (apply form legend atoms (map #(render-form % @(first atoms) [] :all) schema)))
+  ([legend schema atoms attributes]
+   (apply form legend atoms (map #(render-form % @(first atoms) [] attributes) schema)))
   )
