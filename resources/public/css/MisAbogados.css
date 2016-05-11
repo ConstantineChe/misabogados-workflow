@@ -7,7 +7,65 @@
 /* Global
 ---------------------------------------------*/
 /* Global Variables */
+/* Resets */
+body {
+  font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
+  font-weight: 300;
+  padding-top: 70px; }
+
+@media (max-width: 1090px) {
+  body {
+    padding-top: 50px; } }
+@media (min-width: 1200px) {
+  .container {
+    width: 1000px; } }
+h1, h2, h3, h4 {
+  font-family: "Raleway", serif;
+  font-weight: 300; }
+
+h2 {
+  font-size: 3.25em; }
+
+@media (max-width: 992px) {
+  h2 {
+    font-size: 2.25em; } }
+p {
+  font-size: 18px; }
+
+.btn-lg {
+  margin-top: 20px; }
+
 /* Global Patterns */
+.jumbotron {
+  padding-top: 0px;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
+  color: #FFFFFF;
+  text-align: center; }
+  .jumbotron h1 {
+    font-size: 3.1em;
+    font-weight: 400;
+    text-transform: uppercase;
+    margin-top: 4em; }
+  .jumbotron p {
+    font-size: 1.85em; }
+  .jumbotron button {
+    font-size: 1em;
+    margin-top: 40px;
+    margin-bottom: 80px; }
+  .jumbotron h6 {
+    font-size: 1em;
+    font-weight: bold;
+    text-transform: uppercase; }
+
+@media (min-width: 1090px) {
+  .jumbotron h1 {
+    font-size: 3.25em; } }
+@media (max-width: 992px) {
+  .jumbotron h1 {
+    margin-top: 1.25em; }
+  .jumbotron button {
+    margin-bottom: 50px; } }
 .section-padding, .section, .static-content {
   padding-top: 60px;
   padding-bottom: 60px; }
@@ -28,53 +86,14 @@
   background-color: #2877D7; }
   .section-blue h1, .section-blue h2, .section-blue h3, .section-blue h4, .section-blue h5, .section-blue p {
     color: #FFFFFF; }
+  .section-blue li {
+    color: #FFFFFF;
+    font-size: 18px; }
 
 @media (max-width: 767px) {
   .img-description h3 {
     margin-top: 10px; } }
 
-/* Resets */
-body {
-  font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
-  font-weight: 300;
-  /* Move down content because we have a fixed navbar */
-  padding-top: 70px; }
-
-/* The paddding adjustment isn't necessary on mobile devices */
-@media (max-width: 1090px) {
-  body {
-    padding-top: 0px; } }
-/* Constraining display width on large screens */
-@media (min-width: 1200px) {
-  .container {
-    width: 1000px; } }
-h1, h2, h3, h4 {
-  font-family: "Raleway", serif;
-  font-weight: 300; }
-
-/* To comply with SEO best practices, treat h2 as if h1 */
-h2 {
-  font-size: 3.25em; }
-
-@media (max-width: 992px) {
-  h2 {
-    font-size: 2.25em; } }
-p {
-  font-size: 18px; }
-
-.btn-lg {
-  margin-top: 20px; }
-
-.jumbotron {
-  margin-bottom: 0px;
-  padding-bottom: 75px; }
-
-.jumbotron h1 {
-  font-size: 2.25em; }
-
-@media (min-width: 1090px) {
-  .jumbotron h1 {
-    font-size: 3.25em; } }
 .glyphicon {
   vertical-align: middle;
   margin-top: -5px; }
@@ -111,9 +130,7 @@ p {
 ---------------------------------------------*/
 /* Adds a black overlay with transparency */
 .dark-bg {
-  background-color: rgba(0, 0, 34, 0.49804);
-  padding-top: 30px;
-  padding-bottom: 30px; }
+  background-color: rgba(0, 0, 34, 0.49804); }
 
 .darken-bg {
   background-color: rgba(85, 85, 85, 0.49804);
@@ -482,39 +499,8 @@ p {
 /*--------------------------------------------
  * Home Page Sections                        *
 ---------------------------------------------*/
-/* CTA
+/* Shared CTA styles
 ---------------------------------------------*/
-.cta {
-  padding-top: 0px;
-  padding-bottom: 0px;
-  color: #FFFFFF;
-  text-align: center; }
-
-.cta h1 {
-  font-size: 3.1em;
-  font-weight: 400;
-  text-transform: uppercase;
-  margin-top: 4em; }
-
-@media (max-width: 992px) {
-  .cta h1 {
-    margin-top: 1.25em; } }
-.cta p {
-  font-size: 1.85em; }
-
-.cta button {
-  font-size: 1em;
-  margin-top: 40px;
-  margin-bottom: 80px; }
-
-@media (max-width: 992px) {
-  .cta button {
-    margin-bottom: 50px; } }
-.cta h6 {
-  font-size: 1em;
-  font-weight: bold;
-  text-transform: uppercase; }
-
 .cta .thumbnail {
   background: transparent;
   border: none; }
@@ -526,25 +512,20 @@ p {
 ---------------------------------------------*/
 .cta-main {
   background: url(/img/main-cta/cta-bg.jpg);
-  background-size: cover;
-  background-position: 35% 25%;
-  background-repeat: no-repeat; }
+  background-repeat: no-repeat;
+  background-position: 35% 20%;
+  background-size: cover; }
 
+@media (max-width: 1090px) {
+  .cta-main {
+    margin-top: -15px;
+    padding-top: 15px; } }
 /* Categories Section
 ---------------------------------------------*/
-.categories-section {
-  background-color: #FFFFFF; }
-
 .categories-section h2 {
-  color: #089ad6;
-  text-align: center;
-  margin-bottom: 30px; }
+  text-align: center; }
 
-@media (min-width: 992px) {
-  .categories-section h2 {
-    margin-bottom: 50px; } }
 .categories-section .input-group {
-  margin-bottom: 50px;
   max-width: 350px;
   margin-left: auto;
   margin-right: auto;
@@ -552,9 +533,11 @@ p {
 
 @media (min-width: 992px) {
   .categories-section .input-group {
-    padding-top: 40px;
-    margin-bottom: 25px;
+    padding-top: 25px;
     float: left; } }
+.categories-list {
+  margin-top: 35px; }
+
 .categories-list .thumbnail {
   position: relative;
   overflow: hidden;
@@ -610,13 +593,6 @@ p {
 
 /* Laywers Section
 ---------------------------------------------*/
-.lawyers-section {
-  background-color: #2877D7;
-  color: #FFFFFF; }
-
-.lawyers-section li {
-  font-size: 18px; }
-
 @media (max-width: 768px) {
   .lawyer-list {
     margin-top: 75px;
@@ -649,11 +625,7 @@ p {
     font-size: 18px; } }
 /* Testimonies Section
 ---------------------------------------------*/
-.testimonies-section {
-  background-color: #FFFFFF; }
-
 .testimonies-section h2 {
-  color: #089ad6;
   padding-bottom: 40px; }
 
 .testimonies-list li {
@@ -665,7 +637,6 @@ p {
   float: right; }
 
 .testimonies-list h4 {
-  color: #089ad6;
   text-transform: uppercase;
   font-weight: bold; }
 
@@ -695,10 +666,6 @@ p {
     margin-top: 5%; } }
 /* Garantia Section
 ---------------------------------------------*/
-.garantia-section {
-  background-color: #2877D7;
-  color: #FFFFFF; }
-
 .garantia-section img {
   padding-top: 30px;
   max-width: 300px;
@@ -716,7 +683,8 @@ p {
 .cta-second {
   background: url(/img/second-cta/cierre-2.jpg) no-repeat center;
   background-size: cover;
-  padding-bottom: 30px; }
+  padding-bottom: 30px;
+  margin-bottom: 0px; }
 
 .cta-second h2 {
   font-size: 3.1em;
@@ -749,38 +717,23 @@ p {
 /* Heading
 ---------------------------------------------*/
 .categoria-heading {
-  padding-top: 50px;
-  padding-bottom: 0px;
-  color: #FFFFFF;
-  text-align: center;
   background: url(/img/categoria/writing.jpeg);
   background-repeat: no-repeat;
   background-position: center 55%;
   background-size: cover; }
 
 .categoria-heading h1 {
-  font-size: 2.25em;
-  font-weight: 400;
-  text-transform: uppercase;
-  margin-top: 1.5em; }
+  font-size: 2.25em; }
 
-@media (max-width: 992px) {
-  .categoria-heading h1 {
-    margin-top: 1.5em; } }
 .categoria-heading p {
   font-size: 1.5em; }
 
 .categoria-heading button {
-  font-size: 1em;
-  margin-top: 15px;
-  margin-bottom: 40px; }
+  font-size: .75em;
+  margin-top: 15px; }
 
 /* Content
 ---------------------------------------------*/
-.categoria-body {
-  margin-top: 75px;
-  padding-bottom: 50px; }
-
 .faq a {
   color: #333333;
   text-decoration: none; }
