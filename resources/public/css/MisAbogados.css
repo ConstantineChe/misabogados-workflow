@@ -7,22 +7,15 @@
 /* Global
 ---------------------------------------------*/
 /* Global Variables */
-/* Global Patterns */
-.section-padding, .page-section, .static-content {
-  padding-top: 60px;
-  padding-bottom: 60px; }
-
 /* Resets */
 body {
   font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
-  /* Move down content because we have a fixed navbar */
+  font-weight: 300;
   padding-top: 70px; }
 
-/* The paddding adjustment isn't necessary on mobile devices */
 @media (max-width: 1090px) {
   body {
-    padding-top: 0px; } }
-/* Constraining display width on large screens */
+    padding-top: 50px; } }
 @media (min-width: 1200px) {
   .container {
     width: 1000px; } }
@@ -30,7 +23,6 @@ h1, h2, h3, h4 {
   font-family: "Raleway", serif;
   font-weight: 300; }
 
-/* To comply with SEO best practices, treat h2 as if h1 */
 h2 {
   font-size: 3.25em; }
 
@@ -38,21 +30,70 @@ h2 {
   h2 {
     font-size: 2.25em; } }
 p {
-  font-size: 16px; }
+  font-size: 18px; }
 
 .btn-lg {
   margin-top: 20px; }
 
+/* Global Patterns */
 .jumbotron {
+  padding-top: 0px;
+  padding-bottom: 0px;
   margin-bottom: 0px;
-  padding-bottom: 75px; }
-
-.jumbotron h1 {
-  font-size: 2.25em; }
+  color: #FFFFFF;
+  text-align: center; }
+  .jumbotron h1 {
+    font-size: 3.1em;
+    font-weight: 400;
+    text-transform: uppercase;
+    margin-top: 4em; }
+  .jumbotron p {
+    font-size: 1.85em; }
+  .jumbotron button {
+    font-size: 1em;
+    margin-top: 40px;
+    margin-bottom: 80px; }
+  .jumbotron h6 {
+    font-size: 1em;
+    font-weight: bold;
+    text-transform: uppercase; }
 
 @media (min-width: 1090px) {
   .jumbotron h1 {
     font-size: 3.25em; } }
+@media (max-width: 992px) {
+  .jumbotron h1 {
+    margin-top: 1.25em; }
+  .jumbotron button {
+    margin-bottom: 50px; } }
+.section-padding, .section, .static-content {
+  padding-top: 60px;
+  padding-bottom: 60px; }
+
+.section h2 {
+  font-size: 3em; }
+@media (max-width: 992px) {
+  .section h2 {
+    font-size: 2.25em; } }
+@media (max-width: 767px) {
+  .section .col-xs-12 {
+    margin-bottom: 40px; } }
+
+.section-white h1, .section-white h2, .section-white h3, .section-white h4, .section-white h5 {
+  color: #2877D7; }
+
+.section-blue {
+  background-color: #2877D7; }
+  .section-blue h1, .section-blue h2, .section-blue h3, .section-blue h4, .section-blue h5, .section-blue p {
+    color: #FFFFFF; }
+  .section-blue li {
+    color: #FFFFFF;
+    font-size: 18px; }
+
+@media (max-width: 767px) {
+  .img-description h3 {
+    margin-top: 10px; } }
+
 .glyphicon {
   vertical-align: middle;
   margin-top: -5px; }
@@ -89,9 +130,7 @@ p {
 ---------------------------------------------*/
 /* Adds a black overlay with transparency */
 .dark-bg {
-  background-color: rgba(0, 0, 34, 0.49804);
-  padding-top: 30px;
-  padding-bottom: 30px; }
+  background-color: rgba(0, 0, 34, 0.49804); }
 
 .darken-bg {
   background-color: rgba(85, 85, 85, 0.49804);
@@ -229,7 +268,7 @@ p {
 
 .navbar-ctl a {
   color: #FFFFFF !important;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
   text-decoration: none; }
 
@@ -362,6 +401,11 @@ p {
 .bold {
   font-weight: bold; }
 
+.contact-form form {
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto; }
+
 .form-group {
   margin-bottom: 10px; }
 
@@ -455,39 +499,8 @@ p {
 /*--------------------------------------------
  * Home Page Sections                        *
 ---------------------------------------------*/
-/* CTA
+/* Shared CTA styles
 ---------------------------------------------*/
-.cta {
-  padding-top: 0px;
-  padding-bottom: 0px;
-  color: #FFFFFF;
-  text-align: center; }
-
-.cta h1 {
-  font-size: 3.1em;
-  font-weight: 400;
-  text-transform: uppercase;
-  margin-top: 4em; }
-
-@media (max-width: 992px) {
-  .cta h1 {
-    margin-top: 1.25em; } }
-.cta p {
-  font-size: 1.85em; }
-
-.cta button {
-  font-size: 1em;
-  margin-top: 40px;
-  margin-bottom: 80px; }
-
-@media (max-width: 992px) {
-  .cta button {
-    margin-bottom: 50px; } }
-.cta h6 {
-  font-size: 1em;
-  font-weight: bold;
-  text-transform: uppercase; }
-
 .cta .thumbnail {
   background: transparent;
   border: none; }
@@ -499,25 +512,20 @@ p {
 ---------------------------------------------*/
 .cta-main {
   background: url(/img/main-cta/cta-bg.jpg);
-  background-size: cover;
-  background-position: 35% 25%;
-  background-repeat: no-repeat; }
+  background-repeat: no-repeat;
+  background-position: 35% 20%;
+  background-size: cover; }
 
+@media (max-width: 1090px) {
+  .cta-main {
+    margin-top: -15px;
+    padding-top: 15px; } }
 /* Categories Section
 ---------------------------------------------*/
-.categories-section {
-  background-color: #FFFFFF; }
-
 .categories-section h2 {
-  color: #089ad6;
-  text-align: center;
-  margin-bottom: 30px; }
+  text-align: center; }
 
-@media (min-width: 992px) {
-  .categories-section h2 {
-    margin-bottom: 50px; } }
 .categories-section .input-group {
-  margin-bottom: 50px;
   max-width: 350px;
   margin-left: auto;
   margin-right: auto;
@@ -525,9 +533,11 @@ p {
 
 @media (min-width: 992px) {
   .categories-section .input-group {
-    padding-top: 40px;
-    margin-bottom: 25px;
+    padding-top: 25px;
     float: left; } }
+.categories-list {
+  margin-top: 35px; }
+
 .categories-list .thumbnail {
   position: relative;
   overflow: hidden;
@@ -583,13 +593,6 @@ p {
 
 /* Laywers Section
 ---------------------------------------------*/
-.lawyers-section {
-  background-color: #2877D7;
-  color: #FFFFFF; }
-
-.lawyers-section li {
-  font-size: 16px; }
-
 @media (max-width: 768px) {
   .lawyer-list {
     margin-top: 75px;
@@ -619,14 +622,10 @@ p {
 
 @media (max-width: 787px) {
   .lawyer-list h4 {
-    font-size: 16px; } }
+    font-size: 18px; } }
 /* Testimonies Section
 ---------------------------------------------*/
-.testimonies-section {
-  background-color: #FFFFFF; }
-
 .testimonies-section h2 {
-  color: #089ad6;
   padding-bottom: 40px; }
 
 .testimonies-list li {
@@ -638,12 +637,11 @@ p {
   float: right; }
 
 .testimonies-list h4 {
-  color: #089ad6;
   text-transform: uppercase;
   font-weight: bold; }
 
 .testimonies-list blockquote {
-  font-size: 16px;
+  font-size: 18px;
   font-style: italic;
   padding: 0px;
   margin-bottom: 0px;
@@ -654,7 +652,7 @@ p {
     padding-left: 20px; }
 
   .testimonies-list h4 {
-    font-size: 16px; }
+    font-size: 18px; }
 
   .testimonies-list blockquote {
     font-size: 14px; } }
@@ -668,10 +666,6 @@ p {
     margin-top: 5%; } }
 /* Garantia Section
 ---------------------------------------------*/
-.garantia-section {
-  background-color: #2877D7;
-  color: #FFFFFF; }
-
 .garantia-section img {
   padding-top: 30px;
   max-width: 300px;
@@ -682,14 +676,15 @@ p {
   .garantia-section h2 {
     margin-top: 50px; } }
 .garantia-section li {
-  font-size: 16px; }
+  font-size: 18px; }
 
 /* Second CTA
 ---------------------------------------------*/
 .cta-second {
   background: url(/img/second-cta/cierre-2.jpg) no-repeat center;
   background-size: cover;
-  padding-bottom: 30px; }
+  padding-bottom: 30px;
+  margin-bottom: 0px; }
 
 .cta-second h2 {
   font-size: 3.1em;
@@ -722,38 +717,23 @@ p {
 /* Heading
 ---------------------------------------------*/
 .categoria-heading {
-  padding-top: 0px;
-  padding-bottom: 0px;
-  color: #FFFFFF;
-  text-align: center;
   background: url(/img/categoria/writing.jpeg);
   background-repeat: no-repeat;
   background-position: center 55%;
   background-size: cover; }
 
 .categoria-heading h1 {
-  font-size: 2.25em;
-  font-weight: 400;
-  text-transform: uppercase;
-  margin-top: 1.5em; }
+  font-size: 2.25em; }
 
-@media (max-width: 992px) {
-  .categoria-heading h1 {
-    margin-top: 1.5em; } }
 .categoria-heading p {
   font-size: 1.5em; }
 
 .categoria-heading button {
-  font-size: 1em;
-  margin-top: 15px;
-  margin-bottom: 40px; }
+  font-size: .75em;
+  margin-top: 15px; }
 
 /* Content
 ---------------------------------------------*/
-.categoria-body {
-  padding-top: 50px;
-  padding-bottom: 50px; }
-
 .faq a {
   color: #333333;
   text-decoration: none; }
@@ -838,7 +818,7 @@ p {
 
 .contact-panel-form textarea {
   resize: vertical;
-  font-size: 16px; }
+  font-size: 18px; }
 
 .contact-panel-form-btn {
   margin-top: 10px;
@@ -872,9 +852,9 @@ p {
   font-size: 28px;
   margin-top: 0px; }
 .mientras-tanto p {
-  font-size: 18px; }
+  font-size: 20px; }
 .mientras-tanto ul {
-  font-size: 16px; }
+  font-size: 18px; }
 .mientras-tanto button {
   margin-top: 10px; }
 
@@ -885,35 +865,13 @@ p {
   text-align: center;
   color: #b56f1d; }
 .emergencia p {
-  font-size: 20px;
+  font-size: 22px;
   text-align: center;
   margin-bottom: 0px; }
 
 /*--------------------------------------------
  * Lawyers' Landing Page Sections            *
 ---------------------------------------------*/
-/* FOR GLOBAL */
-.page-section h2 {
-  font-size: 3em; }
-@media (max-width: 992px) {
-  .page-section h2 {
-    font-size: 2.25em; } }
-@media (max-width: 767px) {
-  .page-section .col-xs-12 {
-    margin-bottom: 40px; } }
-
-.section-white h1, .section-white h2, .section-white h3, .section-white h4, .section-white h5 {
-  color: #2877D7; }
-
-.section-blue {
-  background-color: #2877D7; }
-  .section-blue h1, .section-blue h2, .section-blue h3, .section-blue h4, .section-blue h5, .section-blue p {
-    color: #FFFFFF; }
-
-@media (max-width: 767px) {
-  .img-description h3 {
-    margin-top: 10px; } }
-
 /* CTA
 ---------------------------------------------*/
 .cta-main-lawyers {
@@ -945,6 +903,7 @@ p {
 .social-proof {
   background: url(/img/lawyers-landing-page/guy-with-phone.jpg);
   background-size: cover;
+  background-attachment: fixed;
   background-position: 15% 0%;
   background-repeat: no-repeat; }
   .social-proof h2 {
@@ -971,26 +930,8 @@ p {
   .register-now h1 {
     font-size: 34px; } }
 .register-now button {
-  font-size: 20px;
+  font-size: 22px;
   margin-bottom: 50px; }
-
-/* Registration form
----------------------------------------------*/
-#lawyerRegistrationForm .modal-header {
-  background-color: #2877D7;
-  color: #FFFFFF; }
-#lawyerRegistrationForm .modal-title {
-  text-align: center;
-  font-size: 2.25em; }
-#lawyerRegistrationForm .close {
-  color: #FFFFFF;
-  opacity: 0.6; }
-#lawyerRegistrationForm .close:hover {
-  opacity: 0.9; }
-
-#lawyer_registration_form {
-  max-width: 400px;
-  margin: 15px auto; }
 
 /* Lawyers Profile Page
 ---------------------------------------------*/
@@ -1012,7 +953,7 @@ p {
     font-weight: bold;
     margin-bottom: 5px; }
   .lawyer-profile-header .qualifier {
-    font-size: 18px; }
+    font-size: 20px; }
   .lawyer-profile-header p {
     margin-top: 10px;
     margin-bottom: 20px; }
@@ -1045,15 +986,15 @@ p {
       margin-top: 15px; }
     .lawyer-profile-header h1 {
       margin-top: 30px;
-      font-size: 30px; }
+      font-size: 32px; }
     .lawyer-profile-header .qualifier {
-      font-size: 14px; }
+      font-size: 16px; }
     .lawyer-profile-header p {
-      font-size: 14px;
+      font-size: 16px;
       margin-top: 5px;
       margin-bottom: 0px; }
     .lawyer-profile-header h3 {
-      font-size: 20px; } }
+      font-size: 22px; } }
   @media (max-width: 400px) {
     .lawyer-profile-header .profile-img {
       max-width: 100px;
@@ -1073,7 +1014,7 @@ p {
   .lawyer-profile h5:first-of-type {
     margin-top: 5px; }
   .lawyer-profile h5 {
-    font-size: 16px;
+    font-size: 18px;
     font-weight: 400;
     margin-top: 30px;
     margin-bottom: 5px; }
@@ -1099,7 +1040,7 @@ p {
     padding-left: 10px;
     overflow: hidden; }
   .overview p {
-    font-size: 14px;
+    font-size: 16px;
     margin-bottom: 0px; }
 
 @media (max-width: 765px) {
@@ -1110,13 +1051,13 @@ p {
   .recommendation h4 {
     font-weight: bold;
     text-align: center;
-    font-size: 16px; }
+    font-size: 18px; }
   .recommendation .progress {
     margin-bottom: 5px; }
   .recommendation .progress-bar {
     background-color: #4ccf5c; }
   .recommendation p {
-    font-size: 14px;
+    font-size: 16px;
     text-align: center; }
 
 @media (max-width: 768px) {
@@ -1153,7 +1094,7 @@ p {
 ---------------------------------------------*/
 .version {
   color: #6f6f6f;
-  font-size: 16px;
+  font-size: 18px;
   font-weight: normal; }
 
 /* Garantía

@@ -3,51 +3,6 @@
 ---------------------------------------------*/
 
 
-/* FOR GLOBAL */
-
-.page-section {
-  @extend .section-padding;
-
-  h2 {
-    font-size: $h2-size - .25;
-  }
-
-  @media (max-width: 992px) {
-    h2 {
-      font-size: $h2-mobile-size;
-    }
-  }
-
-  @media (max-width: 767px) {
-    .col-xs-12 {
-      margin-bottom:40px;
-    }
-  }
-}
-
-.section-white {
-  h1, h2, h3, h4, h5 {
-    color: $background-blue;
-  }
-}
-
-.section-blue {
-  background-color: $background-blue;
-
-  h1, h2, h3, h4, h5, p {
-    color: $inverse-font-color;
-  }
-}
-
-.img-description {
-  @media (max-width: 767px) {
-    h3 {
-      margin-top: 10px;
-    }
-  }
-}
-
-
 
 /* CTA
 ---------------------------------------------*/
@@ -100,7 +55,7 @@
 .social-proof {
   background: url(/img/lawyers-landing-page/guy-with-phone.jpg);
   background-size: cover;
-  // background-attachment: fixed;
+  background-attachment: fixed;
   background-position: 15% 0%;
   background-repeat: no-repeat;
 
@@ -151,35 +106,4 @@
     font-size: $base-font-size + 4;
     margin-bottom: 50px;
   }
-}
-
-
-
-/* Registration form
----------------------------------------------*/
-
-#lawyerRegistrationForm {
-  .modal-header {
-    background-color: $background-blue;
-    color: $inverse-font-color;
-  }
-
-  .modal-title {
-    text-align: center;
-    font-size: $h2-size - 1;
-  }
-
-  .close {
-    color: $inverse-font-color;
-    opacity: 0.6;
-  }
-
-  .close:hover {
-    opacity: 0.9;
-  }
-}
-
-#lawyer_registration_form {
-  max-width: 400px;
-  margin: 15px auto;
 }
