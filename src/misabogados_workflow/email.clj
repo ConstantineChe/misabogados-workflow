@@ -43,7 +43,7 @@
                                   :content (parser/render-file "reset-password_email.html" (merge user {:reset-link link}))}]}))
 
 (defn send-email [{:keys [email subject template data]}]
-  (log/info "email: " email "subject " subject "template " template "data " data)
+  (log/info "Sending email to: " email )
   (send-message settings {:from "no-reply@misabogados.com"
                           :to email
                           :subject subject

@@ -24,8 +24,9 @@
                                                 :executed false
                                                 :type "email"})]
     (dorun (for [email schedules]
-             (do (send-email (:attributes email))
-                 (mc/update-by-id @db "schedule" (:_id email) {$set {:executed true}}))))))
+             (try (do (send-email (:attributes email))
+                      (mc/update-by-id @db "schedule" (:_id email) {$set {:executed true}}))
+                  (catch Exception e (log/error "Error sending email " email "\n" (.getMessage e))))))))
 
 (defn init-mail-scheduler!
   "Initialize email scheduler job"

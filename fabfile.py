@@ -128,9 +128,9 @@ def runapp():
 def kill(pid):
     sudo("kill -9 " + pid)
 
-def log(n=50, file=project+".log"):
+def log(n="50", file=project+".log"):
     run("ls /var/deploy/log")
-    run("tail -n %i /var/deploy/log/%s%s" % (n, instance.directory, file))
+    run("tail -n %s /var/deploy/log/%s%s" % (n, instance.directory, file))
 
 def test():
     run("echo " + instance.directory)
