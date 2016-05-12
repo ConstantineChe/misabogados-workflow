@@ -8,7 +8,8 @@
              [misabogados-workflow.db.core :refer [db oid]]
              [misabogados-workflow.email :refer [send-email]]
              [clj-time.local :as l]
-             [clj-time.core :as time]))
+             [clj-time.core :as time]
+             [clojure.tools.logging :as log]))
 
 
 (defn schedule-email [time attributes]
