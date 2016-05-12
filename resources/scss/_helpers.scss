@@ -23,10 +23,19 @@
   padding-bottom: 60px;
 }
 
+// Provides stacked columns with a bit of spacing on mobile devices
+.collapse-nicely {
+  @media (max-width: 767px) {
+     .col-xs-12 {
+      margin-bottom: 40px;
+    }
+  }
+}
+
 /* Adds helper class for removing button background */
 .btn-no-fill {
   background-color: rgba(0, 0, 0, 0);
-  color: #FFFFFF;
+  color: $inverse-font-color;
 }
 
 /* For implementing a 5 colum layout */

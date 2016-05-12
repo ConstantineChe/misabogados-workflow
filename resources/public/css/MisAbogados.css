@@ -75,9 +75,6 @@ p {
 @media (max-width: 992px) {
   .section h2 {
     font-size: 2.25em; } }
-@media (max-width: 767px) {
-  .section .col-xs-12 {
-    margin-bottom: 40px; } }
 
 .section-white h1, .section-white h2, .section-white h3, .section-white h4, .section-white h5 {
   color: #2877D7; }
@@ -146,6 +143,10 @@ p {
   margin-bottom: -60px;
   padding-top: 60px;
   padding-bottom: 60px; }
+
+@media (max-width: 767px) {
+  .collapse-nicely .col-xs-12 {
+    margin-bottom: 40px; } }
 
 /* Adds helper class for removing button background */
 .btn-no-fill {
@@ -524,17 +525,19 @@ p {
 ---------------------------------------------*/
 .categories-section h2 {
   text-align: center; }
-
 .categories-section .input-group {
   max-width: 350px;
+  padding-top: 10px;
+  padding-bottom: 10px;
   margin-left: auto;
   margin-right: auto;
   float: none; }
-
 @media (min-width: 992px) {
   .categories-section .input-group {
     padding-top: 25px;
+    padding-bottom: 0px;
     float: left; } }
+
 .categories-list {
   margin-top: 35px; }
 
@@ -545,6 +548,7 @@ p {
   background-color: #f5f5f5; }
 
 .caption h5 {
+  color: #333333;
   font-size: .85em; }
 
 @media (min-width: 992px) {
@@ -560,11 +564,11 @@ p {
   padding: 2%;
   opacity: 0;
   z-index: 2;
-  text-align: center;
-  color: #FFFFFF !important; }
+  text-align: center; }
 
 .caption-overlay h5 {
-  font-size: 1.25em;
+  color: #FFFFFF !important;
+  font-size: 1.05em;
   font-weight: bold;
   margin-top: 30px; }
 
