@@ -19,10 +19,7 @@
             [misabogados-workflow.schema :as s]
             [misabogados-workflow.flow :as flow]
             [misabogados-workflow.flow-definition :refer [steps]])
-  (:import [misabogados-workflow.model.Lead]
-           [misabogados-workflow.model.User]
-           [misabogados-workflow.model.BasicInfo]
-           org.bson.types.ObjectId))
+  (:import org.bson.types.ObjectId))
 
 (defn get-step [action]
   ((keyword action) steps))

@@ -32,7 +32,6 @@ class Instance:
         self.directory = "default/"
         self.opts = {'DATABASE_URL': 'mongodb://127.0.0.1/%s_dev' % project,
                      'PORT': '3001',
-                     'LOG_PATH': '/var/deploy/log/%s%s.log' % (self.directory, project),
                      'PAYMENT_SYSTEM': 'webpay',
                      'CURRENCY': 'CLP'}
 
@@ -109,7 +108,7 @@ def deploy(branch="master"):
                 run("rm %s.jar" % project)
             run("ln -s %s %s" % (file_name, project+".jar"))
             run("cp /var/deploy/log4j-template.properties %s" % instance.opts['LOG_CONFIG'])
-            run("sed -i.bak s/<###LOG_PATH###>/%s/g %s" % (instance.log_path, instance.opts['LOG_CONFIG']))
+            run("sed -i.bak -e 's/<###LOG_PATH###>/%s/g' %s" % (instance.log_path.replace('/', '\/'), instance.opts['LOG_CONFIG']))
     runapp()
 
 def check():
