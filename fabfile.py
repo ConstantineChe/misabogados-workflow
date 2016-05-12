@@ -43,10 +43,12 @@ class Instance:
         self.opts['PORT'] = str(8080 + Instance.websites[website]['port'])
         self.opts['COUNTRY'] = website
         self.opts['PRODUCTION'] = 'true'
-        self.opts['LOG_PATH'] = '/var/deploy/log/%s%s.log' % (self.directory, project)
         self.opts['PAYMENT_SYSTEM'] = Instance.websites[website]['psp']
         self.opts['UPLOADS_URL'] = self.directory
         self.opts['UPLOADS_PATH'] = "/var/deploy/uploads/" + self.directory
+        self.opts['LOG_CONFIG'] = "var/deploy/" + self.directory + "log4j.properties"
+        self.log_path = '/var/deploy/log/%s%s.log' % (self.directory, project)
+
 
     def staging(self, website):
         self.directory = "staging/" + Instance.websites[website]['directory']
@@ -55,10 +57,12 @@ class Instance:
         self.opts['SETTINGS_DATABASE_URL'] = 'mongodb://127.0.0.1/%s_staging_settings' % project
         self.opts['PORT'] = str(3000 + Instance.websites[website]['port'])
         self.opts['COUNTRY'] = website
-        self.opts['LOG_PATH'] = '/var/deploy/log/%s%s.log' % (self.directory, project)
         self.opts['PAYMENT_SYSTEM'] = Instance.websites[website]['psp']
         self.opts['UPLOADS_URL'] = self.directory
         self.opts['UPLOADS_PATH'] = "/var/deploy/uploads/" + self.directory
+        self.opts['LOG_CONFIG'] = "var/deploy/" + self.directory + "log4j.properties"
+        self.log_path = '/var/deploy/log/%s%s.log' % (self.directory, project)
+
 
     def get_opts_string(self):
         return ' '.join(map(lambda (k, v): k+'='+v, self.opts.iteritems()))
@@ -104,6 +108,8 @@ def deploy(branch="master"):
                     run("mv %s.jar %s_old.jar" % (project, project))
                 run("rm %s.jar" % project)
             run("ln -s %s %s" % (file_name, project+".jar"))
+            run("cp /var/deploy/log4j-template.properties %s" % instance.opts['LOG_CONFIG'])
+            run("sed -i.bak s/<###LOG_PATH###>/%s/g %s" % (instance.log_path, instance.opts['LOG_CONFIG']))
     runapp()
 
 def check():

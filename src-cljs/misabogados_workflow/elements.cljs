@@ -500,16 +500,19 @@
     (:render-type schema)))
 
 (defmethod render-form :collection [[key schema] data path attributes]
-  (let [{label :label content :field-definitions} schema
+  (let [{label :label fields :field-definitions} schema
         label (if label label (name key))
         collection {:render-type :entity
                     :label (:entity-label schema)
-                    :field-definitions content}
-        attributes (if (not attributes) :all attributes)]
+                    :field-definitions fields}
+        attributes (if (not attributes) :all attributes)
+        content (vec (for [i (range (count (get-in data (conj path key))))]
+                       (render-form [i collection] data (conj path key) attributes)))]
     (into [label]
-          (conj (vec (for [i (range (count (get-in data (conj path key))))]
-                       (render-form [i collection] data (conj path key) attributes)))
-                (btn-new-fieldset (conj path key) (str "New " (:entity-label schema)))))))
+          (if-not (= :readonly (:fields attributes))
+            (conj content
+                  (btn-new-fieldset (conj path key) (str "New " (:entity-label schema))))
+            content))))
 
 (defmethod render-form :entity [[key schema] data path attributes]
   (let [{label :label fields :field-definitions} schema
@@ -531,7 +534,7 @@
                        fields
                        schema-to-render))]
     (into [label]
-          (if (number? key)
+          (if (and (number? key) (not= :readonly (:fields attributes)))
             (conj (vec content) (btn-remove-fieldset path key (str "Remove " label)))
             content))))
 
