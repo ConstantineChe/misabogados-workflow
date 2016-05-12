@@ -96,7 +96,7 @@ def deploy(branch="master"):
         run("lein uberjar")
         if not files.exists(deploy_location+instance.directory):
             run("mkdir -p %s" % deploy_location + instance.directory)
-        if not files.exists(instance.opts['LOG_PATH']):
+        if not files.exists(instance.log_path):
             sudo("mkdir -p %s" % "/var/deploy/log/" + instance.directory)
             sudo("chown -R deploy:deploy %s" % "/var/deploy/log/")
         file_name = "%s_%s.jar" % (project, datetime.today().isoformat())
