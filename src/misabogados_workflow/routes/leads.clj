@@ -2,7 +2,6 @@
   (:require [compojure.core :refer [defroutes GET PUT POST]]
             [ring.util.http-response :refer [ok]]
             [clojure.java.io :as io]
-            [misabogados-workflow.model :refer [->Lead map->User map->BasicInfo]]
             [misabogados-workflow.layout.core :as layout]
             [misabogados-workflow.routes.lead-actions :as actions]
             [hiccup.form :as form]
