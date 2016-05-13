@@ -163,13 +163,6 @@ p {
       font-size: $h2-mobile-size;
     }
   }
-
-  // Provides stacked columns with a bit of spacing on mobile devices
-  @media (max-width: 767px) {
-    .col-xs-12 {
-      margin-bottom:40px;
-    }
-  }
 }
 
 .section-white {

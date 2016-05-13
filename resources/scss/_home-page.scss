@@ -41,25 +41,30 @@
 /* Categories Section
 ---------------------------------------------*/
 
-.categories-section h2 {
-  text-align: center;
-}
+.categories-section {
 
-.categories-section .input-group {
-  max-width: 350px;
-  margin-left: auto;
-  margin-right: auto;
-  float: none;
-}
+  h2 {
+    text-align: center;
+  }
 
-// TODO center vertically
-@media (min-width: 992px) {
-  .categories-section .input-group {
-    padding-top: 25px;
-    float: left;
+  .input-group {
+    max-width: 350px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    float: none;
+  }
+
+  // TODO center vertically
+  @media (min-width: 992px) {
+    .input-group {
+      padding-top: 25px;
+      padding-bottom: 0px;
+      float: left;
+    }
   }
 }
-
 .categories-list {
   margin-top: 35px;
 }
@@ -72,6 +77,7 @@
 }
 
 .caption h5 {
+  color: $font-color;
   font-size: .85em;
 }
 
@@ -92,11 +98,11 @@
   opacity: 0;
   z-index: 2;
   text-align: center;
-  color: $inverse-font-color !important;
 }
 
 .caption-overlay h5 {
-  font-size: 1.25em;
+  color: $inverse-font-color !important;
+  font-size: 1.05em;
   font-weight: bold;
   margin-top: 30px;
 }
