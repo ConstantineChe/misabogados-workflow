@@ -1,6 +1,6 @@
 {% extends "app.html" %}
 {% block content %}
-<form id="payment_form">
+<!-- <form id="payment_form"> -->
   <input name="code" type="hidden" value="{{payment-request.code}}">
   <input name="_id" type="hidden" value="{{payment-request._id}}">
 
@@ -14,15 +14,26 @@
         <p class="lead">{{settings.currency}} {{payment-request.amount}}</p>
       </div>
       <ul class="list-group list-group-flush text-center">
-        <li class="list-group-item"><b>client:</b> {{payment-request.client}}</li>
-        <li class="list-group-item"><b>client_email:</b> {{payment-request.client_email}}</li>
-        <li class="list-group-item"><b>lawyer:</b> {{payment-request.lawyer}}</li>
+        <li class="list-group-item"><b>Cliente:</b> {{payment-request.client}}</li>
+        <li class="list-group-item"><b>Email del cliente:</b> {{payment-request.client_email}}</li>
+        <li class="list-group-item"><b>Abogado:</b> {{payment-request.lawyer}}</li>
       </ul>
-      <div class="panel-footer">
-        <button class="btn btn-lg btn-block btn-info" data-loading-text="Cargando...">Pagar</button>
-      </div>
+
+      <form action="https://gateway.payulatam.com/ppp-web-gateway/" method="post">​
+        {% for key, value in payment-options %}
+          <input type="hidden" name="{{key|name}}" value="{{value}}">
+        {% endfor %}
+        
+        <div class="panel-footer">
+          <input type="submit" class="btn btn-lg btn-block btn-info" data-loading-text="Cargando..." value="Pagar">
+        </div>
+      </form>​
+
+      
+      
     </div>
   </div>
-</form>
+<!-- </form> -->
+
 {% endblock %}
 
