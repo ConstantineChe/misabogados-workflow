@@ -8,10 +8,6 @@
 ---------------------------------------------*/
 
 .categoria-heading {
-  padding-top: 0px;
-  padding-bottom: 0px;
-  color: $inverse-font-color;
-  text-align: center;
   background: url(/img/categoria/writing.jpeg);
   background-repeat: no-repeat;
   background-position: center 55%;
@@ -20,15 +16,6 @@
 
 .categoria-heading h1 {
   font-size: $cta-h1-size;
-  font-weight: 400;
-  text-transform: uppercase;
-  margin-top: 1.5em;
-}
-
-@media (max-width: 992px) {
-  .categoria-heading h1 {
-    margin-top: $cta-h1-mobile-size;
-  }
 }
 
 .categoria-heading p {
@@ -36,20 +23,14 @@
 }
 
 .categoria-heading button {
-  font-size: 1em;
+  font-size: .75em;
   margin-top: 15px;
-  margin-bottom: 40px;
 }
 
 
 
 /* Content
 ---------------------------------------------*/
-
-.categoria-body {
-  padding-top: 50px;
-  padding-bottom: 50px;
-}
 
 .faq a {
   color: $font-color;

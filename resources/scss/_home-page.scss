@@ -4,51 +4,8 @@
 
 
 
-/* CTA
+/* Shared CTA styles
 ---------------------------------------------*/
-
-.cta {
-  padding-top: 0px;
-  padding-bottom: 0px;
-  color: $inverse-font-color;
-  text-align: center;
-}
-
-.cta h1 {
-  font-size: $home-cta-h1-size;
-  font-weight: 400;
-  text-transform: uppercase;
-  margin-top: 4em;
-}
-
-@media (max-width: 992px) {
-  .cta h1 {
-    margin-top: $home-cta-h1-mobile-size;
-  }
-}
-
-.cta p {
-  font-size: 1.85em;
-}
-
-.cta button {
-  font-size: 1em;
-  margin-top: 40px;
-  margin-bottom: 80px;
-}
-
-@media (max-width: 992px) {
-  .cta button {
-    margin-bottom: 50px;
-  }
-}
-
-.cta h6 {
-  font-size: 1em;
-  font-weight: bold;
-  text-transform: uppercase;
-}
-
 .cta .thumbnail {
   background: transparent;
   border: none;
@@ -65,9 +22,18 @@
 
 .cta-main {
   background: url(/img/main-cta/cta-bg.jpg);
-  background-size: cover;
-  background-position: 35% 25%;
   background-repeat: no-repeat;
+  background-position: 35% 20%;
+  background-size: cover;
+}
+
+@media (max-width: 1090px) {
+  .cta-main {
+  // A hacky way to fix image limitation
+  // TODO: fix (to do with two-row to one-row navbar collapse)
+  margin-top: -15px;
+  padding-top: 15px;
+  }
 }
 
 
@@ -76,35 +42,31 @@
 ---------------------------------------------*/
 
 .categories-section {
-  background-color: $background-white;
-}
 
-.categories-section h2 {
-  color: $heading-blue;
-  text-align: center;
-  margin-bottom: 30px;
-}
+  h2 {
+    text-align: center;
+  }
 
-@media (min-width: 992px) {
-  .categories-section h2 {
-    margin-bottom: 50px;
+  .input-group {
+    max-width: 350px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    float: none;
+  }
+
+  // TODO center vertically
+  @media (min-width: 992px) {
+    .input-group {
+      padding-top: 25px;
+      padding-bottom: 0px;
+      float: left;
+    }
   }
 }
-
-.categories-section .input-group {
-  margin-bottom: 50px;
-  max-width: 350px;
-  margin-left: auto;
-  margin-right: auto;
-  float: none;
-}
-
-@media (min-width: 992px) {
-  .categories-section .input-group {
-    padding-top: 40px;
-    margin-bottom: 25px;
-    float: left;
-  }
+.categories-list {
+  margin-top: 35px;
 }
 
 .categories-list .thumbnail {
@@ -115,6 +77,7 @@
 }
 
 .caption h5 {
+  color: $font-color;
   font-size: .85em;
 }
 
@@ -135,11 +98,11 @@
   opacity: 0;
   z-index: 2;
   text-align: center;
-  color: $inverse-font-color !important;
 }
 
 .caption-overlay h5 {
-  font-size: 1.25em;
+  color: $inverse-font-color !important;
+  font-size: 1.05em;
   font-weight: bold;
   margin-top: 30px;
 }
@@ -176,15 +139,6 @@
 
 /* Laywers Section
 ---------------------------------------------*/
-
-.lawyers-section {
-  background-color: $background-blue;
-  color: $inverse-font-color;
-}
-
-.lawyers-section li {
-  font-size: $base-font-size;
-}
 
 @media (max-width: 768px) {
   .lawyer-list {
@@ -232,12 +186,7 @@
 /* Testimonies Section
 ---------------------------------------------*/
 
-.testimonies-section {
-  background-color: $background-white;
-}
-
 .testimonies-section h2 {
-  color: $heading-blue;
   padding-bottom: 40px;
 }
 
@@ -252,7 +201,6 @@
 }
 
 .testimonies-list h4 {
-  color: $heading-blue;
   text-transform: uppercase;
   font-weight: bold;
 }
@@ -296,11 +244,6 @@
 /* Garantia Section
 ---------------------------------------------*/
 
-.garantia-section {
-  background-color: $background-blue;
-  color: $inverse-font-color;
-}
-
 .garantia-section img {
   padding-top: 30px;
   max-width: 300px;
@@ -327,6 +270,7 @@
   background: url(/img/second-cta/cierre-2.jpg) no-repeat center;
   background-size: cover;
   padding-bottom: 30px;
+  margin-bottom: 0px;
 }
 
 .cta-second h2 {
