@@ -64,10 +64,14 @@
         filename (if tmp-filename (create-filename id tmp-filename))
         category (if tmp-filename
                    (assoc (:category params) :image (uploads-url filename))
-                   (:category params))]
+                   (:category params))
+        slug (if (:slug category) (:slug category) (:name category))
+        processed-slug (apply str (filter #(re-matches #"[a-z,\-]" (str %))
+                                          (str/replace (str/lower-case slug) #"\s+" "-")))]
+
     (when tmp-filename
-      (save-file (str "/tmp/" tmp-filename) filename)
-      (mc/update-by-id @db/db "categories" (oid id) {$set category}))
+      (save-file (str "/tmp/" tmp-filename) filename))
+    (mc/update-by-id @db/db "categories" (oid id) {$set (assoc category :slug processed-slug)})
     (response {:id id :status "updated"}))
   )
 
@@ -75,11 +79,14 @@
   "Create new category"
   [{params :params}]
   (let [tmp-filename (get-in params [:category :image :tmp-filename])
-        id (:_id (mc/insert-and-return @db/db "categories" (:category params)))
+        slug (if (-> params :category :slug) (-> params :category :slug) (-> params :category :name))
+        processed-slug (apply str (filter #(re-matches #"[a-z,\-]" (str %))
+                                (str/replace (str/lower-case slug) #"\s+" "-")))
+        id (:_id (mc/insert-and-return @db/db "categories" (assoc (:category params) :slug processed-slug)))
         filename (if tmp-filename (create-filename id tmp-filename))
         category (if tmp-filename
-                   (assoc (:category params) :image (uploads-url filename))
-                   (:category params))]
+                   (assoc (:category params) :image (uploads-url filename) :slug processed-slug)
+                   (assoc (:category params) :slug processed-slug))]
     (prn "tmpfile" tmp-filename)
     (when tmp-filename
       (save-file (str "/tmp/" tmp-filename) filename)
