@@ -49,7 +49,7 @@
     (swap! channels conj {:session session
                           :chan channel})
     (when-not ((keyword session) @sessions)
-        (swap! sessions assoc (keyword session) {:timeout (+ 600 (current-time))}))))
+        (swap! sessions assoc (keyword session) {:timeout (+ (* 30 60) (current-time))}))))
 
 (defn disconnect! [request channel {:keys [code reason]}]
   (let [session (:value (get (:cookies request) "JSESSIONID"))]
