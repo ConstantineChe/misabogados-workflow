@@ -55,6 +55,24 @@
 
     (assoc data :signature signature)))
 
+(defmulti construct-payment-attempt-form (fn [request payment-request date] (settings/fetch :payment_system)))
+
+(defmethod construct-payment-attempt-form "payu" [request payment-request date]
+  {:form-data (add-signature (merge payu-test-payment-data {:amount (:amount payment-request)
+                                                            :currency (settings/fetch :currency)
+                                                            :referenceCode (util/generate-hash (:_id payment-request))
+                                                            :description (:service payment-request)
+                                                            :buyerEmail (:client_email payment-request)
+                                                       }))
+   :form-path "https://gateway.payulatam.com/ppp-web-gateway/"})
+
+(defmethod construct-payment-attempt-form "webpay" [request payment-request date]
+  {:form-data {:TBK_URL_EXITO (util/full-path request "/payments/success")
+               :TBK_URL_FRACASO (util/full-path request "/payments/failure")
+               :TBK_TIPO_TRANSACCION "TR_NORMAL"
+               :TBK_MONTO (* 100 (:amount payment-request))
+               :TBK_ORDEN_COMPRA (util/generate-hash (:_id payment-request))}
+   :form-path "http://payments.misabogados.com/cljpay/tbk_bp_pago.cgi"})
 
 
 
@@ -85,24 +103,6 @@
 (defmethod get-payment-request-by-payment-code "webpay" [request]
   (mc/find-one-as-map @db "payment_requests" {:payment_log {$elemMatch {"data.TBK_ORDEN_COMPRA" (-> request :params :TBK_ORDEN_COMPRA)}}}))
 
-(defmulti construct-payment-attempt-form (fn [request payment-request date] (settings/fetch :payment_system)))
-
-(defmethod construct-payment-attempt-form "payu" [request payment-request date]
-  {:form-data (add-signature (merge payu-test-payment-data {:amount (:amount payment-request)
-                                                            :currency (settings/fetch :currency)
-                                                            :referenceCode (util/generate-hash (:_id payment-request))
-                                                            :description (:service payment-request)
-                                                            :buyerEmail (:client_email payment-request)
-                                                       }))
-   :form-path "https://gateway.payulatam.com/ppp-web-gateway/"})
-
-(defmethod construct-payment-attempt-form "webpay" [request payment-request date]
-  {:form-data {:TBK_URL_EXITO (util/full-path request "/payments/success")
-               :TBK_URL_FRACASO (util/full-path request "/payments/failure")
-               :TBK_TIPO_TRANSACCION "TR_NORMAL"
-               :TBK_MONTO (* 100 (:amount payment-request))
-               :TBK_ORDEN_COMPRA (util/generate-hash (:_id payment-request))}
-   :form-path "http://payments.misabogados.com/cljpay/tbk_bp_pago.cgi"})
 
 (defmulti confirm-payment (fn [request] (settings/fetch :payment_system)))
 
