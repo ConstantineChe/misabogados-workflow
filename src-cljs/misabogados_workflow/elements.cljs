@@ -68,7 +68,7 @@
                 :on-click #(.setSelectionRange (.-target %) 0 (count @text))
                 :on-focus #(if-not readonly (js/setTimeout (fn [_] (reset! dropdown-class "open")) 100))
                 :on-blur #(js/setTimeout (fn [_] (do (reset! dropdown-class "")
-                                             (reset! text (match @cursor)))) 100)
+                                             (reset! text (match @cursor)))) 500)
                 :on-change #(do (reset! text (-> % .-target .-value))
                                 (when-not (< (count @text) min-chars)
                                   (reset! f-opts (filter
@@ -283,7 +283,7 @@
                                                     (str year "-"
                                                          (if (= 1 (count (str month))) (str 0 month) year) "-"
                                                          (if (= 1 (count (str day))) (str 0 day) day))))))
-              (reset! cursor (let [{:keys [day year month]} %] (.toISOString (js/Date. year day month))))) false :es-ES]]
+              (reset! cursor (let [{:keys [day year month]} %] (.toISOString (js/Date. year (dec month) day))))) false :es-ES]]
        [:div.form-group.col-xs-3
         [:label.control-label (second label)]
         [:input.form-control {:type :text
