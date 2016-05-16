@@ -16,6 +16,7 @@
             [clojure.walk :as walk]
             [clj-time.local :as l]
             [misabogados-workflow.schema :as s]
+            [misabogados-workflow.settings :refer [settings]]
             [misabogados-workflow.flow :as flow]
             [misabogados-workflow.flow-definition :refer [steps]])
   (:import org.bson.types.ObjectId))
@@ -93,7 +94,8 @@
 
 (defn get-options []
   (response
-   {:lead_type_code (into [["" ""]] (map #((juxt :name :code) %) (mc/find-maps @db/db "lead_types")))
+   {:region_code (into [["" ""]] (map #((juxt :name :code) %) (:regions @settings)))
+    :lead_type_code (into [["" ""]] (map #((juxt :name :code) %) (mc/find-maps @db/db "lead_types")))
     :lead_source_code (into [["" ""]] (map #((juxt :name :code) %) (mc/find-maps @db/db "lead_sources")))
     :category_id (map #((juxt :name :_id) %) (mc/find-maps @db/db "categories"))
     :client_id (map #((juxt (fn [x] (str (:name x) " (" (:email x) ")")) :_id) %) (mc/find-maps @db/db "clients"))
