@@ -61,7 +61,7 @@
   "Update category by id."
   [id {params :params}]
   (let [tmp-filename (get-in params [:category :image :tmp-filename])
-        filename (create-filename id tmp-filename)
+        filename (if tmp-filename (create-filename id tmp-filename))
         category (if tmp-filename
                    (assoc (:category params) :image (uploads-url filename))
                    (:category params))]

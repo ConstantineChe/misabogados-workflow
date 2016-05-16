@@ -32,7 +32,6 @@ class Instance:
         self.directory = "default/"
         self.opts = {'DATABASE_URL': 'mongodb://127.0.0.1/%s_dev' % project,
                      'PORT': '3001',
-                     'LOG_PATH': '/var/deploy/log/%s%s.log' % (self.directory, project),
                      'PAYMENT_SYSTEM': 'webpay',
                      'CURRENCY': 'CLP'}
 
@@ -43,10 +42,12 @@ class Instance:
         self.opts['PORT'] = str(8080 + Instance.websites[website]['port'])
         self.opts['COUNTRY'] = website
         self.opts['PRODUCTION'] = 'true'
-        self.opts['LOG_PATH'] = '/var/deploy/log/%s%s.log' % (self.directory, project)
         self.opts['PAYMENT_SYSTEM'] = Instance.websites[website]['psp']
         self.opts['UPLOADS_URL'] = self.directory
         self.opts['UPLOADS_PATH'] = "/var/deploy/uploads/" + self.directory
+        self.opts['LOG_CONFIG'] = "/var/deploy/" + self.directory + "log4j.properties"
+        self.log_path = '/var/deploy/log/%s%s.log' % (self.directory, project)
+
 
     def staging(self, website):
         self.directory = "staging/" + Instance.websites[website]['directory']
@@ -55,10 +56,12 @@ class Instance:
         self.opts['SETTINGS_DATABASE_URL'] = 'mongodb://127.0.0.1/%s_staging_settings' % project
         self.opts['PORT'] = str(3000 + Instance.websites[website]['port'])
         self.opts['COUNTRY'] = website
-        self.opts['LOG_PATH'] = '/var/deploy/log/%s%s.log' % (self.directory, project)
         self.opts['PAYMENT_SYSTEM'] = Instance.websites[website]['psp']
         self.opts['UPLOADS_URL'] = self.directory
         self.opts['UPLOADS_PATH'] = "/var/deploy/uploads/" + self.directory
+        self.opts['LOG_CONFIG'] = "/var/deploy/" + self.directory + "log4j.properties"
+        self.log_path = '/var/deploy/log/%s%s.log' % (self.directory, project)
+
 
     def get_opts_string(self):
         return ' '.join(map(lambda (k, v): k+'='+v, self.opts.iteritems()))
@@ -93,7 +96,7 @@ def deploy(branch="master"):
         run("lein uberjar")
         if not files.exists(deploy_location+instance.directory):
             run("mkdir -p %s" % deploy_location + instance.directory)
-        if not files.exists(instance.opts['LOG_PATH']):
+        if not files.exists(instance.log_path):
             sudo("mkdir -p %s" % "/var/deploy/log/" + instance.directory)
             sudo("chown -R deploy:deploy %s" % "/var/deploy/log/")
         file_name = "%s_%s.jar" % (project, datetime.today().isoformat())
@@ -104,6 +107,8 @@ def deploy(branch="master"):
                     run("mv %s.jar %s_old.jar" % (project, project))
                 run("rm %s.jar" % project)
             run("ln -s %s %s" % (file_name, project+".jar"))
+            run("cp /var/deploy/log4j-template.properties %s" % instance.opts['LOG_CONFIG'])
+            run("sed -i.bak -e 's/<###LOG_PATH###>/%s/g' %s" % (instance.log_path.replace('/', '\/'), instance.opts['LOG_CONFIG']))
     runapp()
 
 def check():
@@ -123,9 +128,9 @@ def runapp():
 def kill(pid):
     sudo("kill -9 " + pid)
 
-def log(n=50, file=project+".log"):
+def log(n="50", file=project+".log"):
     run("ls /var/deploy/log")
-    run("tail -n %i /var/deploy/log/%s%s" % (n, instance.directory, file))
+    run("tail -n %s /var/deploy/log/%s%s" % (n, instance.directory, file))
 
 def test():
     run("echo " + instance.directory)

@@ -1,7 +1,8 @@
 (ns misabogados-workflow.email
   (:require [postal.core :refer [send-message]]
             [selmer.parser :as parser]
-            [misabogados-workflow.settings :as settings]))
+            [misabogados-workflow.settings :as settings]
+            [clojure.tools.logging :as log]))
 
 (def settings {:host "smtp.mandrillapp.com"
                :user "panduro@misabogados.com"
@@ -42,6 +43,7 @@
                                   :content (parser/render-file "reset-password_email.html" (merge user {:reset-link link}))}]}))
 
 (defn send-email [{:keys [email subject template data]}]
+  (log/info "Sending email to: " email )
   (send-message settings {:from "no-reply@misabogados.com"
                           :to email
                           :subject subject

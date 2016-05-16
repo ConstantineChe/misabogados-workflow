@@ -2,7 +2,6 @@
   (:require [compojure.core :refer [defroutes GET PUT POST]]
             [ring.util.http-response :refer [ok]]
             [clojure.java.io :as io]
-            [misabogados-workflow.model :refer [->Lead map->User map->BasicInfo]]
             [misabogados-workflow.layout.core :as layout]
             [misabogados-workflow.routes.lead-actions :as actions]
             [hiccup.form :as form]
@@ -19,10 +18,7 @@
             [misabogados-workflow.schema :as s]
             [misabogados-workflow.flow :as flow]
             [misabogados-workflow.flow-definition :refer [steps]])
-  (:import [misabogados-workflow.model.Lead]
-           [misabogados-workflow.model.User]
-           [misabogados-workflow.model.BasicInfo]
-           org.bson.types.ObjectId))
+  (:import org.bson.types.ObjectId))
 
 (defn get-step [action]
   ((keyword action) steps))

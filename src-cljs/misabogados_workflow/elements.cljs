@@ -68,7 +68,7 @@
                 :on-click #(.setSelectionRange (.-target %) 0 (count @text))
                 :on-focus #(if-not readonly (js/setTimeout (fn [_] (reset! dropdown-class "open")) 100))
                 :on-blur #(js/setTimeout (fn [_] (do (reset! dropdown-class "")
-                                             (reset! text (match @cursor)))) 100)
+                                             (reset! text (match @cursor)))) 500)
                 :on-change #(do (reset! text (-> % .-target .-value))
                                 (when-not (< (count @text) min-chars)
                                   (reset! f-opts (filter
@@ -283,7 +283,7 @@
                                                     (str year "-"
                                                          (if (= 1 (count (str month))) (str 0 month) year) "-"
                                                          (if (= 1 (count (str day))) (str 0 day) day))))))
-              (reset! cursor (let [{:keys [day year month]} %] (.toISOString (js/Date. year day month))))) false :es-ES]]
+              (reset! cursor (let [{:keys [day year month]} %] (.toISOString (js/Date. year (dec month) day))))) false :es-ES]]
        [:div.form-group.col-xs-3
         [:label.control-label (second label)]
         [:input.form-control {:type :text
@@ -496,26 +496,45 @@
 
 
 (defmulti render-form
-  (fn [[key schema] data path]
+  (fn [[key schema] data path attributes]
     (:render-type schema)))
 
 (defmethod render-form :collection [[key schema] data path attributes]
-  (let [{label :label content :field-definitions} schema
+  (let [{label :label fields :field-definitions} schema
         label (if label label (name key))
         collection {:render-type :entity
                     :label (:entity-label schema)
-                    :field-definitions content}]
+                    :field-definitions fields}
+        attributes (if (not attributes) :all attributes)
+        content (vec (for [i (range (count (get-in data (conj path key))))]
+                       (render-form [i collection] data (conj path key) attributes)))]
     (into [label]
-          (conj (vec (for [i (range (count (get-in data (conj path key))))]
-                       (render-form [i collection] data (conj path key) key attributes)))
-                (btn-new-fieldset (conj path key) (str "New " (:entity-label schema)))))))
+          (if-not (= :readonly (:fields attributes))
+            (conj content
+                  (btn-new-fieldset (conj path key) (str "New " (:entity-label schema))))
+            content))))
 
 (defmethod render-form :entity [[key schema] data path attributes]
-  (let [{label :label content :field-definitions} schema
+  (let [{label :label fields :field-definitions} schema
         label (if label label (name key))
-        content (map #(render-form % data (conj path key) attributes) content)]
+        child-attributes (if-not (= :all attributes)
+                           (if (keyword? key)
+                             (key attributes) attributes)
+                           attributes)
+        schema-to-render (filter #(not (nil? %))
+                                 (map #(if (not (#{:entity :collection} (:render-type (second %))))
+                                         (cond (= :all (:fields child-attributes)) %
+                                               (= :readonly (:fields child-attributes))
+                                               (assoc-in % [1 :args] (if-let [args (get-in % [1 :args])]
+                                                                       [(assoc (first args) :readonly true)]
+                                                                       [{:readonly true}])))
+                                         (if ((first %) child-attributes) %)) fields))
+        content (map #(render-form % data (conj path key) ((first %) child-attributes))
+                     (if (= :all child-attributes)
+                       fields
+                       schema-to-render))]
     (into [label]
-          (if (number? key)
+          (if (and (number? key) (not= :readonly (:fields attributes)))
             (conj (vec content) (btn-remove-fieldset path key (str "Remove " label)))
             content))))
 

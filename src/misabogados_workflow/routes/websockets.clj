@@ -53,7 +53,7 @@
 
 (defn disconnect! [request channel {:keys [code reason]}]
   (let [session (:value (get (:cookies request) "JSESSIONID"))]
-    (log/info "close code:" code "reason:" reason)
+    (log/debug "close code:" code "reason:" reason)
     (swap! channels #(remove #{{:chan channel :session session}} %))))
 
 (defn websocket-callbacks

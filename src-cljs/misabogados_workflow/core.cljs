@@ -256,12 +256,9 @@
 (defn process-messages [{:keys [message code] :as msg}]
   (case code
     :timeout (when-not (empty? (session/get :user))
-               (let [done (r/atom false)
-                     logged-in? (get-session! done)]
-                 (when (and @done (not @logged-in?))
-                   (u/show-modal "session-timeout")
-                   (session/put! :user {})
-                   (ac/reset-access!))))
+               (u/show-modal "session-timeout")
+               (session/put! :user {})
+               (ac/reset-access!))
     :count nil
     (prn "unknown code " code "message " msg)))
 

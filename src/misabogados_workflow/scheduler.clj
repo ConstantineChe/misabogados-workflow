@@ -8,7 +8,8 @@
              [misabogados-workflow.db.core :refer [db oid]]
              [misabogados-workflow.email :refer [send-email]]
              [clj-time.local :as l]
-             [clj-time.core :as time]))
+             [clj-time.core :as time]
+             [clojure.tools.logging :as log]))
 
 
 (defn schedule-email [time attributes]
@@ -24,8 +25,9 @@
                                                 :executed false
                                                 :type "email"})]
     (dorun (for [email schedules]
-             (do (send-email (:attributes email))
-                 (mc/update-by-id @db "schedule" (:_id email) {$set {:executed true}}))))))
+             (try (do (send-email (:attributes email))
+                      (mc/update-by-id @db "schedule" (:_id email) {$set {:executed true}}))
+                  (catch Exception e (log/error "Error sending email " email "\n" (.getMessage e))))))))
 
 (defn init-mail-scheduler!
   "Initialize email scheduler job"
