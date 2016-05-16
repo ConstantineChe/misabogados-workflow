@@ -71,7 +71,7 @@
   (let [leads (GET (str js/context "/leads") {:handler #(reset! table-data (get % "leads"))
                                 :error-handler #(js/alert (str %))})]
     (fn []
-      [:div.container
+      [:div.container-fluid
        [:h3 "Dashboard"]
        (when-let [notification (session/get :notification)]
        (js/setTimeout #(session/put! :notification nil) 5000)
