@@ -54,74 +54,17 @@
             <li class="dropdown  navbar-button">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Personas <span class="caret"></span></a>
               <ul class="dropdown-menu  categoria-list">
-                <li>
-                  <a href="/categoria/manejo-estado-de-ebriedad">Manejo en estado de ebriedad</a>
-                </li>
-                <li>
-                  <a href="/categoria/divorcio">Divorcio</a>
-                </li>
-                <li>
-                  <a href="/categoria/demanda-de-pension-alimenticia">Demanda de Pensión de alimentos</a>
-                </li>
-                <li>
-                  <a href="/categoria/mediacion-familiar">Mediación Familiar</a>
-                </li>
-                <li>
-                  <a href="/categoria/derecho-laboral">Derecho Laboral</a>
-                </li>
-                <li>
-                  <a href="/categoria/alza-de-isapres">Alza de Isapre</a>
-                </li>
-                <li>
-                  <a href="/categoria/embargos">Embargos</a>
-                </li>
-                <li>
-                  <a href="/categoria/estudio-de-titulos">Estudios de títulos</a>
-                </li>
-                <li>
-                  <a href="/categoria/juicios-de-arrendamiento">Juicios de Arrendamiento y Desalojo</a>
-                </li>
-                <li>
-                  <a href="/categoria/defensa-penal">Defensa Penal</a>
-                </li>
-                <li>
-                  <a href="/categoria/derecho-de-herencias">Herencias</a>
-                </li>
-                <li>
-                  <a href="/categoria/accidentes-de-transito">Accidente de Tránsito</a>
-                </li>
-                <li>
-                  <a href="/categoria/posesion-efectiva">Posesión Efectiva</a>
-                </li>
-                <li>
-                  <a href="/categoria/derechos-del-consumidor">Derechos del consumidor</a>
-                </li>
-                <li>
-                  <a href="/categoria/cuidado-personal">Cuidado Personal</a>
-                </li>
-                <li>
-                  <a href="/categoria/demandas-de-relacion-directa-y-regular">Derecho de Visitas (Relación Directa y Regular)</a>
-                </li>
-                <li>
-                  <a href="/categoria/querella-penal">Querella Penal</a>
-                </li>
+                {% for category in categories-persons  %}
+                <li><a href="/categoria/{{category.slug}}">{{category.name}}</a></li>
+                {% endfor %}
               </ul>
             </li>
             <li class="dropdown  navbar-button">
               <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Empresas <span class="caret"></span></a>
               <ul class="dropdown-menu  categoria-list">
-                <li>
-                  <a href="/categoria/constitucion-de-sociedades">Constitución de sociedades</a>
-                </li>
-                <li>
-                  <a href="/categoria/registro-de-marcas">Registro de Marcas</a>
-                </li>
-                <li>
-                  <a href="/categoria/deuda-y-cobro-de-deudas">Deudas y Cobro de deudas</a>
-                </li>
-                <li>
-                  <a href="/categoria/quiebra">Quiebras</a>
-                </li>
+                {% for category in categories-enterprises  %}
+                <li><a href="/categoria/{{category.slug}}">{{category.name}}</a></li>
+                {% endfor %}
               </ul>
             </li>
 

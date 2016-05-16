@@ -6,7 +6,10 @@
             [ring.util.anti-forgery :refer [anti-forgery-field]]
             [ring.middleware.anti-forgery :refer [*anti-forgery-token*]]
             [misabogados-workflow.settings :as s]
-            [clj-recaptcha.client-v2 :as c]))
+            [clj-recaptcha.client-v2 :as c]
+            [monger.collection :as mc]
+            [monger.operators :refer :all]
+            [misabogados-workflow.db.core :as db]))
 
 (declare ^:dynamic *identity*)
 (declare ^:dynamic *app-context*)
@@ -28,7 +31,9 @@
           :page template
           :settings @s/settings
           :csrf-token *anti-forgery-token*
-          :servlet-context *app-context*)))
+          :servlet-context *app-context*
+          :categories-persons (mc/find-maps @db/db "categories" {:persons true :faq_items {$exists true}} [:name :slug])
+          :categories-enterprises (mc/find-maps @db/db "categories" {:enterprises true :faq_items {$exists true}} [:name :slug]))))
     "text/html; charset=utf-8"))
 
 (defn error-page
