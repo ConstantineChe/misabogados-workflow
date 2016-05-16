@@ -19,40 +19,40 @@
 
     input))
 
-(defn- redirect [url method params]
-  (let [form (.createElement js/document "form")]
-    (aset form "action" url)
-    (aset form "method" method)
-    (aset form "enctype" "multipart/form-data")
-    (doall (map #(.appendChild form (create-hidden-input %)) params))
-    ;; (js/console.log form)
-    (.submit form)
-    ))
+;; (defn- redirect [url method params]
+;;   (let [form (.createElement js/document "form")]
+;;     (aset form "action" url)
+;;     (aset form "method" method)
+;;     (aset form "enctype" "multipart/form-data")
+;;     (doall (map #(.appendChild form (create-hidden-input %)) params))
+;;     (js/console.log form)
+;;     ;; (.submit form)
+;;     ))
 
-(.addEventListener
-  js/window
-  "DOMContentLoaded"
-  (fn []
-    (.submit (js/jQuery "form#payment_form")
-             (fn [e]
-               (this-as form
-                 (do (-> (js/jQuery form)
-                            (.find "button")
-                            (.button "loading"))
-                     (POST (str js/context "/payments/pay")
-                           {:params {:code (-> (js/jQuery "form#payment_form")
-                                               (.find "input[name='code']")
-                                               .val)
-                                     :_id (-> (js/jQuery "form#payment_form")
-                                               (.find "input[name='_id']")
-                                               .val)}
-                            :handler (fn [response]
-                                       (redirect (get response "form-path")
-                                                 "post"
-                                                 (get response "form-data")))}))
-                 (.preventDefault e))
-               ))
-    ))
+;; (.addEventListener
+;;   js/window
+;;   "DOMContentLoaded"
+;;   (fn []
+;;     (.submit (js/jQuery "form#payment_form")
+;;              (fn [e]
+;;                (this-as form
+;;                  (do (-> (js/jQuery form)
+;;                             (.find "button")
+;;                             (.button "loading"))
+;;                      (POST (str js/context "/payments/pay")
+;;                            {:params {:code (-> (js/jQuery "form#payment_form")
+;;                                                (.find "input[name='code']")
+;;                                                .val)
+;;                                      :_id (-> (js/jQuery "form#payment_form")
+;;                                                (.find "input[name='_id']")
+;;                                                .val)}
+;;                             :handler (fn [response]
+;;                                        (redirect (get response "form-path")
+;;                                                  "post"
+;;                                                  (get response "form-data")))}))
+;;                  (.preventDefault e))
+;;                ))
+;;     ))
 
 (def table-data (r/atom {}
                  ))

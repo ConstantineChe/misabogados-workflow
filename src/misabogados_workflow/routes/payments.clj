@@ -29,16 +29,16 @@
                         :merchantId "562342"
                         ;; :ApiKey "6u39nqhq8ftd0hlvnjfs66eh8c"
                         :ApiKey "MZS7GwxB7mxdyVCfb7R7Vig6c8"
-                        :referenceCode "TestPayU"
+                        ;; :referenceCode "TestPayU"
                         ;; :accountId "500537"
-                             :accountId "564865"
+                        :accountId "564865"
                         ;; :description "Test PAYU"
                         ;; :amount "3"
                         :tax "0"
                         :taxReturnBase "0"
                         ;; :signature "be2f083cb3391c84fdf5fd6176801278" 
-                        :test "0"
-                        :confirmationUrl "http://misabogados.com.co/payments/confirm"
+                        ;; :test "1"
+                        ;; :confirmationUrl "http://misabogados.com.co/payments/confirm"
                         ;; :buyerEmail "test@test.com"
                         })
 
@@ -54,19 +54,6 @@
         signature (util/md5 signature-string)]
 
     (assoc data :signature signature)))
-
-
-
-
-(defn get-payment [code request]
-  (render "payment.html"
-          {:payment-request (mc/find-one-as-map @db "payment_requests" {:code code})
-           :payment-options payu-test-payment-data}))
-
-(defmulti get-payment-request-by-payment-code (fn [request] (settings/fetch :payment_system)))
-
-(defmethod get-payment-request-by-payment-code "webpay" [request]
-  (mc/find-one-as-map @db "payment_requests" {:payment_log {$elemMatch {"data.TBK_ORDEN_COMPRA" (-> request :params :TBK_ORDEN_COMPRA)}}}))
 
 (defmulti construct-payment-attempt-form (fn [request payment-request date] (settings/fetch :payment_system)))
 
@@ -86,6 +73,36 @@
                :TBK_MONTO (* 100 (:amount payment-request))
                :TBK_ORDEN_COMPRA (util/generate-hash (:_id payment-request))}
    :form-path "http://payments.misabogados.com/cljpay/tbk_bp_pago.cgi"})
+
+
+
+(defn get-payment [code request]
+  (let [params (:params request)
+        date (t/now)
+        payment-request (mc/find-one-as-map @db "payment_requests" {:code code})
+        form (construct-payment-attempt-form request payment-request date)
+        data (:form-data form)]
+    (if payment-request
+      (do
+        (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date date
+                                                                                              :action "start_payment_attempt"
+                                                                                              :data data}}})
+        (render "payment.html"
+                {:payment-request (mc/find-one-as-map @db "payment_requests" {:code code})
+                 :payment-options (add-signature (merge payu-test-payment-data {:amount (:amount payment-request)
+                                                                                :currency (settings/fetch :currency)
+                                                                                :referenceCode (util/generate-hash (:_id payment-request))
+                                                                                :description (:service payment-request)
+                                                                                :buyerEmail (:client_email payment-request)
+                                                                                }))}))
+      {:status 404
+       })))
+
+(defmulti get-payment-request-by-payment-code (fn [request] (settings/fetch :payment_system)))
+
+(defmethod get-payment-request-by-payment-code "webpay" [request]
+  (mc/find-one-as-map @db "payment_requests" {:payment_log {$elemMatch {"data.TBK_ORDEN_COMPRA" (-> request :params :TBK_ORDEN_COMPRA)}}}))
+
 
 (defmulti confirm-payment (fn [request] (settings/fetch :payment_system)))
 
