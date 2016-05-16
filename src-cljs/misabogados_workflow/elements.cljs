@@ -234,13 +234,20 @@
           [name cursor] (prepare-input cursor form)
           {:keys [readonly]} (first attrs)]
       (when (nil? @cursor) (reset! cursor (second (first options))))
-      [:div.form-group.col-xs-6 {:key name}
-       [:label.control-label {:for name} label]
-       (into [:select.form-control {:id name
-                                    :value @cursor
-                                    :read-only readonly
-                                    :on-change #(if-not readonly (reset! cursor (-> % .-target .-value)))}]
-             (map (fn [[label value]] [:option {:key value :value value} label]) options))])))
+      (if readonly
+        [:div.form-group.col-xs-6 {:key name}
+         [:label.control-label {:for name} label]
+         [:input.form-control {:id name
+                               :type :text
+                               :read-only true
+                               :value (some (fn [[l v]] (when (= v @cursor) l)) options)}]]
+        [:div.form-group.col-xs-6 {:key name}
+         [:label.control-label {:for name} label]
+         (into [:select.form-control {:id name
+                                      :value @cursor
+                                      :read-only readonly
+                                      :on-change #(if-not readonly (reset! cursor (-> % .-target .-value)))}]
+               (map (fn [[label value]] [:option {:key value :value value} label]) options))]))))
 
 (defn input-typeahead [label cursor & attrs]
   (let [{:keys [readonly]} (first attrs)]
@@ -276,17 +283,19 @@
         [:span.input-group-addon
          {:on-click #(swap! expanded? not)}
          [:i.glyphicon.glyphicon-calendar]]]
-        [datepicker year month day expanded? true #(deref cursor)
-         #(if @cursor (swap! cursor (fn [date]
-                                       (let [{:keys [day year month]} %]
-                                         (s/replace date (re-pattern (first (s/split date #"T")))
-                                                    (str year "-"
-                                                         (if (= 1 (count (str month))) (str 0 month) year) "-"
-                                                         (if (= 1 (count (str day))) (str 0 day) day))))))
-              (reset! cursor (let [{:keys [day year month]} %] (.toISOString (js/Date. year (dec month) day))))) false :es-ES]]
+        (when-not readonly
+          [datepicker year month day expanded? true #(deref cursor)
+                      #(if @cursor (swap! cursor (fn [date]
+                                                   (let [{:keys [day year month]} %]
+                                                     (s/replace date (re-pattern (first (s/split date #"T")))
+                                                                (str year "-"
+                                                                     (if (= 1 (count (str month))) (str 0 month) year) "-"
+                                                                     (if (= 1 (count (str day))) (str 0 day) day))))))
+                           (reset! cursor (let [{:keys [day year month]} %] (.toISOString (js/Date. year (dec month) day))))) false :es-ES])]
        [:div.form-group.col-xs-3
         [:label.control-label (second label)]
         [:input.form-control {:type :text
+                              :read-only readonly
                               :value @time
                               :on-change #(let [value (-> % .-target .-value)]
                                             (when (re-matches #"^(0[0-9]|1[0-9]|2[0-3]):[0-5][0-9]$"

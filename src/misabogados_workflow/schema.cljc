@@ -142,7 +142,7 @@
                                             :edit-legend "Edit Client"
                                             :label-fn (fn [entity] (str (:name entity) " (" (:email entity) ")"))
                                             :schema client})
-  (text-field :region_name "Region")
+  (field :dropdown :region_code "Region")
   (text-field :city "City")
   (field :typeahead :category_id "Category")
   (field :dropdown :lead_type_code "Lead Type")
