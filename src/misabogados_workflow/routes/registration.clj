@@ -116,7 +116,6 @@
       (if (= (:new-password params) (:confirm-password params))
         (do (db/update-user (str (:_id user)) {:password (encrypt (:new-password params))})
             (-> (redirect "/")
-                (assoc :session (assoc session :identity (-> user :email keyword)))
                 (assoc-in [:flash :messages :success :password-reset]
                                      "New password was set")))
         (-> (redirect (str "/reset-password/" code))

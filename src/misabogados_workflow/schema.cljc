@@ -81,6 +81,8 @@
   (text-field :name "Title")
   (text-field :quote "Quote")
   (text-field :slug "Slug")
+  (markdown-field :intro "Intro")
+  (markdown-field :pricing "Pricing description")
   (field :image :image "Image" "/admin/categories/file")
   (checkbox-field :persons "Persons")
   (checkbox-field :enterprises "Enterprises")

@@ -56,7 +56,7 @@
                    [:td (get-in lead ["client" 0 "phone"])]
                    [:td (let [problem (get lead "problem")]
                           (if (< 80 (count problem)) (str (subs problem  0 80) "...") problem))]
-                   [:td (get lead "region_name")]
+                   [:td (get lead "region_code")]
                    [:td (get lead "city")]
                    [:td (get lead "lead_source_code")]
                    [:td (get-in lead ["lawyer" 0 "name"])]
@@ -71,7 +71,7 @@
   (let [leads (GET (str js/context "/leads") {:handler #(reset! table-data (get % "leads"))
                                 :error-handler #(js/alert (str %))})]
     (fn []
-      [:div.container
+      [:div.container-fluid
        [:h3 "Dashboard"]
        (when-let [notification (session/get :notification)]
        (js/setTimeout #(session/put! :notification nil) 5000)
