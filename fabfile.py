@@ -43,7 +43,7 @@ class Instance:
         self.opts['COUNTRY'] = website
         self.opts['PRODUCTION'] = 'true'
         self.opts['PAYMENT_SYSTEM'] = Instance.websites[website]['psp']
-        self.opts['UPLOADS_URL'] = self.directory
+        self.opts['UPLOADS_URL'] = "/" + self.directory
         self.opts['UPLOADS_PATH'] = "/var/deploy/uploads/" + self.directory
         self.opts['LOG_CONFIG'] = "/var/deploy/" + self.directory + "log4j.properties"
         self.log_path = '/var/deploy/log/%s%s.log' % (self.directory, project)
@@ -57,7 +57,7 @@ class Instance:
         self.opts['PORT'] = str(3000 + Instance.websites[website]['port'])
         self.opts['COUNTRY'] = website
         self.opts['PAYMENT_SYSTEM'] = Instance.websites[website]['psp']
-        self.opts['UPLOADS_URL'] = self.directory
+        self.opts['UPLOADS_URL'] = "/" + self.directory
         self.opts['UPLOADS_PATH'] = "/var/deploy/uploads/" + self.directory
         self.opts['LOG_CONFIG'] = "/var/deploy/" + self.directory + "log4j.properties"
         self.log_path = '/var/deploy/log/%s%s.log' % (self.directory, project)
