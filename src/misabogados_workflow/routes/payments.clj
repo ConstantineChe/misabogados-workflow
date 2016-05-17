@@ -182,7 +182,7 @@
 
 (defroutes payments-integration-routes
   (POST "/payments/confirm" []
-        c-p)
+        confirm)
   (POST "/payments/failure" []
         failure)
   (POST "/payments/success" []
