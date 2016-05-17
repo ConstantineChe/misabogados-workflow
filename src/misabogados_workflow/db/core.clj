@@ -106,13 +106,12 @@
               {:or "ü" :rp "u"}
               {:or "ñ" :rp "n"}])
 
-(connect!)
 
-(let [categories (mc/find-maps @db "categories")]
-  (dorun (for [category categories
-               :let [slug (apply str (filter #(re-matches #"[a-z],\-")
-                                     (reduce (fn [slg chr] (clojure.string/replace slg (re-pattern (:or chr)) (:rp chr)))
-                                             (clojure.string/lower-case (clojure.string/replace (:slug category) #"\s+" "-"))
-                                              charmap)))]]
-           (mc/update @db "categories" {:_id (:_id category)} {$set {:slug slug}})
-           )))
+(defn update-cats [rq] (let [categories (mc/find-maps @db "categories")]
+                       (dorun (for [category categories
+                                    :let [slug (apply str (filter #(re-matches #"[a-z],\-")
+                                                                  (reduce (fn [slg chr] (clojure.string/replace slg (re-pattern (:or chr)) (:rp chr)))
+                                                                          (clojure.string/lower-case (clojure.string/replace (:slug category) #"\s+" "-"))
+                                                                          charmap)))]]
+                                (mc/update @db "categories" {:_id (:_id category)} {$set {:slug slug}})
+                                ))))
