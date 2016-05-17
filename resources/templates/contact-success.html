@@ -48,7 +48,7 @@
           <img src="/img/contact-success/group_hug@2.png" class="img-responsive  center-block" alt="" />
         </div>
         <div class="col-lg-8  col-md-8  col-sm-8  col-xs-8">
-          <p>Más de 2.500 personas ya confiaron en nosotros.</p>
+          <p>Más de 6000 personas ya confiaron en nosotros.</p>
           <p>¡Gracias!</p>
         </div>
       </div>
@@ -97,7 +97,8 @@
           <img src="/img/contact-success/emergency@2.png" class="img-responsive  center-block" alt="" />
           <h3>¿Emergencia?</h3>
           <p>Llámanos de inmediato:</p>
-          <p><a href="tel:+56229402121">+56(2)29402121</a></p>
+
+          <p><a href="tel:{{settings.contact_phone|remove:\"()- \"}}"><span class="glyphicon  glyphicon-earphone  glyphicon-left"></span>{{settings.contact_phone}}</a></p>
         </div>
       </div>
     </div>
