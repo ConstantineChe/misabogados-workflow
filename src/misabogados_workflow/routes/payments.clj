@@ -151,7 +151,7 @@
                                                                                                         "4" "payment_attempt_succeded"
                                                                                                         "6" "payment_attempt_failed") 
                                                                                           :data params}}})
-    result))
+    {:status 200}))
 
 (defn failure [request]
     (let [params (:params request)
