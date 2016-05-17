@@ -348,8 +348,7 @@
                            entity-options opts utl entity-id edit-fn root-key-edit get-entity-fn)]
        [(create-entity-modal edit-legend (str id "-create") create-schema selected-entity
                              entity-options opts utl cursor entity-label create-fn) ]
-       ])))
-
+       ]))).
 (defn input-markdown
   "textarea with markdown->html preview."
   [label path & attrs]
