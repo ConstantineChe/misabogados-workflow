@@ -39,7 +39,7 @@
         message (read-transit msg)]
     (case (:code message)
       :extend (swap! sessions assoc-in [(keyword session) :timeout]
-                     (+ 600 (current-time)))
+                     (+ (* 30 60) (current-time)))
       (doseq [channel @channels]
         (async/send! (:chan channel) msg)))))
 

@@ -13,6 +13,7 @@
             [misabogados-workflow.settings :as settings]
             [buddy.auth :refer [authenticated?]]
             [misabogados-workflow.schema :as s]
+            [markdown.core :refer [md-to-html-string]]
             ))
 
 (defn home-page [request]
@@ -44,7 +45,9 @@
   {:status "ok"})
 
 (defn show-category [slug]
-  (let [category (mc/find-one-as-map @db/db "categories" {:slug slug})]
+  (let [category (mc/find-one-as-map @db/db "categories" {:slug slug})
+        category (assoc category :intro [:safe (md-to-html-string (:intro category))]
+                        :pricing [:safe (md-to-html-string (:pricing category))])]
     (render "category.html" {:title (:name category)
                              :category category})))
 
