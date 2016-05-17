@@ -47,7 +47,8 @@
                  [clj-recaptcha "0.0.2"]
                  [org.clojure/core.async "0.2.374"]
                  [com.cognitect/transit-clj "0.8.285"]
-                 [clojurewerkz/quartzite "2.0.0"]]
+                 [clojurewerkz/quartzite "2.0.0"]
+                 [org.apache.commons/commons-lang3 "3.4"]]
 
   :min-lein-version "2.0.0"
   :uberjar-name "misabogados-workflow.jar"

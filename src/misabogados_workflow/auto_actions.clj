@@ -6,9 +6,10 @@
    [misabogados-workflow.scheduler :refer [schedule-email]]
    [clj-time.core :as t]
    [clj-time.local :as l]
-   [clj-time.format :as f]))
+   [clj-time.format :as f])
+  (:import [org.apache.commons.lang3 LocaleUtils]))
 
-(def date-time-formatter (f/formatter "d 'de' MMMM 'de' yyyy H:mm"))
+(def date-time-formatter (f/with-locale (f/formatter "d 'de' MMMM 'de' yyyy H:mm") (LocaleUtils/toLocale "es_US")))
 
 (f/unparse date-time-formatter (l/local-now))
 

@@ -111,6 +111,7 @@
   (field :image :profile_picture "Profile picture" "admin/lawyers/file")
   (checkbox-field :certified "Certified lawyer")
   (field :textarea :description "Description")
+  (field :textarea :quote "Quote")
   (embeds-many :experience "Experience"
                (text-field :place "Where")
                (text-field :position "Position")
