@@ -106,6 +106,8 @@
   (text-field :address "Dirección")
   (text-field :years_of_experience "Years of experience")
   (text-field :slug "Slug")
+  (field :number :rating "X% de los usuarios dice que sí")
+  (field :date-time :join_date ["miembro desde" "."])
   (field :image :profile_picture "Profile picture" "admin/lawyers/file")
   (checkbox-field :certified "Certified lawyer")
   (field :textarea :description "Description")
