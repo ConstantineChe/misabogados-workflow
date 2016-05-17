@@ -16,7 +16,7 @@
 (defn get-settings [request]
   (response @sttngs/settings))
 
-(defn update-settxings [request]
+(defn update-settings [request]
   (sttngs/save! (get-in request [:params :settings]))
   (response {:status :updated}))
 
