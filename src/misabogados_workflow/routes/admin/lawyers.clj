@@ -60,7 +60,7 @@
   "Update lawyer by id."
   [id {params :params}]
   (let [tmp-filename (get-in params [:lawyer :profile_picture :tmp-filename])
-        filename (create-filename id tmp-filename)
+        filename (if tmp-filename (create-filename id tmp-filename))
         lawyer (if tmp-filename
                    (assoc (:lawyer params) :profile_picture (uploads-url filename))
                    (:lawyer params))]

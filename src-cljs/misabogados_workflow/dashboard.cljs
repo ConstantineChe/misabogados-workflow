@@ -56,7 +56,7 @@
                    [:td (get-in lead ["client" 0 "phone"])]
                    [:td (let [problem (get lead "problem")]
                           (if (< 80 (count problem)) (str (subs problem  0 80) "...") problem))]
-                   [:td (get lead "region_name")]
+                   [:td (get lead "region_code")]
                    [:td (get lead "city")]
                    [:td (get lead "lead_source_code")]
                    [:td (get-in lead ["lawyer" 0 "name"])]
