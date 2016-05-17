@@ -3,12 +3,16 @@
             [gws.mandrill.api.messages :as messages]
             [misabogados-workflow.db.core :as db :refer [oid]]
             [monger.operators :refer :all]
-            [monger.collection :as mc]))
+            [monger.collection :as mc]
+            [misabogados-workflow.settings :as s]))
 
 (def client (client/create "4FCHR1oN9NUam7sBXzgHEw"))
 
 (defn send-email [msg]
   (messages/send client msg))
+
+(defn- get-template-name [key default]
+  (if (clojure.string/blank? (s/fetch key)) default (s/fetch key)))
 
 (defn email-params [name lead]
   (let [lawyer (mc/find-one-as-map @db/db "lawyers" {:_id (-> lead :matches last :lawyer_id)})
@@ -28,7 +32,7 @@
 ;;     send_mail("dani@misabogados.com", subject, body)
 ;;   end
 
-      :derivation_email {:template_name "mail-referral"
+      :derivation_email {:template_name (get-template-name :derivation "mail-referral")
                          :template_content []
                          :message {:to [{:email "dani@misabogados.com"
                                          :name "Dani"}]
@@ -48,7 +52,7 @@
 
 ;;     send_mail(lead.user.email, subject, body)
 ;;   end
-      :meeting_email {:template_name "mail-reuni-n-agendada"
+      :meeting_email {:template_name (get-template-name :meeting "mail-reuni-n-agendada")
                       :template_content []
                       :message {:to [{:email (:email client)
                                       :name (:name client)}]
@@ -74,7 +78,7 @@
 
 ;;     send_mail([lead.user.email, lead.matches.last.workflow_lawyer.email], subject, body)
 ;;   end
-      :phone_coordination_email {:template_name "presentation-email"
+      :phone_coordination_email {:template_name (get-template-name :phone_coordination "presentation-email")
                                  :template_content []
                                  :message {:to [{:email (:email client)
                                                  :name (:name client)}
@@ -103,7 +107,7 @@
 ;;     # send_mail(lead.user.email, subject, body)
 ;;     mail(to: lead.user.email, subject: subject, body: body, content_type: "text/html", from:
 ;;   end
-      :thanks_email {:template_name "agradecimiento"
+      :thanks_email {:template_name (get-template-name :thanks "agradecimiento")
                       :template_content []
                       :message {:to [{:email (:email client)
                                       :name (:name client)}]
@@ -121,7 +125,7 @@
 ;;     body = mandrill_template("mail-de-extensi-n", merge_vars)
 ;;     send_mail(lead.user.email, subject, body)
 ;;   end
-      :extension_email {:template_name "mail-de-extensi-n"
+      :extension_email {:template_name (get-template-name :extension "mail-de-extensi-n")
                         :template_content []
                         :message {:to [{:email (:email client)
                                         :name (:name client)}]
