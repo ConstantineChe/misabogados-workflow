@@ -106,7 +106,7 @@
 
 
 (defn update-cats [rq] (let [categories (mc/find-maps @db "categories")]
-                         (for [category categories
+                         (dorun (for [category categories
                                  :let [slug (apply str (filter #(re-matches #"[a-z,\-]" (str %))
                                                                (reduce (fn [slg chr]
                                                                          (prn slg)
@@ -116,6 +116,7 @@
                                                                        (clojure.string/lower-case (clojure.string/replace
                                                                                                    (:slug category) #"\s+" "-"))
                                                                        charmap)))]]
-                           (log/info slug)
-                           ;(mc/update @db "categories" {:_id (:_id category)} {$set {:slug slug}})
-                             )))
+                             (do (log/info slug)
+                                 slug)
+                                        ;(mc/update @db "categories" {:_id (:_id category)} {$set {:slug slug}})
+                             ))))
