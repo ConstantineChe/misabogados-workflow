@@ -120,7 +120,10 @@
                (text-field :place "Where")
                (text-field :from "From")
                (text-field :to "To")
-               (text-field :degree "Degree")))
+               (text-field :degree "Degree"))
+  (embeds-many :feedback "Feedback"
+               (text-field :client_name "Clients name")
+               (field :textarea :text "Text")))
 
 (defentity settings "Ajustes"
   (text-field :full_country_name "País")

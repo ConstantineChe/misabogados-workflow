@@ -59,7 +59,8 @@
 (defn show-lawyer [slug]
   (let [lawyer (mc/find-one-as-map @db/db "lawyers" {:slug slug})]
     (render "lawyers_profile.html" {:title  (:name lawyer)
-                                    :lawyer lawyer})))
+                                    :lawyer (assoc lawyer :join_date (try (.getYear (:join_date lawyer))
+                                                                          (catch Exception e "")))})))
 
 (defroutes home-routes
   (GET "/" [] home-page)
