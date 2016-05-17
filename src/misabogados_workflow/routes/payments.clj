@@ -37,8 +37,8 @@
                         :tax "0"
                         :taxReturnBase "0"
                         ;; :signature "be2f083cb3391c84fdf5fd6176801278" 
-                        ;; :test "1"
-                        ;; :confirmationUrl "http://misabogados.com.co/payments/confirm"
+                        :test "1"
+                        :confirmationUrl "http://staging.misabogados.com.co/payments/confirm"
                         ;; :buyerEmail "test@test.com"
                         })
 
@@ -100,6 +100,9 @@
 
 (defmulti get-payment-request-by-payment-code (fn [request] (settings/fetch :payment_system)))
 
+(defmethod get-payment-request-by-payment-code "payu" [request]
+  (mc/find-one-as-map @db "payment_requests" {:payment_log {$elemMatch {"data.referenceCode" (-> request :params :referenceCode)}}}))
+
 (defmethod get-payment-request-by-payment-code "webpay" [request]
   (mc/find-one-as-map @db "payment_requests" {:payment_log {$elemMatch {"data.TBK_ORDEN_COMPRA" (-> request :params :TBK_ORDEN_COMPRA)}}}))
 
@@ -129,16 +132,31 @@
        :body {:error "Codigo de pago no es valido. Probablemente el comprobante ha sido cambiado, el enlace nuevo debe ser en su correo."}}
       )))
 
-(defn confirm [request]
+(defmulti confirm-payment (fn [request] (settings/fetch :payment_system)))
+
+(defmethod confirm-payment "webpay" [request]
   (let [params (:params request)
         [payment-request result message] (confirm-payment request)]
-    (println (str "----CONFIRM " params) )
     (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date (t/now)
                                                                                           :action "confirm_payment_attempt"
                                                                                           :result result
                                                                                           :message message
                                                                                           :data params}}})
     result))
+
+(defmethod confirm-payment "payu" [request]
+  (let [params (:params request)
+        payment-request (get-payment-request-by-payment-code request)]
+    (mc/update @db "payment_requests" {:_id (:_id payment-request)} {$push {:payment_log {:date (t/now)
+                                                                                          :action (case (:state_pol params) 
+                                                                                                        "4" "payment_attempt_succeded"
+                                                                                                        "6" "payment_attempt_failed") 
+                                                                                          :data params}}})
+    ""))
+
+(defn confirm [request] 
+  (println (str "----CONFIRM " (:params request)))
+  (confirm-payment request))
 
 (defn failure [request]
     (let [params (:params request)

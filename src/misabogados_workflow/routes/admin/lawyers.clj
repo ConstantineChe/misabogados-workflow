@@ -17,6 +17,13 @@
             [misabogados-workflow.access-control :as ac]
             [buddy.auth.accessrules :refer [restrict]]))
 
+(defn wrap-datetime [params]
+  (walk/postwalk
+   #(if (and (string? %)
+             (re-matches #"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}).+" %))
+      (try (l/to-local-date-time %)
+           (catch Exception e  %)) %)
+   params))
 
 (defn file-path [filename]
   (if (:production env)
@@ -59,7 +66,8 @@
 (defn update-lawyer
   "Update lawyer by id."
   [id {params :params}]
-  (let [tmp-filename (get-in params [:lawyer :profile_picture :tmp-filename])
+  (let [params (wrap-datetime params)
+        tmp-filename (get-in params [:lawyer :profile_picture :tmp-filename])
         filename (if tmp-filename (create-filename id tmp-filename))
         lawyer (if tmp-filename
                    (assoc (:lawyer params) :profile_picture (uploads-url filename))
@@ -73,7 +81,8 @@
 (defn create-lawyer
   "Create new lawyer"
   [{params :params}]
-  (let [id (:_id (mc/insert-and-return @db/db "lawyers" (:lawyer params)))
+  (let [params (wrap-datetime params)
+        id (:_id (mc/insert-and-return @db/db "lawyers" (:lawyer params)))
         tmp-filename (get-in params [:lawyer :profile_picture :tmp-filename])
         filename (if tmp-filename (create-filename id tmp-filename))
         lawyer (if tmp-filename

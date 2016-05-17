@@ -34,7 +34,7 @@
 
       :derivation_email {:template_name (get-template-name :derivation "mail-referral")
                          :template_content []
-                         :message {:to [{:email "dani@misabogados.com"
+                         :message {:to [{:email (if (= "cl" (s/fetch :country)) "dani@misabogados.com" (s/fetch :contact_email)) 
                                          :name "Dani"}]
                                    :from_email "no-reply@misabogados.com"
                                    :subject (str "Nueva derivación: " (:name client) " - " (:name lawyer))
