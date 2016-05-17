@@ -19,7 +19,8 @@
             [misabogados-workflow.settings :as settings]
             [clj-time.coerce :as c]
             [clj-time.core :as t]
-            [monger.joda-time]))
+            [monger.joda-time]
+            [clojure.tools.logging :as log]))
 
 ;; payu co
 ;; Api key: MZS7GwxB7mxdyVCfb7R7Vig6c8 Api login:cjhH8yIfa9gOC8F Public key:PK6437ce6m5Ohcgl76647q68ch Merchant Id:562342 Accout Id: 564865
@@ -101,7 +102,7 @@
 (defmulti get-payment-request-by-payment-code (fn [request] (settings/fetch :payment_system)))
 
 (defmethod get-payment-request-by-payment-code "payu" [request]
-  (mc/find-one-as-map @db "payment_requests" {:payment_log {$elemMatch {"data.referenceCode" (-> request :params :referenceCode)}}}))
+  (mc/find-one-as-map @db "payment_requests" {:payment_log {$elemMatch {"data.referenceCode" (-> request :params :reference_sale)}}}))
 
 (defmethod get-payment-request-by-payment-code "webpay" [request]
   (mc/find-one-as-map @db "payment_requests" {:payment_log {$elemMatch {"data.TBK_ORDEN_COMPRA" (-> request :params :TBK_ORDEN_COMPRA)}}}))
@@ -152,10 +153,10 @@
                                                                                                         "4" "payment_attempt_succeded"
                                                                                                         "6" "payment_attempt_failed") 
                                                                                           :data params}}})
-    ""))
+    {:status 200}))
 
 (defn confirm [request] 
-  (println (str "----CONFIRM " (:params request)))
+  (log/warn "Confirming payment with params:" request)
   (confirm-payment request))
 
 (defn failure [request]
