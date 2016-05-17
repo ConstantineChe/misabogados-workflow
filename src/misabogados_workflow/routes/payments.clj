@@ -19,7 +19,8 @@
             [misabogados-workflow.settings :as settings]
             [clj-time.coerce :as c]
             [clj-time.core :as t]
-            [monger.joda-time]))
+            [monger.joda-time]
+            [clojure.tools.logging :as log]))
 
 ;; payu co
 ;; Api key: MZS7GwxB7mxdyVCfb7R7Vig6c8 Api login:cjhH8yIfa9gOC8F Public key:PK6437ce6m5Ohcgl76647q68ch Merchant Id:562342 Accout Id: 564865
@@ -152,10 +153,10 @@
                                                                                                         "4" "payment_attempt_succeded"
                                                                                                         "6" "payment_attempt_failed") 
                                                                                           :data params}}})
-    ""))
+    {:status 200}))
 
 (defn confirm [request] 
-  (println (str "----CONFIRM " (:params request)))
+  (log/warn "Confirming payment with params:" request)
   (confirm-payment request))
 
 (defn failure [request]
