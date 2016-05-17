@@ -104,8 +104,7 @@
               :or "ó" :rp "o"
               :or "ú" :rp "u"
               :or "ü" :rp "u"
-              :or "ñ" :rp "n"
-              :or "\s+" :rp "-"})
+              :or "ñ" :rp "n"})
 
 (connect!)
 
@@ -113,7 +112,7 @@
   (dorun (for [category categories
                :let [slug (aply str (filter #(re-matches #"[a-z],\-")
                                      (reduce (fn [slg chr] (clojure.string/replace slg (re-pattern (:or chr)) (:rp chr)))
-                                             (clojure.string/lower-case (:slug category))
+                                             (clojure.string/lower-case (clojure.string/replace (:slug category) #"\s+" "-"))
                                               charmap)))]]
            (mc/update @db "categories" {:_id (:_id category)} {$set {:slug slug}})
            )))
