@@ -81,10 +81,10 @@
                        :dest-dir   "resources/public/css/"
                        :executable "sassc"
                        :args       ["-m" "-t" "nested"]}
-          :production {:source-dir "scss/"
+          :production {:source-dir "resources/scss/"
                        :dest-dir   "resources/public/css/"
                        :executable "sassc"
-                       :args       ["-I" "resources/scss/" "-t" "compressed"]}}}
+                       :args       ["-t" "compressed"]}}}
 
   :clean-targets ^{:protect false} [:target-path [:cljsbuild :builds :app :compiler :output-dir] [:cljsbuild :builds :app :compiler :output-to]]
   :cljsbuild
