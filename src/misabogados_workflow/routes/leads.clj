@@ -57,7 +57,7 @@
   (let [params (-> request :params :lead)
         params (objectify-ids params)
         lead (mc/insert-and-return @db/db "leads" (assoc params :date_created (new java.util.Date)))]
-
+    (actions/do-lead-actions (:actions params) lead)
     (response {:staus "ok" :id (:_id lead)})))
 
 (defn update-lead-data [lead id]
