@@ -47,7 +47,12 @@
 (defn show-category [slug]
   (let [category (mc/find-one-as-map @db/db "categories" {:slug slug})
         category (assoc category :intro [:safe (md-to-html-string (:intro category))]
-                        :pricing [:safe (md-to-html-string (:pricing category))])]
+                        :pricing [:safe (md-to-html-string (:pricing category))])
+        category (assoc category :faq_items (map (fn [faq-item]
+                                                   {:id (if-let [id (:id faq-item)] id) (.indexOf (:faq_items category) faq-item)
+                                                    :name (:name faq-item)
+                                                   :text (md-to-html-string (:text faq-item))})
+                                                 (:faq_items category)))]
     (render "category.html" {:title (:name category)
                              :category category})))
 
@@ -72,5 +77,4 @@
   (GET "/info_para_abogados" [] (render "info_para_abogados.html" {:title "Información para los Abogados"}))
   (GET "/como_funciona" [] (render "como_funciona.html" {:title "¿Cómo funciona?"}))
   (GET "/precios" [] (render "precios.html" {:title "Precios"}))
-  (GET "/categories_json" [] (map (fn [i] {:id (:slug i) :name (:name i)}) (mc/find-maps @db/db "categories")))
-  (GET "/update-cats" [] db/update-cats))
+  (GET "/categories_json" [] (map (fn [i] {:id (:slug i) :name (:name i)}) (mc/find-maps @db/db "categories"))))

@@ -64,7 +64,8 @@
     (if-not (:verified user)
       (do
         (db/update-user (str (:_id user)) {:verified true})
-        (let [updated-session (assoc (:session request) :identity (keyword (:email user)))]
+        (let [updated-session (assoc (:session request) :identity (keyword (:email user))
+                                     :role (keyword (:role user)))]
           (-> (redirect "/")
               (assoc :session updated-session)
               (assoc-in [:flash :messages :success :verified] "Su email se ha verificado."))))
