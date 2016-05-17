@@ -53,10 +53,11 @@
    params))
 
 (defn create-lead-ajax [request]
-  (let [params (assoc (-> request :params :lead) :matches [(-> request :params :lead :matches)])
-        params (assoc-in params [:matches 0 :meetings] [(get-in params [:matches 0 :meetings])])
+  (clojure.pprint/pprint request)
+  (let [params (-> request :params :lead)
         params (objectify-ids params)
         lead (mc/insert-and-return @db/db "leads" (assoc params :date_created (new java.util.Date)))]
+
     (response {:staus "ok" :id (:_id lead)})))
 
 (defn update-lead-data [lead id]
