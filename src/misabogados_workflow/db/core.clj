@@ -2,7 +2,8 @@
     (:require [monger.core :as mg]
               [monger.collection :as mc]
               [monger.operators :refer :all]
-              [config.core :refer [env]])
+              [config.core :refer [env]]
+              [clojure.tools.logging :as log])
     (:import org.bson.types.ObjectId))
 
 
@@ -115,6 +116,6 @@
                                                                        (clojure.string/lower-case (clojure.string/replace
                                                                                                    (:slug category) #"\s+" "-"))
                                                                        charmap)))]]
-                           (prn slug)
+                           (log/info slug)
                            ;(mc/update @db "categories" {:_id (:_id category)} {$set {:slug slug}})
                              )))
