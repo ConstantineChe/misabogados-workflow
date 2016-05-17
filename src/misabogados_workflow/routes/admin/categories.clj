@@ -66,7 +66,7 @@
                    (assoc (:category params) :image (uploads-url filename))
                    (:category params))
         slug (if (:slug category) (:slug category) (:name category))
-        processed-slug (apply str (filter #(re-matches #"[a-z,\-]" (str %))
+        processed-slug (apply str (filter #(re-matches #"[a-z\-]" (str %))
                                           (str/replace (str/lower-case slug) #"\s+" "-")))]
 
     (when tmp-filename
@@ -80,7 +80,7 @@
   [{params :params}]
   (let [tmp-filename (get-in params [:category :image :tmp-filename])
         slug (if (-> params :category :slug) (-> params :category :slug) (-> params :category :name))
-        processed-slug (apply str (filter #(re-matches #"[a-z,\-]" (str %))
+        processed-slug (apply str (filter #(re-matches #"[a-z\-]" (str %))
                                 (str/replace (str/lower-case slug) #"\s+" "-")))
         id (:_id (mc/insert-and-return @db/db "categories" (assoc (:category params) :slug processed-slug)))
         filename (if tmp-filename (create-filename id tmp-filename))
