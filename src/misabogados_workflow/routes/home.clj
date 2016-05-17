@@ -72,5 +72,4 @@
   (GET "/info_para_abogados" [] (render "info_para_abogados.html" {:title "Información para los Abogados"}))
   (GET "/como_funciona" [] (render "como_funciona.html" {:title "¿Cómo funciona?"}))
   (GET "/precios" [] (render "precios.html" {:title "Precios"}))
-  (GET "/categories_json" [] (map (fn [i] {:id (:slug i) :name (:name i)}) (mc/find-maps @db/db "categories")))
-  (GET "/update-cats" [] db/update-cats))
+  (GET "/categories_json" [] (map (fn [i] {:id (:slug i) :name (:name i)}) (mc/find-maps @db/db "categories"))))
