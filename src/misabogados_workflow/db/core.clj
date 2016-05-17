@@ -98,13 +98,13 @@
 
 
 
-(def charmap {:or "í" :rp "i"
-              :or "é" :rp "e"
-              :or "á" :rp "a"
-              :or "ó" :rp "o"
-              :or "ú" :rp "u"
-              :or "ü" :rp "u"
-              :or "ñ" :rp "n"})
+(def charmap [{:or "í" :rp "i"}
+              {:or "é" :rp "e"}
+              {:or "á" :rp "a"}
+              {:or "ó" :rp "o"}
+              {:or "ú" :rp "u"}
+              {:or "ü" :rp "u"}
+              {:or "ñ" :rp "n"}])
 
 (connect!)
 
