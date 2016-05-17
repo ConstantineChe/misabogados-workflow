@@ -18,6 +18,27 @@
             [config.core :refer [env]]
             [ring.util.response :refer [redirect response]]))
 
+(def charmap [{:or "í" :rp "i"}
+              {:or "é" :rp "e"}
+              {:or "á" :rp "a"}
+              {:or "ó" :rp "o"}
+              {:or "ú" :rp "u"}
+              {:or "ü" :rp "u"}
+              {:or "ñ" :rp "n"}])
+
+(defn create-slug
+  [name]
+(apply str (filter #(re-matches #"[a-z\-]" (str %))
+                   (reduce (fn [slg chr]
+                             (prn slg)
+                             (clojure.string/replace slg
+                                                     (re-pattern (:or chr))
+                                                     (:rp chr)))
+                           (clojure.string/lower-case (clojure.string/replace
+                                                       name #"\s+" "-"))
+                           charmap)))
+  )
+
 
 (defn file-path [filename]
   (if (:production env)
@@ -65,13 +86,12 @@
         category (if tmp-filename
                    (assoc (:category params) :image (uploads-url filename))
                    (:category params))
-        slug (if (:slug category) (:slug category) (:name category))
-        processed-slug (apply str (filter #(re-matches #"[a-z\-]" (str %))
-                                          (str/replace (str/lower-case slug) #"\s+" "-")))]
+        slug-source (if (:slug category) (:slug category) (:name category))
+        slug (create-slug slug-source)]
 
     (when tmp-filename
       (save-file (str "/tmp/" tmp-filename) filename))
-    (mc/update-by-id @db/db "categories" (oid id) {$set (assoc category :slug processed-slug)})
+    (mc/update-by-id @db/db "categories" (oid id) {$set (assoc category :slug slug)})
     (response {:id id :status "updated"}))
   )
 
@@ -79,14 +99,13 @@
   "Create new category"
   [{params :params}]
   (let [tmp-filename (get-in params [:category :image :tmp-filename])
-        slug (if (-> params :category :slug) (-> params :category :slug) (-> params :category :name))
-        processed-slug (apply str (filter #(re-matches #"[a-z\-]" (str %))
-                                (str/replace (str/lower-case slug) #"\s+" "-")))
-        id (:_id (mc/insert-and-return @db/db "categories" (assoc (:category params) :slug processed-slug)))
+        slug-source (if (-> params :category :slug) (-> params :category :slug) (-> params :category :name))
+        slug (create-slug slug-source)
+        id (:_id (mc/insert-and-return @db/db "categories" (assoc (:category params) :slug slug)))
         filename (if tmp-filename (create-filename id tmp-filename))
         category (if tmp-filename
-                   (assoc (:category params) :image (uploads-url filename) :slug processed-slug)
-                   (assoc (:category params) :slug processed-slug))]
+                   (assoc (:category params) :image (uploads-url filename) :slug slug)
+                   (assoc (:category params) :slug slug))]
     (prn "tmpfile" tmp-filename)
     (when tmp-filename
       (save-file (str "/tmp/" tmp-filename) filename)
