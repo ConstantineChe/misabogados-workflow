@@ -134,6 +134,12 @@
   (embeds-many :regions "Regions"
                (text-field :code "Code")
                (text-field :name "Name"))
+  ;; (embeds-one :custom-email-templates "Custom email templates")
+  (text-field :derivation "Derivation email")
+  (text-field :meeting "Meeting email")
+  (text-field :phone_coordination "Phone coordination email")
+  (text-field :thanks "Thanks email")
+  (text-field :extension "Extension email")
   (embeds-many :payment_system_options "Payment system options"
                (text-field :key "Key")
                (text-field :value "Value")))
