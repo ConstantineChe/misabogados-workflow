@@ -81,6 +81,8 @@
   (text-field :name "Title")
   (text-field :quote "Quote")
   (text-field :slug "Slug")
+  (markdown-field :intro "Intro")
+  (markdown-field :pricing "Pricing description")
   (field :image :image "Image" "/admin/categories/file")
   (checkbox-field :persons "Persons")
   (checkbox-field :enterprises "Enterprises")
@@ -132,6 +134,12 @@
   (embeds-many :regions "Regions"
                (text-field :code "Code")
                (text-field :name "Name"))
+  ;; (embeds-one :custom-email-templates "Custom email templates")
+  (text-field :derivation "Derivation email")
+  (text-field :meeting "Meeting email")
+  (text-field :phone_coordination "Phone coordination email")
+  (text-field :thanks "Thanks email")
+  (text-field :extension "Extension email")
   (embeds-many :payment_system_options "Payment system options"
                (text-field :key "Key")
                (text-field :value "Value")))

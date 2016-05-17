@@ -28,5 +28,4 @@
                                  :subject "Meeting"
                                  :data {:name (:name client)
                                         :time meeting-time-formatted
-                                        :lawyer (:name lawyer)}} )
-    ))
+                                        :lawyer (:name lawyer)}})))

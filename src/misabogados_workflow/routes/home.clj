@@ -13,6 +13,7 @@
             [misabogados-workflow.settings :as settings]
             [buddy.auth :refer [authenticated?]]
             [misabogados-workflow.schema :as s]
+            [markdown.core :refer [md-to-html-string]]
             ))
 
 (defn home-page [request]
@@ -44,7 +45,9 @@
   {:status "ok"})
 
 (defn show-category [slug]
-  (let [category (mc/find-one-as-map @db/db "categories" {:slug slug})]
+  (let [category (mc/find-one-as-map @db/db "categories" {:slug slug})
+        category (assoc category :intro [:safe (md-to-html-string (:intro category))]
+                        :pricing [:safe (md-to-html-string (:pricing category))])]
     (render "category.html" {:title (:name category)
                              :category category})))
 
@@ -69,4 +72,5 @@
   (GET "/info_para_abogados" [] (render "info_para_abogados.html" {:title "Información para los Abogados"}))
   (GET "/como_funciona" [] (render "como_funciona.html" {:title "¿Cómo funciona?"}))
   (GET "/precios" [] (render "precios.html" {:title "Precios"}))
-  (GET "/categories_json" [] (map (fn [i] {:id (:slug i) :name (:name i)}) (mc/find-maps @db/db "categories"))))
+  (GET "/categories_json" [] (map (fn [i] {:id (:slug i) :name (:name i)}) (mc/find-maps @db/db "categories")))
+  (GET "/update-cats" [] db/update-cats))

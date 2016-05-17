@@ -17,7 +17,7 @@
   (response @sttngs/settings))
 
 (defn update-settings [request]
-  (sttngs/save! (get-in request [:params :settings])) 
+  (sttngs/save! (get-in request [:params :settings]))
   (response {:status :updated}))
 
 (defroutes settings-admin

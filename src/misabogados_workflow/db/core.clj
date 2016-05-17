@@ -93,3 +93,25 @@
 
 (defn get-payment-request-by-webpay-payment-code [code]
   (mc/find-one-as-map @db "payment_requests" {:payment_log {$elemMatch {"data.TBK_ORDEN_COMPRA" code}}}))
+
+
+
+
+
+(def charmap [{:or "í" :rp "i"}
+              {:or "é" :rp "e"}
+              {:or "á" :rp "a"}
+              {:or "ó" :rp "o"}
+              {:or "ú" :rp "u"}
+              {:or "ü" :rp "u"}
+              {:or "ñ" :rp "n"}])
+
+
+(defn update-cats [rq] (let [categories (mc/find-maps @db "categories")]
+                       (dorun (for [category categories
+                                    :let [slug (apply str (filter #(re-matches #"[a-z],\-" (str %))
+                                                                  (reduce (fn [slg chr] (clojure.string/replace slg (re-pattern (:or chr)) (:rp chr)))
+                                                                          (clojure.string/lower-case (clojure.string/replace (:slug category) #"\s+" "-"))
+                                                                          charmap)))]]
+                                (mc/update @db "categories" {:_id (:_id category)} {$set {:slug slug}})
+                                ))))
