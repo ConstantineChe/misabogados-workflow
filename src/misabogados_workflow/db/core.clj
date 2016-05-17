@@ -114,7 +114,7 @@
                                                                                                  (re-pattern (:or chr))
                                                                                                  (:rp chr)))
                                                                        (clojure.string/lower-case (clojure.string/replace
-                                                                                                   (:slug category) #"\s+" "-"))
+                                                                                                   (:name category) #"\s+" "-"))
                                                                        charmap)))]]
                                         (mc/update @db "categories" {:_id (:_id category)} {$set {:slug slug}})
                              ))))
