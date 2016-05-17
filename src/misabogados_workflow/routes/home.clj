@@ -49,7 +49,7 @@
         category (assoc category :intro [:safe (md-to-html-string (:intro category))]
                         :pricing [:safe (md-to-html-string (:pricing category))])
         category (assoc category :faq_items (map (fn [faq-item]
-                                                   {:id (:id faq-item)
+                                                   {:id (if-let [id (:id faq-item)] id (.indexOf (:faq_items category) faq-item))
                                                     :name (:name faq-item)
                                                    :text (md-to-html-string (:text faq-item))})
                                                  (:faq_items category)))]
