@@ -110,7 +110,7 @@
 
 (let [categories (mc/find-maps @db "categories")]
   (dorun (for [category categories
-               :let [slug (aply str (filter #(re-matches #"[a-z],\-")
+               :let [slug (apply str (filter #(re-matches #"[a-z],\-")
                                      (reduce (fn [slg chr] (clojure.string/replace slg (re-pattern (:or chr)) (:rp chr)))
                                              (clojure.string/lower-case (clojure.string/replace (:slug category) #"\s+" "-"))
                                               charmap)))]]
