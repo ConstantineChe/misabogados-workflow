@@ -85,6 +85,22 @@
                                                           ))} "Guardar"]]
              (map #(el/action-button lead-data % (str "lead/" id "/action/") "#dashboard") @step-actions))])))
 
+(defn lead-actions [actions]
+  (fn [] [:fieldset
+          [:legend "Actions"]
+          (doall (map (fn [[name label]]
+                        (let [cursor (r/cursor actions [name])]
+                          [:div.form-group {:key name} [:label
+                                                        [:input {:type :checkbox
+                                                                 :value @cursor
+                                                                 :on-change #(reset! cursor (-> % .-target .-checked))}]
+                                                        label]]))
+                      {:derivation_email "Mail enviar a derivación (a Dani)"
+                       :meeting_email "Mail consejos para reunión (al cliente)"
+                       :phone_coordination_email "Mail coordinación telefónica (al cliente y al abogado)"
+                       :thanks_email "Mail de agradecimiento (al cliente)"
+                       :extension_email "Mail de Extensión (al cliente)"
+                       :trello_email "Nuevo asunto en trello"}))]))
 
 (defn new-lead []
   (let [lead-data (r/atom {})
@@ -98,21 +114,7 @@
 ;       (str "form data: " @lead-data) [:br]
 ;       (str "clients: " (:client_id (:lead @options)))
        (el/create-form "New Lead" s/lead [lead-data options util])
-       [:fieldset
-        [:legend "Actions"]
-        (doall (map (fn [[name label]]
-                      (let [cursor (r/cursor actions [name])]
-                        [:div.form-group {:key name} [:label
-                                                      [:input {:type :checkbox
-                                                               :value @cursor
-                                                               :on-change #(reset! cursor (-> % .-target .-checked))}]
-                                                      label]]))
-                    {:derivation_email "Mail enviar a derivación (a Dani)"
-                     :meeting_email "Mail consejos para reunión (al cliente)"
-                     :phone_coordination_email "Mail coordinación telefónica (al cliente y al abogado)"
-                     :thanks_email "Mail de agradecimiento (al cliente)"
-                     :extension_email "Mail de Extensión (al cliente)"
-                     :trello_email "Nuevo asunto en trello"}))]
+       [lead-actions actions]
        [:button.btn.btn-primary {:type :button
                                  :on-click #(if true ;;(validate-lead-form @lead-data)
                                               (do (create-lead (:lead @lead-data) @actions)
@@ -135,6 +137,7 @@
 ;       (str "options: " (dissoc @options :lead)) [:br]
 ;       (str "actions: " @actions)
        (el/create-form "Edit Lead" s/lead [lead-data options util])
+       [lead-actions actions]
        [:button.btn.btn-primary {:type :button
                                  :on-click #(if true ;;(validate-lead-form @lead-data)
                                               (do (update-lead (session/get :current-lead-id) (:lead @lead-data) @actions)
