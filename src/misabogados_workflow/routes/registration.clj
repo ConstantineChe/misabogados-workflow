@@ -118,7 +118,7 @@
         (do (db/update-user (str (:_id user)) {:password (encrypt (:new-password params))})
             (-> (redirect "/")
                 (assoc-in [:flash :messages :success :password-reset]
-                                     "New password was set")))
+                                     "La contraseña ha cambiado con satisfecho")))
         (-> (redirect (str "/reset-password/" code))
             (assoc-in [:flash :messages :errors :error] "La contraseña y su confirmación no coinciden"))))))
 
