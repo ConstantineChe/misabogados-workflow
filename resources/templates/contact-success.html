@@ -60,33 +60,9 @@
         <div class="panel-heading">
           <h3>Mientras tanto</h3>
           <p>Puedes consultar parte del contenido más popular según nuestros usuarios:</p>
-          <ul>
-            <li>
-              <a href="http://blog.misabogados.com/es/que-tipos-de-infracciones-a-la-ley-de-transito-existen/">
-                ¿Qué tipos de infracciones a la ley de tránsito existen?
-              </a>
-            </li>
-            <li>
-              <a href="http://blog.misabogados.com/es/ley-emilia/">
-                Lo nuevo de la Ley Emilia
-              </a>
-            </li>
-            <li>
-              <a href="https://blog.misabogados.com/es/demanda-por-pension-alimenticia/">
-                Pasos para demandar por pensión alimenticia
-              </a>
-            </li>
-            <li>
-              <a href="http://blog.misabogados.com/es/que-tipos-de-infracciones-a-la-ley-de-transito-existen/">
-                Protección a la maternidad
-              </a>
-            </li>
-            <li>
-              <a href="https://blog.misabogados.com/es/proteccion-ala-maternidad/">
-                Nueva ley para trabajadoras de casa particular
-              </a>
-            </li>
-          </ul>
+          {% ifequal settings.country "cl" %}{% include "_posts_block_cl.html" %}{% endifequal %}
+          {% ifequal settings.country "co" %}{% include "_posts_block_co.html" %}{% endifequal %}
+          {% ifequal settings.country "mx" %}{% include "_posts_block_mx.html" %}{% endifequal %}
           <button type="button" class="btn  btn-success" href="/">No, gracias, llévame al Home <span class="glyphicon  glyphicon-menu-right"></span></button>
         </div>
       </div>
