@@ -80,7 +80,12 @@
 (defn get-payment [code request]
   (let [params (:params request)
         date (t/now)
-        payment-request (mc/find-one-as-map @db "payment_requests" {:code code})
+        payment-request (first (mc/aggregate @db "payment_requests"
+                                             [{"$match" {:code code}}
+                                              {"$lookup" {:from "lawyers"
+                                                          :localField :lawyer
+                                                          :foreignField :_id
+                                                          :as :lawyer}}]))
         form (construct-payment-attempt-form request payment-request date)
         data (:form-data form)]
     (if payment-request
@@ -89,7 +94,7 @@
                                                                                               :action "start_payment_attempt"
                                                                                               :data data}}})
         (render "payment.html"
-                {:payment-request (mc/find-one-as-map @db "payment_requests" {:code code})
+                {:payment-request payment-request
                  :payment-options (add-signature (merge payu-test-payment-data {:amount (:amount payment-request)
                                                                                 :currency (settings/fetch :currency)
                                                                                 :referenceCode (util/generate-hash (:_id payment-request))
