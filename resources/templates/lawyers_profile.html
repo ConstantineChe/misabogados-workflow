@@ -171,14 +171,14 @@
   <div class="container">
     <h2>Opiniones de clientes</h2>
     <ul>
+      {% for feedback in lawyer.feedback%}
       <li>
-        <h4>Rafael Maldonado</h4>
+        <h4>{{feedback.client_name}}</h4>
         <small>11 de april de 2015</small>
-        <p>
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed hendrerit sem sed lacus pellentesque, ac gravida sem ultrices. Etiam ut nisi tellus. Nunc a nibh quam. Integer a dignissim leo.
-        </p>
+        <p>{{feedback.text}}</p>
         <img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-white.png" alt="" /><img src="/img/lawyer-profile/star-white.png" alt="" />
       </li>
+      {% endfor %}
     </ul>
     <button type="button" class="btn  btn-lg  btn-warning  center-block">Ver más opiniones</button>
   </div>
