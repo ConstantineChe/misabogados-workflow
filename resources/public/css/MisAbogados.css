@@ -66,12 +66,13 @@ p {
     margin-top: 1.25em; }
   .jumbotron button {
     margin-bottom: 50px; } }
-.section-padding, .section, .static-content {
+.section-padding, .section, .background-overlay, .darken-bg, .greenen-bg, .bluen-bg, .bluen-bg-dark, .static-content {
   padding-top: 60px;
   padding-bottom: 60px; }
 
 .section h2 {
-  font-size: 3em; }
+  font-size: 3em;
+  margin-bottom: 30px; }
 @media (max-width: 992px) {
   .section h2 {
     font-size: 2.25em; } }
@@ -133,6 +134,13 @@ p {
     top: 70px; } }
 /* Helpers
 ---------------------------------------------*/
+/* Helper method for vertically aligning two columns */
+.vertically-center-cols {
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
+  margin-right: -4px; }
+
 /* Adds a black overlay with transparency */
 .dark-bg {
   background-color: rgba(0, 0, 34, 0.49804); }
@@ -141,29 +149,25 @@ p {
 .green-bg {
   background-color: rgba(92, 184, 92, 0.75); }
 
+/* Counters section padding */
+.background-overlay, .darken-bg, .greenen-bg, .bluen-bg, .bluen-bg-dark {
+  margin-top: -60px;
+  margin-bottom: -60px; }
+
 /* Adds a dark overlay with transparency */
 .darken-bg {
-  background-color: rgba(85, 85, 85, 0.49804);
-  margin-top: -60px;
-  margin-bottom: -60px;
-  padding-top: 60px;
-  padding-bottom: 60px; }
+  background-color: rgba(85, 85, 85, 0.49804); }
 
 /* Adds a green overlay with transparency */
 .greenen-bg {
-  background-color: rgba(92, 184, 92, 0.75);
-  margin-top: -60px;
-  margin-bottom: -60px;
-  padding-top: 60px;
-  padding-bottom: 60px; }
+  background-color: rgba(92, 184, 92, 0.75); }
 
 /* Adds a blue overlay with transparency */
 .bluen-bg {
-  background-color: rgba(40, 119, 215, 0.49804);
-  margin-top: -60px;
-  margin-bottom: -60px;
-  padding-top: 60px;
-  padding-bottom: 60px; }
+  background-color: rgba(40, 119, 215, 0.49804); }
+
+.bluen-bg-dark {
+  background-color: rgba(40, 119, 215, 0.90361); }
 
 @media (max-width: 767px) {
   .collapse-nicely .col-xs-12 {
@@ -907,6 +911,9 @@ p {
 
 /* Access New Clients
 ---------------------------------------------*/
+.access-new-clients h2 {
+  margin-bottom: 15px; }
+
 /* Grow Your Business With Technology
 ---------------------------------------------*/
 .grow-with-technology h2 {
@@ -924,8 +931,7 @@ p {
   background-position: 15% 0%;
   background-repeat: no-repeat; }
   .social-proof h2 {
-    margin-top: 100px;
-    margin-bottom: 30px; }
+    margin-top: 100px; }
   .social-proof p {
     margin-bottom: 100px; }
 
@@ -943,9 +949,8 @@ p {
 
 /* Register now section
 ---------------------------------------------*/
-@media (max-width: 992px) {
-  .register-now h1 {
-    font-size: 34px; } }
+.register-now h2 {
+  margin-bottom: 15px; }
 .register-now button {
   font-size: 22px;
   margin-bottom: 50px; }
@@ -1231,10 +1236,13 @@ p {
   background-size: cover; }
   .como-funciona-heading h1 {
     margin-top: 3em;
-    margin-bottom: 3em; }
+    margin-bottom: 3em;
+    text-transform: none; }
 
 /* Service Overview
 ---------------------------------------------*/
+.service-overview h2 {
+  margin-bottom: 15px; }
 .service-overview img {
   max-width: 125px;
   margin-bottom: 20px; }
@@ -1255,16 +1263,31 @@ p {
   .lawyer-network-features p {
     overflow: hidden; }
 
-.vertical-align-helper {
-  display: inline-block;
-  height: 100%;
-  vertical-align: middle; }
-
-.vertical-align-img {
-  vertical-align: middle; }
-
 .lawyer-network-screenshot {
   max-width: 350px; }
+
+/* Ongoing support
+---------------------------------------------*/
+.ongoing-support {
+  background: url(/img/como-funciona/handshake.jpg);
+  background-repeat: no-repeat;
+  background-position: 57% 0%;
+  background-size: cover; }
+
+/* Guarantee Section
+---------------------------------------------*/
+.guarantee-section h2 {
+  text-align: center; }
+
+/* Find your lawyer
+---------------------------------------------*/
+.find-your-lawyer {
+  background: url(/img/como-funciona/two-guys-at-computer.jpg);
+  background-repeat: no-repeat;
+  background-position: 36% 52%;
+  background-size: cover; }
+  .find-your-lawyer h2 {
+    margin-bottom: 15px; }
 
 /*--------------------------------------------
  * Precios Page Sections                     *

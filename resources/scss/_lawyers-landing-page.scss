@@ -19,6 +19,11 @@
 /* Access New Clients
 ---------------------------------------------*/
 
+.access-new-clients {
+  h2 {
+    margin-bottom: 15px;
+  }
+}
 
 
 
@@ -51,7 +56,6 @@
 
   h2 {
     margin-top: 100px;
-    margin-bottom: 30px;
   }
 
   p {
@@ -86,10 +90,8 @@
 
 .register-now {
 
-  @media (max-width: 992px) {
-    h1 {
-      font-size: 34px;
-    }
+  h2 {
+    margin-bottom: 15px;
   }
 
   button {
