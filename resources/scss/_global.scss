@@ -8,12 +8,12 @@
 $base-font-size: 18px;
 
 $home-cta-h1-size: 3.1em;
-$home-cta-h1-mobile-size: 1.25em;
+$home-cta-h1-mobile-size: 2.4em;
 $cta-h1-size: 2.25em;
 $cta-h1-mobile-size: 1.5em;
 
 $h2-size: 3.25em;
-$h2-mobile-size: 2.25em;
+$h2-mobile-size: 2.2em;
 
 $font-color: #333333;
 $inverse-font-color: #FFFFFF;
@@ -140,6 +140,7 @@ p {
 @media (max-width: 992px) {
   .jumbotron {
     h1 {
+      font-size: $home-cta-h1-mobile-size;
       margin-top: $home-cta-h1-mobile-size;
     }
 
@@ -165,6 +166,13 @@ p {
   @media (max-width: 992px) {
     h2 {
       font-size: $h2-mobile-size;
+    }
+  }
+
+  /* Center headings on mobile */
+  @media (max-width: 768px) {
+    .col-xs-12 h2 {
+      text-align: center;
     }
   }
 }

@@ -28,7 +28,7 @@ h2 {
 
 @media (max-width: 992px) {
   h2 {
-    font-size: 2.25em; } }
+    font-size: 2.2em; } }
 p {
   font-size: 18px; }
 
@@ -63,19 +63,25 @@ p {
     font-size: 3.25em; } }
 @media (max-width: 992px) {
   .jumbotron h1 {
-    margin-top: 1.25em; }
+    font-size: 2.4em;
+    margin-top: 2.4em; }
   .jumbotron button {
     margin-bottom: 50px; } }
 .section-padding, .section, .background-overlay, .darken-bg, .greenen-bg, .bluen-bg, .bluen-bg-dark, .static-content {
   padding-top: 60px;
   padding-bottom: 60px; }
 
-.section h2 {
-  font-size: 3em;
-  margin-bottom: 30px; }
-@media (max-width: 992px) {
+.section {
+  /* Center headings on mobile */ }
   .section h2 {
-    font-size: 2.25em; } }
+    font-size: 3em;
+    margin-bottom: 30px; }
+  @media (max-width: 992px) {
+    .section h2 {
+      font-size: 2.2em; } }
+  @media (max-width: 768px) {
+    .section .col-xs-12 h2 {
+      text-align: center; } }
 
 .section-white h1, .section-white h2, .section-white h3, .section-white h4, .section-white h5 {
   color: #2877D7; }
@@ -677,6 +683,9 @@ p {
   border-left: none; }
 
 @media (max-width: 787px) {
+  .testimonies-section h2 {
+    padding-bottom: 20px; }
+
   .testimonies-list {
     padding-left: 20px; }
 
@@ -723,7 +732,7 @@ p {
 
 @media (max-width: 992px) {
   .cta h2 {
-    margin-top: 1.25em; } }
+    margin-top: 2.4em; } }
 /* Radio Agricultura Player
 ---------------------------------------------*/
 .radioAgriculturaPlayer {
@@ -1259,12 +1268,17 @@ p {
   .lawyer-network-features img {
     float: left;
     margin-top: 2px;
-    margin-right: 30px; }
+    margin-right: 30px;
+    margin-bottom: 5px; }
+  @media (max-width: 768px) {
+    .lawyer-network-features img {
+      margin-left: 10px; } }
   .lawyer-network-features p {
     overflow: hidden; }
 
 .lawyer-network-screenshot {
-  max-width: 350px; }
+  max-width: 350px;
+  width: 100%; }
 
 /* Ongoing support
 ---------------------------------------------*/
