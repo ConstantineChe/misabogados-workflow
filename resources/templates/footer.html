@@ -46,9 +46,19 @@
             <div class="col-lg-2  col-md-2  col-sm-4  col-xs-12">
               <h4>REDES SOCIALES</h4>
               <div class="social-icons">
+                {% ifequal settings.country "cl" %}
                 <a href="https://www.facebook.com/misabogados"><i class="fa  fa-facebook-square"></i></a>
                 <a href="https://twitter.com/misabogadosCL"><i class="fa  fa-twitter-square"></i></a>
                 <a href="https://plus.google.com/+Misabogados"><i class="fa  fa-google-plus-square"></i></a>
+                {% endifequal %}
+                {% ifequal settings.country "co" %}
+                <a href="https://www.facebook.com/Misabogadoscom-Colombia-920380174714337"><i class="fa  fa-facebook-square"></i></a>
+                <a href="https://twitter.com/misabogadosCO"><i class="fa  fa-twitter-square"></i></a>
+                {% endifequal %}
+                {% ifequal settings.country "mx" %}
+                <a href="https://www.facebook.com/misabogadosmexico/"><i class="fa  fa-facebook-square"></i></a>
+                <a href="https://twitter.com/misabogadosM"><i class="fa  fa-twitter-square"></i></a>
+                {% endifequal %}
               </div>
 
 
