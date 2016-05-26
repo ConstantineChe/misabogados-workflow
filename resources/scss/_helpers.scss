@@ -1,6 +1,15 @@
 /* Helpers
 ---------------------------------------------*/
 
+/* Helper method for vertically aligning two columns */
+.vertically-center-cols {
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
+  // the following hacking around a whitespace issue
+  margin-right: -4px;
+}
+
 // TODO refactor these colour overlay styles
 /* Adds a black overlay with transparency */
 .dark-bg {
@@ -12,31 +21,39 @@
   background-color: rgba(92, 184, 92, 0.75);
 }
 
-/* Adds a dark overlay with transparency */
-.darken-bg {
-  background-color: rgba(85, 85, 85, 0.498039);
+/* Adds a blue overlay with transparency */
+.blue-bg {
+  background-color: rgba(40, 119, 215, 0.803614);
+}
+
+/* Counters section padding */
+.background-overlay {
+  @extend .section-padding;
   margin-top: -60px;
   margin-bottom: -60px;
-  padding-top: 60px;
-  padding-bottom: 60px;
+}
+
+/* Adds a dark overlay with transparency */
+.darken-bg {
+  @extend .background-overlay;
+  background-color: rgba(85, 85, 85, 0.498039);
 }
 
 /* Adds a green overlay with transparency */
 .greenen-bg {
+  @extend .background-overlay;
   background-color: rgba(92, 184, 92, 0.75);
-  margin-top: -60px;
-  margin-bottom: -60px;
-  padding-top: 60px;
-  padding-bottom: 60px;
 }
 
 /* Adds a blue overlay with transparency */
 .bluen-bg {
+  @extend .background-overlay;
   background-color: rgba(40, 119, 215, 0.498039);
-  margin-top: -60px;
-  margin-bottom: -60px;
-  padding-top: 60px;
-  padding-bottom: 60px;
+}
+
+.bluen-bg-dark {
+  @extend .background-overlay;
+  background-color: rgba(40, 119, 215, 0.803614);
 }
 
 // Provides stacked columns with a bit of spacing on mobile devices
