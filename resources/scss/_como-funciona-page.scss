@@ -10,13 +10,21 @@
 .como-funciona-heading {
   background: url(/img/como-funciona/couple-at-computer.jpg);
   background-repeat: no-repeat;
-  background-position: center 30%;
+  background-position: center 25%;
   background-size: cover;
 
+  // TODO refactor this common pattern
   h1 {
     margin-top: 3em;
     margin-bottom: 3em;
     text-transform: none;
+  }
+
+  @media (max-width: 768px) {
+    h1 {
+      margin-top: 2em;
+      margin-bottom: 2em;
+    }
   }
 }
 

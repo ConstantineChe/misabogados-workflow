@@ -21,6 +21,11 @@
   background-color: rgba(92, 184, 92, 0.75);
 }
 
+/* Adds a blue overlay with transparency */
+.blue-bg {
+  background-color: rgba(40, 119, 215, 0.803614);
+}
+
 /* Counters section padding */
 .background-overlay {
   @extend .section-padding;
@@ -48,7 +53,7 @@
 
 .bluen-bg-dark {
   @extend .background-overlay;
-  background-color: rgba(40, 119, 215, 0.903614);
+  background-color: rgba(40, 119, 215, 0.803614);
 }
 
 // Provides stacked columns with a bit of spacing on mobile devices
