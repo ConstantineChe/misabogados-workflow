@@ -53,7 +53,7 @@
         <div class="panel panel-default accordion-cta">
           <div class="panel-heading">
             <h4 class="panel-title">¿No encontraste lo que buscabas?</h4>
-            <button type="button" class="btn btn-primary">Contáctanos para contactarte con un Abogado</button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#contactForm">Contáctanos para contactarte con un Abogado</button>
           </div>
         </div>
 
@@ -72,9 +72,9 @@
 
             <form>
               <div class="form-group  contact-panel-form">
-                <textarea class="form-control" rows="8" id="message" placeholder="¿Qué estás buscando? ¿Qué necesitas? Descríbenos tu problema aquí."></textarea>
+                <textarea id="sidebar_problem" class="form-control" rows="8" id="message" placeholder="¿Qué estás buscando? ¿Qué necesitas? Descríbenos tu problema aquí."></textarea>
               </div>
-              <button type="submit" class="btn  btn-success  btn-lg  contact-panel-form-btn">Comienza ahora <span class="glyphicon  glyphicon-menu-right"></span></button>
+              <button id="sidebar_start_button" type="button" class="btn  btn-success  btn-lg  contact-panel-form-btn" data-toggle="modal" data-target="#contactForm">Comienza ahora <span class="glyphicon  glyphicon-menu-right"></span></button>
             </form>
           </div>
         </div>
@@ -96,6 +96,10 @@
   $('.collapse').removeClass('in');
   $(location.hash + '_collapse').collapse('show');
   }
+  
+  $('#sidebar_start_button').click(function () {
+  $('#contact_form [name="problem"]').val($('#sidebar_problem').val());
+  });
   });
 </script>
 {% endblock %}
