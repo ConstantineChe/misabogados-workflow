@@ -177,6 +177,18 @@ p {
   }
 }
 
+/* For stacking sections of same color */
+.section-extended {
+  padding-top: 0px;
+}
+
+@media (max-width: 768px) {
+  .section-extended{
+    // TODO this is hacky
+    margin-top: -40px;
+  }
+}
+
 .section-white {
   h1, h2, h3, h4, h5 {
     color: $background-blue;

@@ -40,7 +40,7 @@
 
 
 <!-- How it works -->
-<div class="section  section-white">
+<div class="section  section-extended  section-white">
   <div class="container">
     <div class="row  collapse-nicely">
       <div class="col-lg-6  col-md-6  col-sm-6  col-xs-12  vertically-center-cols">
@@ -84,42 +84,50 @@
 
 <!-- Flexible pricing -->
 <div class="section  section-white  flexible-pricing">
-  <div class="container">
-    <h2>Precios flexibles</h2>
-    <p>
-      Los precios varían según lo que tú estés necesitando y tus expectativas. Estos son algunos ejemplos de los servicios y precios que más se han repetido en la red. Si te interesa alguno, puedes consultarlo con nosotros para conseguirlo por ti.
-    </p>
+  <div class="container-fluid">
+    <div class="section-header">
+      <h2>Precios flexibles</h2>
+      <p class="lead">
+        Los precios varían según lo que tú estés necesitando y tus expectativas. Estos son algunos ejemplos de los servicios y precios que más se han repetido en la red. Si te interesa alguno, puedes consultarlo con nosotros para conseguirlo por ti.
+      </p>
+    </div>
     <div class="row">
       <div class="col-lg-4  col-md-4  col-sm-4  col-xs-12">
         <div class="thumbnail  solicitud-de-visa">
           <div class="dark-thumbnail-bg">
-            <h4>Solicitud de Visa</h4>
+            <h3>Solicitud de Visa</h3>
             <p>
               Tramita el tipo de Visa que necesitas con un experto en migraciones.
             </p>
-            <button type="button" class="btn  btn-success">$100.000</button><small>*Desde</small>
+            <div class="button-row">
+              <button type="button" class="btn  btn-success" data-toggle="modal" data-target="#advertisedPricingForm">$100.000</button><small>*Desde</small>
+            </div>
           </div>
         </div>
       </div>
       <div class="col-lg-4  col-md-4  col-sm-4  col-xs-12">
         <div class="thumbnail  promesa-de-compraventa">
           <div class="dark-thumbnail-bg">
-            <h4>Promesa de compraventa</h4>
+            <h3>Promesa de Compraventa</h3>
             <p>
               Redacta la promesa asegurando que tenga todas las cláusulas necesarias para ti.
             </p>
-            <button type="button" class="btn  btn-success">$45.000</button>
+            <div class="button-row">
+              <button type="button" class="btn  btn-success" data-toggle="modal" data-target="#advertisedPricingForm">$45.000</button>
+            </div>
           </div>
         </div>
       </div>
       <div class="col-lg-4  col-md-4  col-sm-4  col-xs-12">
         <div class="thumbnail  factibilidad-de-marca">
           <div class="dark-thumbnail-bg">
-            <h4>Factibilidad de Marca</h4>
+            <h3>Factibilidad de Marca</h3>
             <p>
               Descubre si tu marca es factible de ser registrada. Ahórrate el riesgo de intentar registrar sin saberlo.
             </p>
-            <button type="button" class="btn  btn-success">Gratis</button><img src="/img/precios/star.png" class="img-responsive  center-block" alt="Estrella" />
+            <div class="button-row">
+              <button type="button" class="btn  btn-success" data-toggle="modal" data-target="#advertisedPricingForm">Gratis</button><img src="/img/precios/star.png" class="img-responsive  center-block" alt="Estrella" />
+            </div>
           </div>
         </div>
       </div>
@@ -130,26 +138,26 @@
 
 
 <!-- FAQ -->
-<div class="section  section-white  precios-faq">
+<div class="section  section-extended  section-white  precios-faq">
   <div class="container">
     <h2>Preguntas Frecuentes</h2>
     <ul>
       <li>
-          <img src="/img/precios/question-mark.png" class="img-responsive  center-block" alt="Signo de interrogación" />
+          <img src="/img/precios/question-mark.png" class="hidden-xs  img-responsive  center-block" alt="Signo de interrogación" />
           <h3>¿Quiénes son los abogados de Misabogados.com?</h3>
           <p>
             Es una red de abogados pre seleccionados por un proceso estandarizado de entrevistas, para asegurar la buena experiencia de quienes contraten los servicios legales. Rechazamos el 80% de los abogados que conocemos en este proceso.
           </p>
       </li>
       <li>
-          <img src="/img/precios/question-mark.png" class="img-responsive  center-block" alt="Signo de interrogación" />
+          <img src="/img/precios/question-mark.png" class="hidden-xs  img-responsive  center-block" alt="Signo de interrogación" />
           <h3>¿Cómo saben cuánto cuesta el servicio que necesito?</h3>
           <p>
             Manejamos una extensa red de abogados, y conocemos hace años el mercado legal de nuestro país. Estas dos características nos permite encontrar un abogado ajustado a lo que buscas en precio, experiencia y ubicación. Déjanos tu mensaje para que lo consigamos por ti.
           </p>
       </li>
       <li>
-          <img src="/img/precios/question-mark.png" class="img-responsive  center-block" alt="Signo de interrogación" />
+          <img src="/img/precios/question-mark.png" class="hidden-xs  img-responsive  center-block" alt="Signo de interrogación" />
           <h3>¿Cómo se hace el pago a mi abogado?</h3>
           <p>
             Una vez que conseguimos el precio que se ajusta a lo que estás buscando, puedes pagar según las facilidades que cada abogado entrega. Puedes pagar con transferencias, depósitos, tarjeta de crédito, débito e incluso online. Lo anterior es muy importante de conversar a la hora de contratar cualquiera de los abogados disponibles.
@@ -170,6 +178,39 @@
         Déjanos tu mensaje para conseguir un abogado ajustado a ti
       </p>
       <p><button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#contactForm">Comienza ahora <span class="glyphicon  glyphicon-menu-right"></span></button></p>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Coordinate advertised pricing -->
+<div id="advertisedPricingForm" class="modal  fade  contact-form" tabindex="-1" role="dialog" aria-labelledby="advertisedPricingForm">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-body">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title">Déjanos tu información para coordinarte con un abogado al precio que viste</h4>
+        <form id="advertised_pricing_form" method="POST" action="">
+          <div class="form-group">
+            <label class="control-label" for="lawyer_name">Nombre:</label>
+            <input class="form-control" type="text" name="contact_name" placeholder="Nombre" required value=""/>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="lawyer_email">Email:</label>
+            <input class="form-control" type="email" name="contact_email" placeholder="Email" required value=""/>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="lawyer_name">Teléfono de Contacto (gratis):</label>
+            <input class="form-control" type="text" name="contact_phone" placeholder="Teléfono de Contacto" required value=""/>
+          </div>
+          <div class="form-group">
+            <label class="control-label" for="lawyer_email">Confirma el nombre del servicio solicitado:</label>
+            <input class="form-control" type="email" name="service_name" placeholder="Nombre del servicio" required value=""/>
+          </div>
+          <button class="btn  btn-lg  btn-block  btn-success" data-loading-text="Cargando...">Conseguir Precio</button>
+        </form>
+      </div>
     </div>
   </div>
 </div>

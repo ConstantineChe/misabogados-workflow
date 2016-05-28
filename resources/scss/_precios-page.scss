@@ -36,6 +36,12 @@
   background-repeat: no-repeat;
   background-position: center 65%;
   background-size: cover;
+
+  li {
+    font-size: $base-font-size + 2;
+    font-weight: 400;
+    margin-bottom: 10px;
+  }
 }
 
 
@@ -45,21 +51,60 @@
 
 .flexible-pricing {
 
+  .container-fluid {
+    max-width: 1100px;
+  }
+
+  h2, .lead {
+    text-align: center;
+  }
+
   .thumbnail {
     height: 300px;
+    max-width: 350px;
     border: 0px;
+    border-radius: 8px;
     padding: 0px;
+    margin-left: auto;
+    margin-right: auto;
+
+    color: $inverse-font-color;
+
+    h3 {
+      color: $inverse-font-color;
+      // font-size: 21px;
+      font-weight: bold;
+      margin-top: 0px;
+    }
+
+    .button-row {
+      position: absolute;
+      bottom: 38px;
+
+      button {
+        font-weight: bold;
+        font-size: $base-font-size;
+      }
+
+      small {
+        margin-left: 5px;
+      }
+
+      img {
+        float: right;
+        margin-left: 10px;
+        margin-top: 7px;
+      }
+    }
+
   }
 
   .dark-thumbnail-bg {
     background-color: rgba(31, 31, 31, 0.7);
     width: 100%;
     height: 100%;
-    border-radius: 4px;
-  }
-
-  p, small {
-    color: $inverse-font-color;
+    border-radius: 8px;
+    padding: 20px;
   }
 }
 
@@ -80,7 +125,7 @@
 .factibilidad-de-marca {
   background: url(/img/precios/guy-on-phone.jpg);
   background-repeat: no-repeat;
-  background-position: center 65%;
+  background-position: -50% 65%;
   background-size: cover;
 }
 
@@ -89,6 +134,15 @@
 /* FAQ
 ---------------------------------------------*/
 .precios-faq {
+
+  .container {
+    max-width: 800px;
+  }
+
+  h2 {
+    text-align: center;
+    margin-bottom: 40px;
+  }
 
   ul {
     padding-left: 0px;
@@ -118,4 +172,29 @@
   background-repeat: no-repeat;
   background-position: center 65%;
   background-size: cover;
+
+  h2 {
+    margin-bottom: 20px;
+  }
+}
+
+
+
+/* Contact form */
+#advertisedPricingForm {
+  h4 {
+    text-transform: none;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 500px) {
+    h4 {
+      font-size: $base-font-size + 4;
+    }
+  }
+
+  .btn {
+    margin-top: 20px;
+    margin-bottom: 10px;
+  }
 }
