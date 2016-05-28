@@ -38,17 +38,27 @@
 
               <h4>ABOGADOS</h4>
               <ul>
-                <li><a href="#">Ingresar</a></li>
-                <li><a href="#">Registrarse</a></li>
-                <li><a href="#">Más información</a></li>
+                <li><a href="/login">Ingresar</a></li>
+                <li><a href="/signup">Registrarse</a></li>
+                <li><a href="/info_para_abogados">Más información</a></li>
               </ul>
             </div>
             <div class="col-lg-2  col-md-2  col-sm-4  col-xs-12">
               <h4>REDES SOCIALES</h4>
               <div class="social-icons">
+                {% ifequal settings.country "cl" %}
                 <a href="https://www.facebook.com/misabogados"><i class="fa  fa-facebook-square"></i></a>
                 <a href="https://twitter.com/misabogadosCL"><i class="fa  fa-twitter-square"></i></a>
                 <a href="https://plus.google.com/+Misabogados"><i class="fa  fa-google-plus-square"></i></a>
+                {% endifequal %}
+                {% ifequal settings.country "co" %}
+                <a href="https://www.facebook.com/Misabogadoscom-Colombia-920380174714337"><i class="fa  fa-facebook-square"></i></a>
+                <a href="https://twitter.com/misabogadosCO"><i class="fa  fa-twitter-square"></i></a>
+                {% endifequal %}
+                {% ifequal settings.country "mx" %}
+                <a href="https://www.facebook.com/misabogadosmexico/"><i class="fa  fa-facebook-square"></i></a>
+                <a href="https://twitter.com/misabogadosM"><i class="fa  fa-twitter-square"></i></a>
+                {% endifequal %}
               </div>
 
 
@@ -59,7 +69,15 @@
                 <li><a href="/politica-de-privacidad">Política de privacidad</a></li>
               </ul>
 
-              <img src="/img/footer/webpay_gris.png" class="webpay-img  img-responsive" alt="Puedes pagas con Webpay" />
+              {% ifequal settings.country "cl" %}
+                <img src="/img/footer/webpay_gris.png" class="webpay-img  img-responsive" alt="Puedes pagar con Webpay" />
+              {% endifequal %}
+              {% ifequal settings.country "co" %}
+                <img src="/img/footer/payu_blanco.png" class="webpay-img  img-responsive" alt="Puedes pagar con PayU" />
+              {% endifequal %}
+              {% ifequal settings.country "mx" %}
+                <img src="/img/footer/payu_blanco.png" class="webpay-img  img-responsive" alt="Puedes pagar con PayU" />
+              {% endifequal %}
             </div>
           </div>
         </div>

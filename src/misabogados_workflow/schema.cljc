@@ -14,7 +14,7 @@
   [name label & fields]
   (apply array-map
          (entity-schema (keyword name)
-                        {:type :embadded-entity
+                        {:type :embedded-entity
                          :render-type :entity
                          :label label
                          :collection-name name}
@@ -36,11 +36,18 @@
 
 ;; Functions that define fields
 (defn embeds-many [name label & fields] (entity-schema name
-                                                       {:type :embadded-collection
+                                                       {:type :embedded-collection
                                                         :label label
                                                         :entity-label (i/singular label)
                                                         :render-type :collection}
                                                   fields))
+
+(defn embeds-one [name label & fields] (entity-schema name
+                                                      {:type :embedded-entity
+                                                       :label label
+                                                       :entity-label label
+                                                       :render-type :entity}
+                                                fields))
 
 (defn text-field [name label] [name {:render-type :text :label label}])
 
@@ -64,12 +71,6 @@
          :label label}])
 
 (defn simple-dict-field [name] {name {:type :dictionary-reference}})
-
-(defn embeds-one [name label & fields] (entity-schema name
-                                                      {:type :embadded-entity
-                                                       :label label
-                                                       :render-type :entity}
-                                                fields))
 
 (defn datetime-field [name] {name {:type :datetime-field}})
 
@@ -124,7 +125,10 @@
                (text-field :degree "Degree"))
   (embeds-many :feedback "Feedback"
                (text-field :client_name "Clients name")
-               (field :textarea :text "Text")))
+               (field :textarea :text "Text"))
+  (embeds-one :languages "Idiomas"
+               (checkbox-field :spanish "Español")
+               (checkbox-field :english "Inglés")))
 
 (defentity settings "Ajustes"
   (text-field :full_country_name "País")

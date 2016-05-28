@@ -501,8 +501,6 @@
     (doall (for [fieldset fieldsets]
              (fieldset-fn form-data fieldset [:visiblity] false)))]])
 
-
-
 (defmulti render-form
   (fn [[key schema] data path attributes]
     (:render-type schema)))
@@ -523,6 +521,10 @@
             content))))
 
 (defmethod render-form :entity [[key schema] data path attributes]
+  ;; (js/console.log (str "SCH " schema 
+  ;;                      "; DATA " (get-in data (conj path))
+  ;;                      "; PATH " path
+  ;;                      "; KEY " key) )
   (let [{label :label fields :field-definitions} schema
         label (if label label (name key))
         child-attributes (if-not (= :all attributes)
@@ -537,6 +539,10 @@
                                                                        [(assoc (first args) :readonly true)]
                                                                        [{:readonly true}])))
                                          (if ((first %) child-attributes) %)) fields))
+        data (if (and (= (:type schema) :embedded-entity)
+                      (empty? (get-in data (conj path key))))
+               (assoc-in data (conj path key) {})
+               data)
         content (map #(render-form % data (conj path key) ((first %) child-attributes))
                      (if (= :all child-attributes)
                        fields
@@ -560,9 +566,14 @@
     {key []}))
 
 (defmethod get-struct :entity [[key schema]]
+  
   (let [{content :field-definitions} schema
         struct (map get-struct content)]
-    {key (if (vector? struct) struct (apply merge struct))}))
+    (js/console.log (str "~~~SCH " schema 
+                       "; KEY " key) )
+    (if (= :embedded-entity (:type schema)) 
+      {key [{}]}
+      {key (if (vector? struct) struct (apply merge struct))})))
 
 (defmethod get-struct :default [[key schema]]
   {key nil})

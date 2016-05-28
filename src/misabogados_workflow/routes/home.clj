@@ -66,7 +66,7 @@
   (GET "/" [] home-page)
   (GET "/garantia" [] (render (str "guarantee_" (settings/fetch :country) ".html") {:title "Garantía"}))
   (GET "/terminos-y-condiciones" [] (render (str "terms_and_conditions_" (settings/fetch :country) ".html")  {:title "Términos y Condiciones"}))
-  (GET "/politica-de-privacidad" [] (render "privacy.html" {:title "Politica de privacidad"}))
+  (GET "/politica-de-privacidad" [] (render (str "privacy_" (settings/fetch :country) ".html")  {:title "Politica de privacidad"}))
   (GET "/categoria/:slug" [slug :as request] (show-category slug))
   (GET "/app" [] app-page)
   (GET "/docs" [] (ok (-> "docs/docs.md" io/resource slurp)))
