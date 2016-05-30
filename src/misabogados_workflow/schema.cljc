@@ -125,10 +125,20 @@
                (text-field :degree "Degree"))
   (embeds-many :feedback "Feedback"
                (text-field :client_name "Clients name")
+               (field :date-time :timestamp "Timestamp")
                (field :textarea :text "Text"))
-  (embeds-one :languages "Idiomas"
-               (checkbox-field :spanish "Español")
-               (checkbox-field :english "Inglés")))
+
+  (checkbox-field :language_spanish "Idioma: Español")
+  (checkbox-field :language_english "Idioma: Ingles")
+
+  (field :number :feedback_score_knowledge "Usuarios dicen: Conocimientos")
+  (field :number :feedback_score_response_time "Usuarios dicen: Tiempo de la respuesta")
+  (field :number :feedback_score_price_accessibility "Usuarios dicen: Accesibilidad de precios")
+  (field :number :feedback_score_quality "Usuarios dicen: Calidad de atencion")
+
+  (checkbox-field :payment_method_cash "Forma de pago: Efectivo")
+  (checkbox-field :payment_method_card "Forma de pago: Débito/Crédito")
+  (checkbox-field :payment_method_check "Forma de pago: Cheque"))
 
 (defentity settings "Ajustes"
   (text-field :full_country_name "País")

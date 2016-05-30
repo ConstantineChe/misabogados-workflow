@@ -194,23 +194,23 @@
         <div class="col-lg-4  col-md-4  col-sm-4  col-xs-12">
           <h3>Formas de pago</h3>
           <ul>
-            <li><img src="/img/lawyer-profile/cash.png" alt="" />Efectivo</li>
-            <li><img src="/img/lawyer-profile/credit-cards.png" alt="" />Débito/Crédito</li>
-            <li><img src="/img/lawyer-profile/cheque.png" alt="" />Cheque</li>
+            {% if lawyer.payment_method_cash %}<li><img src="/img/lawyer-profile/cash.png" alt="" />Efectivo</li>{% endif %}
+            {% if lawyer.payment_method_card %}<li><img src="/img/lawyer-profile/credit-cards.png" alt="" />Débito/Crédito</li>{% endif %}
+            {% if lawyer.payment_method_check %}<li><img src="/img/lawyer-profile/cheque.png" alt="" />Cheque</li>{% endif %}
           </ul>
         </div>
         <div class="col-lg-4  col-md-4  col-sm-4  col-xs-12">
           <h3>Idiomas</h3>
           <ul>
-            <li><img src="/img/lawyer-profile/Chile.png" alt="" />Español</li>
-            <li><img src="/img/lawyer-profile/United-States-of-America.png" alt="" />Inglés</li>
+            {% if lawyer.language_spanish %}<li><img src="/img/lawyer-profile/Chile.png" alt="" />Español</li>{% endif %}
+            {% if lawyer.language_english %}<li><img src="/img/lawyer-profile/United-States-of-America.png" alt="" />Inglés</li>{% endif %}
           </ul>
         </div>
         <div class="col-lg-4  col-md-4  col-sm-4  col-xs-12">
           <h3>Contacto</h3>
           <ul>
-            <li><img src="/img/lawyer-profile/cellphone.png" alt="Teléfono" /><a href="tel:+5690000000">+56 9 0000 000</a></li>
-            <li><img src="/img/lawyer-profile/envelope.png" alt="Correo electrónico" /><a href="mailto:email@mail.com">email@mail.com</a></li>
+            <li><img src="/img/lawyer-profile/cellphone.png" alt="Teléfono" /><a href="tel:{{lawyer.phone}}">{{lawyer.phone}}</a></li>
+            <li><img src="/img/lawyer-profile/envelope.png" alt="Correo electrónico" /><a href="mailto:{{lawyer.email}}">{{lawyer.email}}</a></li>
           </ul>
         </div>
       </div>

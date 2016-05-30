@@ -569,11 +569,7 @@
   
   (let [{content :field-definitions} schema
         struct (map get-struct content)]
-    (js/console.log (str "~~~SCH " schema 
-                       "; KEY " key) )
-    (if (= :embedded-entity (:type schema)) 
-      {key [{}]}
-      {key (if (vector? struct) struct (apply merge struct))})))
+    {key (if (vector? struct) struct (apply merge struct))}))
 
 (defmethod get-struct :default [[key schema]]
   {key nil})
@@ -581,7 +577,6 @@
 (defn prepare-atom [schema atom]
   (reset! atom (apply merge (map get-struct schema)))
   atom)
-
 
 (defn create-form
   "Create form from schema."
