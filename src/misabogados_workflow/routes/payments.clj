@@ -38,7 +38,7 @@
                         :tax "0"
                         :taxReturnBase "0"
                         ;; :signature "be2f083cb3391c84fdf5fd6176801278" 
-                        :test "1"
+                        ;; :test "1"
                         :confirmationUrl "http://staging.misabogados.com.co/payments/confirm"
                         ;; :buyerEmail "test@test.com"
                         })
