@@ -24,7 +24,6 @@
   (let []
     [:div
      [:legend "Leads"]
-     [:button.btn.btn-default {:on-click #(swap! show-all not)} (if @show-all "Show less" "Show all")]
      (if-not (empty? @table-data)
        [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
         [:th "ID"]
@@ -42,7 +41,7 @@
         [:th "Enlaces"]
         [:th ""]
         [:tbody
-         (doall (for [lead (if @show-all @table-data (take 10 @table-data))
+         (doall (for [lead @table-data
                       :let [id (get lead "_id")
                             pending-action (util/remove-kebab (get lead "step"))
                             actions (get-actions lead)]]
@@ -68,13 +67,17 @@
        [:p "there are no leads to show."])]))
 
 (defn dashboard []
-  (let [leads (GET (str js/context "/leads") {:handler #(reset! table-data (get % "leads"))
-                                :error-handler #(js/alert (str %))})]
+  (let [leads (GET (str js/context "/leads") {:params {:per-page 20
+                                                       :page 1
+                                                       :sort-field :_id
+                                                       :sort-dir -1}
+                                              :handler #(reset! table-data (get % "leads"))
+                                              :error-handler #(js/alert (str %))})]
     (fn []
       [:div.container-fluid
        [:h3 "Dashboard"]
        (when-let [notification (session/get :notification)]
-       (js/setTimeout #(session/put! :notification nil) 5000)
+       (js/setTimeout #(session/put! :notification nil) 10000)
                   notification)
        [:a {:class "btn btn-primary"
             :href "#lead"} "New Lead"]

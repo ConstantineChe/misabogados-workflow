@@ -45,7 +45,8 @@
                    (assoc :session (assoc session :identity (-> request :params :email keyword))))
                (do (when (= :lawyer role)
                      (let [lawyer-profile (mc/insert-and-return @db/db "lawyers" {:email (:email params)
-                                                                                  :name (:name params)})]
+                                                                                  :name (:name params)
+                                                                                  :join_date (java.util.Date.)})]
                        (mc/update @db/db "users" {:email (:email params)} {$set {:lawyer_profile (:_id lawyer-profile)}})))
                    (-> (redirect "/")
                        (assoc :session (assoc session :identity (-> request :params :email keyword)

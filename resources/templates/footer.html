@@ -59,7 +59,10 @@
                 <li><a href="/politica-de-privacidad">Política de privacidad</a></li>
               </ul>
 
+              {% ifequal settings.payment_system "webpay" %}
               <img src="/img/footer/webpay_gris.png" class="webpay-img  img-responsive" alt="Puedes pagas con Webpay" />
+              {% endifequal %}
+              {% ifequal settings.payment_system "payu" %}
             </div>
           </div>
         </div>

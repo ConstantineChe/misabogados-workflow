@@ -404,37 +404,9 @@
   </div>
 
   <!-- Supported by -->
-  <div class="container">
-    <h6>Apoyado por:</h6>
-    <div class="row">
-      <div class="col-lg-5ths  col-md-5ths  col-sm-4  col-xs-4">
-        <a href="http://www.corfo.cl/inicio" class="thumbnail" target="_blank">
-          <img src="/img/supporters/corfo.png" class="img-responsive" alt="MisAbogados.com es apoyado por CORFO">
-        </a>
-      </div>
-      <div class="col-lg-5ths  col-md-5ths  col-sm-4  col-xs-4">
-        <a href="http://www.chrysalis.cl/" class="thumbnail" target="_blank">
-          <img src="/img/supporters/chrysalis.png" class="img-responsive" alt="MisAbogados.com es apoyado por Chrysalis">
-        </a>
-      </div>
-      <div class="col-lg-5ths  col-md-5ths  col-sm-4  col-xs-4">
-        <a href="http://www.nazca.vc/" class="thumbnail" target="_blank">
-          <img src="/img/supporters/nazca.png" class="img-responsive" alt="MisAbogados.com es apoyado por Nazca Ventures">
-        </a>
-      </div>
-      <div class="col-lg-5ths  col-md-5ths  col-sm-6  col-xs-6">
-        <a href="http://startupchile.org/" class="thumbnail" target="_blank">
-          <img src="/img/supporters/supchile.png" class="img-responsive" alt="MisAbogados.com es apoyado por Start-Up Chile">
-        </a>
-      </div>
-      <div class="col-lg-5ths  col-md-5ths  col-sm-6  col-xs-6">
-        <a href="http://www.startupmexico.com/" class="thumbnail" target="_blank">
-          <img src="/img/supporters/start_mexico.png" class="img-responsive" alt="MisAbogados.com es apoyado por Start-Up Mexico">
-        </a>
-      </div>
-    </div>
-  </div>
-</div>
+  {% ifequal settings.country "cl" %}{% include "_supported_by_cl.html" %}{% endifequal %}
+  {% ifequal settings.country "co" %}{% include "_supported_by_co.html" %}{% endifequal %}
+  {% ifequal settings.country "mx" %}{% include "_supported_by_mx.html" %}{% endifequal %}
 
 
 

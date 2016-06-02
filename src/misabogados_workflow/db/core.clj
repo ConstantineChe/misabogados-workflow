@@ -37,36 +37,41 @@
 (defn get-lead [id]
   (mc/find-one-as-map @db "leads" {:_id (oid id)}))
 
-(defn get-leads [role identity]
-  (cond (= :admin role)
-        (mc/aggregate @db "leads"
-                      [;;{"$match" {:matches {"$exists" true}}}
-                       {"$unwind" {:path "$matches", :preserveNullAndEmptyArrays true}}
-                       {"$lookup" {:from "categories"
-                                   :localField :category_id
-                                   :foreignField :_id
-                                   :as :category}}
-                       {"$lookup" {:from "lead_types"
-                                   :localField :lead_type_code
-                                   :foreignField :code
-                                   :as :lead_type}}
-                       {"$lookup" {:from "lawyers"
-                                   :localField :matches.lawyer_id
-                                   :foreignField :_id
-                                   :as :lawyer}}
-                       {"$lookup" {:from "clients"
-                                   :localField :client_id
-                                   :foreignField :_id
-                                   :as :client}}
-                       ;;{"$limit" 20}
-                       {"$sort" {:_id -1}}
-                       ])
-        (= :operator role)
-        (mc/find-maps @db "leads" {:step {$nin ["archive"]}})
-        (= :lawyer role)
-        {}
-        (= :client role)
-        {}))
+(defn get-leads [role identity per-page page sort]
+  (let [offset (* per-page (dec page))]
+    (prn sort)
+    (cond (= :admin role)
+          (mc/aggregate @db "leads"
+                        [
+
+                         {"$unwind" {:path "$matches", :preserveNullAndEmptyArrays true}}
+                         {"$lookup" {:from "categories"
+                                     :localField :category_id
+                                     :foreignField :_id
+                                     :as :category}}
+                         {"$lookup" {:from "lead_types"
+                                     :localField :lead_type_code
+                                     :foreignField :code
+                                     :as :lead_type}}
+                         {"$lookup" {:from "lawyers"
+                                     :localField :matches.lawyer_id
+                                     :foreignField :_id
+                                     :as :lawyer}}
+                         {"$lookup" {:from "clients"
+                                     :localField :client_id
+                                     :foreignField :_id
+                                     :as :client}}
+;                         {"$match" {:client {$elemMatch {:email {$regex "test" $options "i"}}}}}
+                         {"$sort" sort}
+                         {"$skip" offset}
+                         {"$limit" per-page}
+                         ])
+          (= :operator role)
+          (mc/find-maps @db "leads" {:step {$nin ["archive"]}})
+          (= :lawyer role)
+          {}
+          (= :client role)
+          {})))
 
 
 
