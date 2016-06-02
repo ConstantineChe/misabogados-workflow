@@ -16,7 +16,7 @@
       <ul class="list-group list-group-flush text-center">
         <li class="list-group-item"><b>Cliente:</b> {{payment-request.client}}</li>
         <li class="list-group-item"><b>Email del cliente:</b> {{payment-request.client_email}}</li>
-        <li class="list-group-item"><b>Abogado:</b> {{payment-request.lawyer}}</li>
+        <li class="list-group-item"><b>Abogado:</b> {{payment-request.lawyer.0.name}}</li>
       </ul>
 
       <form action="https://gateway.payulatam.com/ppp-web-gateway/" method="post">​

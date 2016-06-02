@@ -8,12 +8,12 @@
 $base-font-size: 18px;
 
 $home-cta-h1-size: 3.1em;
-$home-cta-h1-mobile-size: 1.25em;
+$home-cta-h1-mobile-size: 2.4em;
 $cta-h1-size: 2.25em;
 $cta-h1-mobile-size: 1.5em;
 
 $h2-size: 3.25em;
-$h2-mobile-size: 2.25em;
+$h2-mobile-size: 2.2em;
 
 $font-color: #333333;
 $inverse-font-color: #FFFFFF;
@@ -27,9 +27,12 @@ $background-green: #4ccf5c;
 
 $background-panel: #f5f5f5;
 $background-panel-hover: #c4c4c4;
+$background-panel-dark: #E4E4E4;
 $background-caption-overlay: rgba(0, 0, 0, 0.55);
 
 $anchor-icon-color: #7f7f7f;
+$button-contact-color: #FED000;
+$button-contact-border-color: #DEB80B;
 $button-toggle-color: #c0c0c0;
 
 
@@ -137,6 +140,7 @@ p {
 @media (max-width: 992px) {
   .jumbotron {
     h1 {
+      font-size: $home-cta-h1-mobile-size;
       margin-top: $home-cta-h1-mobile-size;
     }
 
@@ -156,12 +160,32 @@ p {
 
   h2 {
     font-size: $h2-size - .25;
+    margin-bottom: 30px;
   }
 
   @media (max-width: 992px) {
     h2 {
       font-size: $h2-mobile-size;
     }
+  }
+
+  /* Center headings on mobile */
+  @media (max-width: 768px) {
+    .col-xs-12 h2 {
+      text-align: center;
+    }
+  }
+}
+
+/* For stacking sections of same color */
+.section-extended {
+  padding-top: 0px;
+}
+
+@media (max-width: 768px) {
+  .section-extended{
+    // TODO this is hacky
+    margin-top: -40px;
   }
 }
 
