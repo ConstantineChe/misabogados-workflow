@@ -82,8 +82,8 @@
       <h3>Estudios</h3>
       {% for item in lawyer.study %}
       <h5>{{item.place}}</h5>
-      <p>from {{item.from}} to {{item.to}}</p>
-      <p>Degree {{item.degree}}</p>
+      <p>Entre {{item.from}} y {{item.to}}</p>
+      <p>Tútulo: {{item.degree}}</p>
       {% endfor %}
     </div>
     <div class="col-lg-5  col-md-5  col-sm-4  col-xs-12">
@@ -91,7 +91,7 @@
       {% for item in lawyer.experience %}
       <h5>{{item.place}}</h5>
       <p>{{item.position}}</p>
-      <p>From {{item.from}} To {{item.to}}</p>
+      <p>De {{item.from}} a {{item.to}}</p>
       {% endfor %}
     </div>
   </div>
@@ -180,7 +180,7 @@
       </li>
       {% endfor %}
     </ul>
-    <button type="button" class="btn  btn-lg  btn-warning  center-block">Ver más opiniones</button>
+    <!--<button type="button" class="btn  btn-lg  btn-warning  center-block">Ver más opiniones</button>-->
   </div>
 </div>
 
