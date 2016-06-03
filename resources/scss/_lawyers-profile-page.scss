@@ -52,7 +52,7 @@
     }
   }
 
-  @media (max-width: 992px) {
+  @media (max-width: $md-size) {
     .profile-img {
       margin-top: 10px;
       position: relative;
@@ -74,7 +74,7 @@
     }
   }
 
-  @media (max-width: 768px) {
+  @media (max-width: $xs-size) {
     .profile-img {
       max-height: 125px;
       max-width: 125px;
@@ -185,7 +185,8 @@
 
 }
 
-@media (max-width: 765px) {
+// TODO investigate why -3
+@media (max-width: $xs-size - 3) {
   .overview:first-of-type {
     margin-top: 0px;
   }
@@ -214,7 +215,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: $xs-size) {
   .recommendation {
     margin-top: 20px;
   }
@@ -410,7 +411,7 @@
   }
 }
 
-@media (max-width: 992px) {
+@media (max-width: $md-size) {
   .granular-details {
     ul {
       padding-left: 20px;
@@ -422,7 +423,7 @@
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: $xs-size) {
   .granular-details {
     ul {
       padding-left: 50px;

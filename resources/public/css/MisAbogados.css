@@ -4,9 +4,14 @@
 * MisAbogados Theme
 *
 */
+/* Variables
+---------------------------------------------*/
+/* Fonts */
+/* Backgrounds */
+/* Elements */
+/* Sizing */
 /* Global
 ---------------------------------------------*/
-/* Global Variables */
 /* Resets */
 body {
   font-family: "Open Sans", Helvetica Neue, Helvetica, Arial, sans-serif;
@@ -67,6 +72,15 @@ p {
     margin-top: 2.4em; }
   .jumbotron button {
     margin-bottom: 50px; } }
+.information-page-heading h1, .como-funciona-heading h1, .precios-heading h1 {
+  margin-top: 3em;
+  margin-bottom: 3em;
+  text-transform: none; }
+@media (max-width: 768px) {
+  .information-page-heading h1, .como-funciona-heading h1, .precios-heading h1 {
+    margin-top: 2em;
+    margin-bottom: 2em; } }
+
 .section-padding, .section, .background-overlay, .darken-bg, .greenen-bg, .bluen-bg, .bluen-bg-dark, .static-content {
   padding-top: 60px;
   padding-bottom: 60px; }
@@ -99,7 +113,7 @@ p {
     color: #FFFFFF; }
   .section-blue li {
     color: #FFFFFF;
-    font-size: 14px; }
+    font-size: 18px; }
 
 .section-header {
   max-width: 725px;
@@ -109,7 +123,7 @@ p {
   .section-header p {
     margin-top: 15px; }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .img-description h3 {
     margin-top: 10px; } }
 
@@ -132,7 +146,6 @@ p {
     height: 50px;
     margin: -50px 0 0;
     visibility: hidden; } }
-/* Alert styling */
 .alert-top {
   position: absolute;
   top: 105px;
@@ -186,7 +199,7 @@ p {
 .bluen-bg-dark {
   background-color: rgba(40, 119, 215, 0.80361); }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .collapse-nicely .col-xs-12 {
     margin-bottom: 40px; } }
 
@@ -666,7 +679,7 @@ p {
 .icon-star {
   height: 20px; }
 
-@media (max-width: 787px) {
+@media (max-width: 788px) {
   .lawyer-list h4 {
     font-size: 18px; } }
 /* Testimonies Section
@@ -693,7 +706,7 @@ p {
   margin-bottom: 0px;
   border-left: none; }
 
-@media (max-width: 787px) {
+@media (max-width: 788px) {
   .testimonies-section h2 {
     padding-bottom: 20px; }
 
@@ -721,7 +734,7 @@ p {
   margin-left: auto;
   margin-right: auto; }
 
-@media (max-width: 991px) {
+@media (max-width: 992px) {
   .garantia-section h2 {
     margin-top: 50px; } }
 .garantia-section li {
@@ -890,7 +903,7 @@ p {
 .next-steps ul {
   padding-left: 0px; }
 
-@media (max-width: 787px) {
+@media (max-width: 788px) {
   .next-steps img {
     max-width: 75px;
     margin-top: 5px; } }
@@ -1053,7 +1066,7 @@ p {
   padding-top: 40px; }
   .lawyer-profile h3, .lawyer-profile h4, .lawyer-profile h5 {
     font-family: "Open Sans", Helvetica, Arial, sans-serif;
-    color: #089ad6; }
+    color: #2877D7; }
   .lawyer-profile h3 {
     margin-top: 30px;
     text-transform: uppercase;
@@ -1106,7 +1119,7 @@ p {
   .recommendation .progress-bar {
     background-color: #4ccf5c; }
   .recommendation p {
-    font-size: 14px;
+    font-size: 16px;
     text-align: center; }
 
 @media (max-width: 768px) {
@@ -1188,13 +1201,13 @@ p {
   padding: 20px;
   margin-bottom: 30px; }
 .client-feedback h4 {
-  color: #089ad6;
+  color: #2877D7;
   font-weight: bold;
   text-transform: uppercase;
   margin-top: 0px;
   margin-bottom: 5px; }
 .client-feedback small {
-  color: #089ad6;
+  color: #2877D7;
   font-size: 14px;
   margin-top: 0px; }
 .client-feedback p {
@@ -1254,14 +1267,6 @@ p {
   background-repeat: no-repeat;
   background-position: center 25%;
   background-size: cover; }
-  .como-funciona-heading h1 {
-    margin-top: 3em;
-    margin-bottom: 3em;
-    text-transform: none; }
-  @media (max-width: 768px) {
-    .como-funciona-heading h1 {
-      margin-top: 2em;
-      margin-bottom: 2em; } }
 
 /* Service Overview
 ---------------------------------------------*/
@@ -1328,14 +1333,6 @@ p {
   background-repeat: no-repeat;
   background-position: center 30%;
   background-size: cover; }
-  .precios-heading h1 {
-    margin-top: 3em;
-    margin-bottom: 3em;
-    text-transform: none; }
-  @media (max-width: 768px) {
-    .precios-heading h1 {
-      margin-top: 2em;
-      margin-bottom: 2em; } }
 
 /* Benefits of using MisAbogados
 ---------------------------------------------*/

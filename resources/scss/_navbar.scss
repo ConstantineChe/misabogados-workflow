@@ -2,14 +2,14 @@
 ---------------------------------------------*/
 
 /* 2 row navbar */
-@media (min-width: 768px) {
+@media (min-width: $xs-size) {
   .two-row .navbar-collapse {
     clear: left;
   }
 }
 
 /* Redefines navbar breakpoint */
-@media (max-width: 1090px) {
+@media (max-width: $navbar-breakpoint-size) {
   .navbar-header {
     float: none;
   }
@@ -78,7 +78,7 @@
   height: 33px;
 }
 
-@media (min-width: 1090px) {
+@media (min-width: $navbar-breakpoint-size) {
   .navbar-brand {
     height: 50px;
     margin-left: 0px !important;
@@ -123,7 +123,7 @@
     min-width: 150px;
   }
 
-@media (min-width: 768px) {
+@media (min-width: $xs-size) {
   .country-selector {
     padding-top: 12px !important;
   }
@@ -186,7 +186,7 @@
   margin-bottom: 25px;
 }
 
-@media (min-width: 1090px) {
+@media (min-width: $navbar-breakpoint-size) {
 
   .button-bar {
     height: 30px;
@@ -242,14 +242,14 @@
   margin-right: 5px;
 }
 
-@media (min-width: 768px) {
+@media (min-width: $xs-size) {
   .navbar-toggle {
     margin-right: 5px;
     margin-left: 15px;
   }
 }
 
-@media (max-width: 1090px) {
+@media (max-width: $navbar-breakpoint-size) {
   .navbar-collapse ul {
     padding-left: 20px;
   }

@@ -3,42 +3,6 @@
 
 
 
-/* Global Variables */
-
-$base-font-size: 18px;
-
-$home-cta-h1-size: 3.1em;
-$home-cta-h1-mobile-size: 2.4em;
-$cta-h1-size: 2.25em;
-$cta-h1-mobile-size: 1.5em;
-
-$h2-size: 3.25em;
-$h2-mobile-size: 2.2em;
-
-$font-color: #333333;
-$inverse-font-color: #FFFFFF;
-$inverse-font-color-hover: #b2b2b2;
-$heading-blue: #089ad6;
-
-$background-white: #FFFFFF;
-$background-blue: #2877D7;
-$background-grey: #2b2b2b;
-$background-green: #4ccf5c;
-
-$background-panel: #f5f5f5;
-$background-panel-hover: #c4c4c4;
-$background-panel-dark: #E4E4E4;
-$background-caption-overlay: rgba(0, 0, 0, 0.55);
-
-$anchor-icon-color: #7f7f7f;
-$button-contact-color: #FED000;
-$button-contact-border-color: #DEB80B;
-$button-toggle-color: #c0c0c0;
-
-
-
-
-
 /* Resets */
 
 body {
@@ -50,14 +14,14 @@ body {
 }
 
 // Move content down adjustment for mobile navbar
-@media (max-width: 1090px) {
+@media (max-width: $navbar-breakpoint-size) {
   body {
     padding-top: 50px;
   }
 }
 
 // Constraining display width on large screens
-@media (min-width: 1200px) {
+@media (min-width: $lg-size) {
   .container {
       width: 1000px;
   }
@@ -73,7 +37,7 @@ h2 {
   font-size: $h2-size;
 }
 
-@media (max-width: 992px) {
+@media (max-width: $md-size) {
   h2 {
     font-size: $h2-mobile-size;
   }
@@ -94,6 +58,7 @@ p {
 /* Global Patterns */
 
 // MisAbogados jumbotron style
+
 .jumbotron {
   padding-top: 0px;
   padding-bottom: 0px;
@@ -129,7 +94,7 @@ p {
 }
 
 // Adjustments for large screens
-@media (min-width: 1090px) {
+@media (min-width: $navbar-breakpoint-size) {
   .jumbotron h1 {
     // TODO convert to variable
     font-size: 3.25em;
@@ -137,7 +102,7 @@ p {
 }
 
 // Adjustments for mobile
-@media (max-width: 992px) {
+@media (max-width: $md-size) {
   .jumbotron {
     h1 {
       font-size: $home-cta-h1-mobile-size;
@@ -149,6 +114,26 @@ p {
     }
   }
 }
+
+// Adjustments for "information" pages
+.information-page-heading {
+  h1 {
+    margin-top: 3em;
+    margin-bottom: 3em;
+    text-transform: none;
+  }
+
+  @media (max-width: $xs-size) {
+    h1 {
+      margin-top: 2em;
+      margin-bottom: 2em;
+    }
+  }
+}
+
+
+
+// MisAbogados section styles
 
 .section-padding {
   padding-top: 60px;
@@ -163,14 +148,14 @@ p {
     margin-bottom: 30px;
   }
 
-  @media (max-width: 992px) {
+  @media (max-width: $md-size) {
     h2 {
       font-size: $h2-mobile-size;
     }
   }
 
   /* Center headings on mobile */
-  @media (max-width: 768px) {
+  @media (max-width: $xs-size) {
     .col-xs-12 h2 {
       text-align: center;
     }
@@ -182,7 +167,7 @@ p {
   padding-top: 0px;
 }
 
-@media (max-width: 768px) {
+@media (max-width: $xs-size) {
   .section-extended{
     // TODO this is hacky
     margin-top: -40px;
@@ -220,13 +205,22 @@ p {
   }
 }
 
+
+
+// Image description styling
+// TODO what is this for again?
+
 .img-description {
-  @media (max-width: 767px) {
+  @media (max-width: $xs-size) {
     h3 {
       margin-top: 10px;
     }
   }
 }
+
+
+
+// Glyphicon styling
 
 .glyphicon {
   vertical-align: middle;
@@ -237,6 +231,10 @@ p {
   margin-right: 5px;
 }
 
+
+
+// Anchor styling
+
 .anchor {
  display: block;
  height: 100px;
@@ -244,7 +242,7 @@ p {
  visibility: hidden;
 }
 
-@media (max-width: 992px) {
+@media (max-width: $md-size) {
   .anchor {
     display: block;
     height: 50px;
@@ -253,7 +251,10 @@ p {
   }
 }
 
-/* Alert styling */
+
+
+// Alert styling
+
 .alert-top {
   position: absolute;
   top: 105px;
@@ -264,7 +265,7 @@ p {
   margin-right: auto;
 }
 
-@media (max-width: 1090px) {
+@media (max-width: $navbar-breakpoint-size) {
   .alert-top {
     top: 70px;
   }

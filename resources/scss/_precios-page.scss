@@ -7,24 +7,12 @@
 /* Heading
 ---------------------------------------------*/
 .precios-heading {
+  @extend .information-page-heading;
+  
   background: url(/img/precios/credit-card-and-laptop.jpg);
   background-repeat: no-repeat;
   background-position: center 30%;
   background-size: cover;
-
-  // TODO refactor this pattern
-  h1 {
-    margin-top: 3em;
-    margin-bottom: 3em;
-    text-transform: none;
-  }
-
-  @media (max-width: 768px) {
-    h1 {
-      margin-top: 2em;
-      margin-bottom: 2em;
-    }
-  }
 }
 
 

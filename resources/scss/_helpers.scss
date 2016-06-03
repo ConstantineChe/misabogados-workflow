@@ -58,7 +58,7 @@
 
 // Provides stacked columns with a bit of spacing on mobile devices
 .collapse-nicely {
-  @media (max-width: 767px) {
+  @media (max-width: $xs-size) {
      .col-xs-12 {
       margin-bottom: 40px;
     }
@@ -87,21 +87,21 @@
     float: left;
 }
 
-@media (min-width: 768px) {
+@media (min-width: $xs-size) {
     .col-sm-5ths {
         width: 20%;
         float: left;
     }
 }
 
-@media (min-width: 992px) {
+@media (min-width: $md-size) {
     .col-md-5ths {
         width: 20%;
         float: left;
     }
 }
 
-@media (min-width: 1200px) {
+@media (min-width: $lg-size) {
     .col-lg-5ths {
         width: 20%;
         float: left;

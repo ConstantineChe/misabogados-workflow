@@ -27,7 +27,7 @@
   background-size: cover;
 }
 
-@media (max-width: 1090px) {
+@media (max-width: $navbar-breakpoint-size) {
   .cta-main {
   // A hacky way to fix image limitation
   // TODO: fix (to do with two-row to one-row navbar collapse)
@@ -57,7 +57,7 @@
   }
 
   // TODO center vertically
-  @media (min-width: 992px) {
+  @media (min-width: $md-size) {
     .input-group {
       padding-top: 25px;
       padding-bottom: 0px;
@@ -81,7 +81,7 @@
   font-size: .85em;
 }
 
-@media (min-width: 992px) {
+@media (min-width: $md-size) {
   .caption h5 {
     font-size: 1em;
   }
@@ -140,7 +140,7 @@
 /* Laywers Section
 ---------------------------------------------*/
 
-@media (max-width: 768px) {
+@media (max-width: $xs-size) {
   .lawyer-list {
     margin-top: 75px;
     max-width: 350px;
@@ -175,7 +175,8 @@
   height: 20px;
 }
 
-@media (max-width: 787px) {
+// TODO investigate why +20
+@media (max-width: $xs-size + 20) {
   .lawyer-list h4 {
     font-size: $base-font-size;
   }
@@ -213,7 +214,8 @@
   border-left: none;
 }
 
-@media (max-width: 787px) {
+// TODO investigate why +20
+@media (max-width: $xs-size + 20) {
 
   .testimonies-section h2 {
     padding-bottom: 20px;
@@ -238,7 +240,7 @@
   margin-right: auto;
 }
 
-@media (max-width: 992px) {
+@media (max-width: $md-size) {
   .testimony-video {
     margin-top: 5%;
   }
@@ -255,7 +257,7 @@
   margin-right: auto;
 }
 
-@media (max-width: 991px) {
+@media (max-width: $md-size) {
   .garantia-section h2 {
     margin-top: 50px;
   }
@@ -284,7 +286,7 @@
   margin-top: 4em;
 }
 
-@media (max-width: 992px) {
+@media (max-width: $md-size) {
   .cta h2 {
     margin-top: $home-cta-h1-mobile-size;
   }

@@ -65,7 +65,7 @@
   max-height: 50px;
 }
 
-@media (min-width: 1200px) {
+@media (min-width: $lg-size) {
   .footer-contact .container {
     width: 1200px;
   }
@@ -87,7 +87,7 @@
   text-transform: uppercase;
 }
 
-@media (max-width: 992px) {
+@media (max-width: $md-size) {
   .footer-contact div {
     margin-top: 5px;
     margin-bottom: 5px;

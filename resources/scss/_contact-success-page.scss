@@ -31,7 +31,8 @@
 
 }
 
-@media (max-width: 787px) {
+// TODO investigate why the +20
+@media (max-width: $xs-size + 20) {
   .next-steps img {
     max-width: 75px;
     margin-top: 5px;
