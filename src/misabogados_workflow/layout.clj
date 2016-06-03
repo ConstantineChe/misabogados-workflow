@@ -20,10 +20,12 @@
                                     (c/render "6Lco-wsTAAAAAKJL86ESJT8W7s4Fb2aOnrZxwJdu \"")))
 
 (parser/add-tag! :stars (fn [[score] context]
-                          (let [stars (read-string score)]
-                             (str context
-                              (reduce str (repeat stars "<img src=\"/img/lawyer-profile/star-gold.png\" alt=\"Estrella\" />")) 
-                              (reduce str (repeat (- 5 stars) "<img src=\"/img/lawyer-profile/star-white.png\" alt=\"Estrella\" />")))) ))
+                          (let [stars (read-string  
+                                       (get-in context                              
+                                               (map keyword (clojure.string/split (str score) #"\."))))]
+                            (str
+                             (reduce str (repeat stars "<img src=\"/img/lawyer-profile/star-gold.png\" alt=\"Estrella\" />")) 
+                             (reduce str (repeat (- 5 stars) "<img src=\"/img/lawyer-profile/star-white.png\" alt=\"Estrella\" />"))))))
 (filters/add-filter! :markdown (fn [content] [:safe (md-to-html-string content)]))
 
 (defn render
