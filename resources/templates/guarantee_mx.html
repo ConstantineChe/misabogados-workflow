@@ -1,13 +1,10 @@
-{% extends "base.html" %}
+{% extends "layout.html" %}
 
 {% block metadata %}
     <meta name="description" content="Conectamos personas con abogados. Cuéntanos tu problema y nosotros te conectaremos con el abogado que más se ajuste a lo que necesitas: fácil y simple." />
 {% endblock %}
 
-{% block content %}
-
-{% include "navbar.html" %}
-
+{% block page %}
 
 <!-- Guarentee Content -->
 <div class="container  static-content">
@@ -38,8 +35,5 @@
     </div>
   </div>
 </div>
-
-
-{% include "footer.html" %}
 
 {% endblock %}
