@@ -104,9 +104,10 @@
 
 (defn get-lead-actions [id request]
   (let [lead (db/get-lead id)
-        step (if (:step lead) (keyword (:step lead)) :check)
+        step (if (:step lead) (keyword (:step lead)) :pitch)
         actions (filter #((:roles %) (-> request :session :role)) (:actions (step steps)))]
     (response {:id id :actions actions})))
+
 
 
 (defroutes leads-routes

@@ -12,7 +12,7 @@
 
 
 (defn get-actions [lead]
-  (let [step (if (get lead "step") (get lead "step") "check")]
+  (let [step (if (get lead "step") (get lead "step") "pitch")]
     (list [:a {:key :edit
                :class "btn btn-secondary"
                :href (str "#lead/" (get lead "_id") "/edit")} [:span.glyphicon.glyphicon-edit] " Edit"]
