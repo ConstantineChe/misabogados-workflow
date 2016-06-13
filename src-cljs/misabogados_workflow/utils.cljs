@@ -45,3 +45,6 @@
 (defn redirect [url]
   (aset js/window "location" url)
   (.scrollTo js/window 0 0))
+
+(defn enable-tooltips []
+  (.tooltip (js/jQuery ".balloon-tooltip")))

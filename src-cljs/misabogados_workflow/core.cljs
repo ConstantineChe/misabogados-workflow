@@ -213,8 +213,12 @@
           :payments #'payments
           :admin #'admin}))
 
+(defn component-did-mount-hooks []
+)
+
 (defn page []
-  [(pages (session/get :page))])
+  (r/create-class {:component-did-mount #(component-did-mount-hooks)
+                   :reagent-render (fn [] [(pages (session/get :page))])}))
 
 ;; -------------------------
 ;; Routes
