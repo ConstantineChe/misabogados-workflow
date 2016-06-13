@@ -149,25 +149,7 @@
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
         <h4 class="modal-title">Se parte de nuestra red</h4>
         <!-- <h5>Optional blurb goes here</h5> -->
-        <form id="lawyer_registration_form" method="POST" action="">
-          <div class="form-group">
-            <label class="control-label" for="lawyer_name">Nombre:</label>
-            <input class="form-control" type="text" name="lawyer_name" placeholder="Nombre" required value="{{lawyer_name}}"/>
-          </div>
-          <div class="form-group">
-            <label class="control-label" for="lawyer_email">Email:</label>
-            <input class="form-control" type="email" name="lawyer_email" placeholder="Email" required value="{{lawyer_email}}"/>
-          </div>
-          <div class="form-group">
-            <label class="control-label" for="lawyer-password">Contraseña:</label>
-            <input class="form-control" type="password" name="lawyer-password" placeholder="Contraseña">
-          </div>
-          <div class="form-group">
-            <label class="control-label" for="lawyer-password-confirm">Confirmar Contraseña:</label>
-            <input class="form-control" type="password" name="lawyer-password-confirm" placeholder="Confirmar Contraseña">
-          </div>
-          <button class="btn  btn-lg  btn-block  btn-success" data-loading-text="Cargando...">Registráme Ahora</button>
-        </form>
+        {% include "_signup_form.html" with lawyers_only="true"%}
       </div>
     </div>
   </div>

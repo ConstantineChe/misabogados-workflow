@@ -126,6 +126,7 @@
   (embeds-many :feedback "Feedback"
                (text-field :client_name "Clients name")
                (field :date-time :timestamp "Timestamp")
+               (field :number :score "Score")
                (field :textarea :text "Text"))
 
   (checkbox-field :language_spanish "Idioma: Español")
