@@ -13,17 +13,17 @@
 // TODO refactor these colour overlay styles
 /* Adds a black overlay with transparency */
 .dark-bg {
-  background-color: rgba(0, 0, 34, 0.498039);
+  background-color: rgba($background-grey, 0.5);
 }
 
 /* Adds a green overlay with transparency */
 .green-bg {
-  background-color: rgba(92, 184, 92, 0.75);
+  background-color: rgba($background-green, 0.75);
 }
 
 /* Adds a blue overlay with transparency */
 .blue-bg {
-  background-color: rgba(40, 119, 215, 0.803614);
+  background-color: rgba($background-blue, 0.8);
 }
 
 /* Counters section padding */
@@ -36,24 +36,24 @@
 /* Adds a dark overlay with transparency */
 .darken-bg {
   @extend .background-overlay;
-  background-color: rgba(85, 85, 85, 0.498039);
+  background-color: rgba($background-grey, 0.6);
 }
 
 /* Adds a green overlay with transparency */
 .greenen-bg {
   @extend .background-overlay;
-  background-color: rgba(92, 184, 92, 0.75);
+  background-color: rgba($background-green, 0.65);
 }
 
 /* Adds a blue overlay with transparency */
 .bluen-bg {
   @extend .background-overlay;
-  background-color: rgba(40, 119, 215, 0.498039);
+  background-color: rgba($background-blue, 0.5);
 }
 
 .bluen-bg-dark {
   @extend .background-overlay;
-  background-color: rgba(40, 119, 215, 0.803614);
+  background-color: rgba($background-blue, 0.8);
 }
 
 // Provides stacked columns with a bit of spacing on mobile devices

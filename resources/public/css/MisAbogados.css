@@ -7,7 +7,7 @@
 /* Variables
 ---------------------------------------------*/
 /* Fonts */
-/* Backgrounds */
+/* backgrounds */
 /* Elements */
 /* Sizing */
 /* Global
@@ -45,7 +45,7 @@ p {
   padding-top: 0px;
   padding-bottom: 0px;
   margin-bottom: 0px;
-  color: #FFFFFF;
+  color: #ffffff;
   text-align: center; }
   .jumbotron h1 {
     font-size: 3.1em;
@@ -105,14 +105,14 @@ p {
   .section-extended {
     margin-top: -40px; } }
 .section-white h1, .section-white h2, .section-white h3, .section-white h4, .section-white h5 {
-  color: #2877D7; }
+  color: #1e90bf; }
 
 .section-blue {
-  background-color: #2877D7; }
+  background-color: #1e90bf; }
   .section-blue h1, .section-blue h2, .section-blue h3, .section-blue h4, .section-blue h5, .section-blue p {
-    color: #FFFFFF; }
+    color: #ffffff; }
   .section-blue li {
-    color: #FFFFFF;
+    color: #ffffff;
     font-size: 18px; }
 
 .section-header {
@@ -169,15 +169,15 @@ p {
 
 /* Adds a black overlay with transparency */
 .dark-bg {
-  background-color: rgba(0, 0, 34, 0.49804); }
+  background-color: rgba(43, 43, 43, 0.5); }
 
 /* Adds a green overlay with transparency */
 .green-bg {
-  background-color: rgba(92, 184, 92, 0.75); }
+  background-color: rgba(76, 207, 92, 0.75); }
 
 /* Adds a blue overlay with transparency */
 .blue-bg {
-  background-color: rgba(40, 119, 215, 0.80361); }
+  background-color: rgba(30, 144, 191, 0.8); }
 
 /* Counters section padding */
 .background-overlay, .darken-bg, .greenen-bg, .bluen-bg, .bluen-bg-dark {
@@ -186,18 +186,18 @@ p {
 
 /* Adds a dark overlay with transparency */
 .darken-bg {
-  background-color: rgba(85, 85, 85, 0.49804); }
+  background-color: rgba(43, 43, 43, 0.6); }
 
 /* Adds a green overlay with transparency */
 .greenen-bg {
-  background-color: rgba(92, 184, 92, 0.75); }
+  background-color: rgba(76, 207, 92, 0.65); }
 
 /* Adds a blue overlay with transparency */
 .bluen-bg {
-  background-color: rgba(40, 119, 215, 0.49804); }
+  background-color: rgba(30, 144, 191, 0.5); }
 
 .bluen-bg-dark {
-  background-color: rgba(40, 119, 215, 0.80361); }
+  background-color: rgba(30, 144, 191, 0.8); }
 
 @media (max-width: 768px) {
   .collapse-nicely .col-xs-12 {
@@ -206,7 +206,7 @@ p {
 /* Adds helper class for removing button background */
 .btn-no-fill {
   background-color: transparent;
-  color: #FFFFFF; }
+  color: #ffffff; }
 
 /* For implementing a 5 colum layout */
 .col-xs-5ths,
@@ -323,7 +323,7 @@ p {
   margin-right: 0px; }
 
 .navbar-ctl a {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   font-size: 18px;
   font-weight: bold;
   text-decoration: none; }
@@ -355,7 +355,7 @@ p {
 
 .navbar-button a {
   margin-top: 2px;
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   font-weight: bold; }
 
 .navbar-button a:hover {
@@ -363,7 +363,7 @@ p {
 
 .dropdown-menu {
   background-color: #2b2b2b;
-  color: #FFFFFF; }
+  color: #ffffff; }
 
 .categoria-list {
   font-size: 14px;
@@ -478,14 +478,14 @@ p {
 ---------------------------------------------*/
 /* Footer: Main */
 .footer {
-  color: #FFFFFF; }
+  color: #ffffff; }
 
 .footer li a {
   text-decoration: none;
   border-bottom: 1px dotted; }
 
 .footer li a:hover {
-  color: #FFFFFF;
+  color: #ffffff;
   border-bottom: 1px solid; }
 
 .footer-main {
@@ -520,7 +520,7 @@ p {
   padding-right: 2px; }
 
 .footer-main i:hover {
-  color: #FFFFFF; }
+  color: #ffffff; }
 
 .webpay-img {
   margin-top: 20px;
@@ -531,7 +531,7 @@ p {
     width: 1200px; } }
 /* Footer: Contact Information */
 .footer-contact {
-  background-color: #2877D7;
+  background-color: #1e90bf;
   font-size: 14px;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -550,7 +550,7 @@ p {
   vertical-align: middle; }
 
 .footer-contact a {
-  color: #FFFFFF; }
+  color: #ffffff; }
 
 /*--------------------------------------------
  * Home Page Sections                        *
@@ -622,7 +622,7 @@ p {
   text-align: center; }
 
 .caption-overlay h5 {
-  color: #FFFFFF !important;
+  color: #ffffff !important;
   font-size: 1.05em;
   font-weight: bold;
   margin-top: 30px; }
@@ -758,7 +758,7 @@ p {
   .cta h2 {
     margin-top: 2.4em; } }
 .dropdown-menu.typeahead {
-  background-color: #FFFFFF;
+  background-color: #ffffff;
   color: #333333; }
 
 /* Radio Agricultura Player
@@ -997,8 +997,8 @@ p {
 /* Heading
 ---------------------------------------------*/
 .lawyer-profile-header {
-  background-color: #2877D7;
-  color: #FFFFFF;
+  background-color: #1e90bf;
+  color: #ffffff;
   padding-bottom: 0px;
   position: relative;
   min-height: 190px; }
@@ -1070,7 +1070,7 @@ p {
   padding-top: 40px; }
   .lawyer-profile h3, .lawyer-profile h4, .lawyer-profile h5 {
     font-family: "Open Sans", Helvetica, Arial, sans-serif;
-    color: #2877D7; }
+    color: #1e90bf; }
   .lawyer-profile h3 {
     margin-top: 30px;
     text-transform: uppercase;
@@ -1201,17 +1201,17 @@ p {
   list-style-type: none;
   padding-left: 0px; }
 .client-feedback li {
-  background-color: #E4E4E4;
+  background-color: #e4e4e4;
   padding: 20px;
   margin-bottom: 30px; }
 .client-feedback h4 {
-  color: #2877D7;
+  color: #1e90bf;
   font-weight: bold;
   text-transform: uppercase;
   margin-top: 0px;
   margin-bottom: 5px; }
 .client-feedback small {
-  color: #2877D7;
+  color: #1e90bf;
   font-size: 14px;
   margin-top: 0px; }
 .client-feedback p {
@@ -1248,7 +1248,7 @@ p {
   .granular-details li {
     margin-bottom: 20px; }
   .granular-details li a {
-    color: #FFFFFF; }
+    color: #ffffff; }
   .granular-details img {
     margin-right: 15px;
     max-width: 50px; }
@@ -1364,9 +1364,9 @@ p {
   padding: 0px;
   margin-left: auto;
   margin-right: auto;
-  color: #FFFFFF; }
+  color: #ffffff; }
   .flexible-pricing .thumbnail h3 {
-    color: #FFFFFF;
+    color: #ffffff;
     font-weight: bold;
     margin-top: 0px; }
   .flexible-pricing .thumbnail .button-row {
