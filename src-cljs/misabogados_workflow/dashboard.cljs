@@ -10,6 +10,40 @@
 
 (def show-all (r/atom false))
 
+(defn get-filters []
+  (filter #(not (empty? %)) [(if (session/get-in [:filters :lead :client_name])
+                       {"$match" {:client
+                                  {"$elemMatch"
+                                   {:name
+                                    {"$regex" (session/get-in [:filters :lead :client_name])
+                                     "$options" "i"}}}}})
+               (if (session/get-in [:filters :lead :client_email])
+                 {"$match" {:client
+                            {"$elemMatch"
+                             {:email
+                              {"$regex" (session/get-in [:filters :lead :client_email])
+                               "$options" "i"}}}}})
+               (if (session/get-in [:filters :lead :lawyer_name]) {"$match" {:lawyer
+                                                                             {"$elemMatch"
+                                                                              {:name
+                                                                               {"$regex" (session/get-in [:filters :lead :lawyer_name])
+                                                                                "$options" "i"}}}}})
+               (if (session/get-in [:filters :lead :lawyer_name])
+                 {"$match" {:lawyer
+                            {"$elemMatch"
+                             {:email
+                              {"$regex" (session/get-in [:filters :lead :lawyer_email])
+                               "$options" "i"}}}}})]))
+
+
+(defn get-leads []
+  (GET (str js/context "/leads") {:params {:per-page 20
+                                                       :page 1
+                                                       :sort-field :_id
+                                                       :sort-dir -1
+                                                       :filters (get-filters)}
+                                              :handler #(reset! table-data (get % "leads"))
+                                              :error-handler #(js/alert (str %))}))
 
 (defn get-actions [lead]
   (let [step (if (get lead "step") (get lead "step") "pitch")]
@@ -20,11 +54,21 @@
                :class "btn btn-success"
                :href (str "#lead/" (get lead "_id") "/action/" step)} [:span.glyphicon.glyphicon-play] " " (util/remove-kebab step)])))
 
+
 (defn table []
   (let []
     [:div
      [:legend "Leads"]
-     [:button.btn.btn-default {:on-click #(swap! show-all not)} (if @show-all "Show less" "Show all")]
+     [:label "Client name " [:input {:type :text :value (session/get-in [:filters :lead :client_name])
+                                     :on-change #(session/assoc-in! [:filters :lead :client_name] (-> % .-target .-value))}]]
+     [:label "Client email " [:input {:type :text :value (session/get-in [:filters :lead :client_email])
+                                      :on-change #(session/assoc-in! [:filters :lead :client_email] (-> % .-target .-value))}]]
+     [:br]
+     [:label "Lawyer name " [:input {:type :text :value (session/get-in [:filters :lead :lawyer_name])
+                                     :on-change #(session/assoc-in! [:filters :lead :lawyer_name] (-> % .-target .-value))}]]
+     [:label "Lawyer email " [:input {:type :text :value (session/get-in [:filters :lead :lawyer_email])
+                                      :on-change #(session/assoc-in! [:filters :lead :lawyer_email] (-> % .-target .-value))}]]
+     [:button.btn.btn-primary {:on-click #(get-leads)} "Apply filters"]
      (if-not (empty? @table-data)
        [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
         [:th "ID"]
@@ -42,7 +86,7 @@
         [:th "Enlaces"]
         [:th ""]
         [:tbody
-         (doall (for [lead (if @show-all @table-data (take 10 @table-data))
+         (doall (for [lead @table-data
                       :let [id (get lead "_id")
                             pending-action (util/remove-kebab (get lead "step"))
                             actions (get-actions lead)]]
@@ -68,13 +112,12 @@
        [:p "there are no leads to show."])]))
 
 (defn dashboard []
-  (let [leads (GET (str js/context "/leads") {:handler #(reset! table-data (get % "leads"))
-                                :error-handler #(js/alert (str %))})]
+  (let [leads (get-leads)]
     (fn []
       [:div.container-fluid
        [:h3 "Dashboard"]
        (when-let [notification (session/get :notification)]
-       (js/setTimeout #(session/put! :notification nil) 5000)
+       (js/setTimeout #(session/put! :notification nil) 15000)
                   notification)
        [:a {:class "btn btn-primary"
             :href "#lead"} "New Lead"]
