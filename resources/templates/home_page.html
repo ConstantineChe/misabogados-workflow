@@ -40,7 +40,7 @@
           <label class="sr-only" for="categories-filter">Filtro áreas legales</label>
           <input type="text" class="form-control" data-provide="typeahead" id="categories-filter" placeholder="Buscar...">
           <span class="input-group-btn">
-            <button class="btn btn-default" type="button">Buscar</button>
+            <button class="btn btn-default" id="category-search" type="button">Buscar</button>
           </span>
         </div>
       </div>
@@ -49,8 +49,8 @@
     <!-- Categories -->
     {% ifequal settings.country "cl" %}{% include "_categories_block_cl.html" %}{% endifequal %}
     {% ifequal settings.country "co" %}{% include "_categories_block_co.html" %}{% endifequal %}
-    {% ifequal settings.country "mx" %}{% include "_categories_block_mx.html" %}{% endifequal %}  
-      
+    {% ifequal settings.country "mx" %}{% include "_categories_block_mx.html" %}{% endifequal %}
+
   </div>
 </div>
 

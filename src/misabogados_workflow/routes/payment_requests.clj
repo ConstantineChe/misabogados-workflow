@@ -52,7 +52,11 @@
     {:message "Not allowed"}))
 
 (defn get-payment-requests [request]
-  (let [payment-requests (apply merge (map (fn [payment-request]
+  (prn (:params request))
+  (let [{:keys [page per-page filters sort-field sort-dir]} (:params request)
+        per-page (Integer. per-page)
+        offset (* per-page (dec (Integer. page)))
+        payment-requests (apply merge (map (fn [payment-request]
                           {(str (:_id payment-request)) (dissoc payment-request :_id)})
                                            (cond (= :lawyer (-> request :session :role))
                                                  (dbcore/get-payment-requests (get-lawyer-profile-id request))
@@ -64,11 +68,16 @@
                                                                                                             (key f))))
                                                                                      c))))
                                                       (mc/aggregate @db "payment_requests"
-                                                                        [{"$lookup" {:from "lawyers"
-                                                                                     :localField :lawyer
-                                                                                     :foreignField :_id
-                                                                                     :as :lawyer_data}}
-                                                                         ])))))]
+                                                                    (vec (concat
+                                                                          [{"$lookup" {:from "lawyers"
+                                                                                       :localField :lawyer
+                                                                                       :foreignField :_id
+                                                                                       :as :lawyer_data}}]
+                                                                          (doall (map second filters))
+                                                                          [{"$skip" offset}
+                                                                           {"$limit" per-page}
+                                                                           {"$sort" {sort-field (Integer. sort-dir)}}]
+                                                                           )))))))]
     (response {:payment-requests payment-requests :status "ok" :role (-> request :session :role)})))
 
 

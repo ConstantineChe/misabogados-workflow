@@ -60,24 +60,46 @@
 
 (def validation-message (r/atom nil))
 
+(defn get-filters []
+  (filter #(not (empty? %))
+          [(if-let [name (session/get-in [:filters :payment-requests :name])]
+             {"$match" {:client {"$regex" name "$options" "i"}}})
+           (if-let [email (session/get-in [:filters :payment-requests :email])]
+             {"$match" {:client_email {"$regex" email "$options" "i"}}})
+           (if-let [own-client (session/get-in [:filters :payment-requests :own-client])]
+             {"$match" {:own_client own-client}})
+           (if-let [from-date (session/get-in [:filters :payment-requests :from-date])]
+             {"$match" {:date_created {"$gte" from-date}}})
+           (if-let [to-date (session/get-in [:filters :payment-requests :to-date])]
+             {"$match" {:date_created {"$lte" to-date}}})
+           ]))
 
 ;;todo server request
-(defn refresh-table []
-  (GET (str js/context "/payment-requests")
-       {:handler #(reset! table-data (get % "payment-requests")
-                          nil)}))
+(defn get-payment-requests []
+  (let [filters (get-filters)]
+    (prn @session/state)
+    (prn filters)
+    (GET (str js/context "/payment-requests")
+               {:params {:per-page 20
+                         :page 1
+                         :sort-field :_id
+                         :filters filters
+                         :sort-dir -1
+                         }
+                :handler #(reset! table-data (get % "payment-requests")
+                                  nil)})))
 
 (defn create-payment-request [form-data]
   (POST (str js/context "/payment-requests") {:params form-data
-                                      :handler #(refresh-table)
+                                      :handler #(get-payment-requests)
                                       :error-handler (fn [] nil)}))
 (defn update-payment-request [id form-data]
   (PUT (str js/context "/payment-requests/" id) {:params (dissoc form-data :_id :terms)
-                                                 :handler #(refresh-table)
+                                                 :handler #(get-payment-requests)
                                                  :error-handler #(js/alert (str %))}))
 
 (defn remove-payment-request [id]
-  (DELETE (str js/context "/payment-requests/" id) {:handler #(do (js/alert (str %)) (refresh-table))
+  (DELETE (str js/context "/payment-requests/" id) {:handler #(do (js/alert (str %)) (get-payment-requests))
                                                     :error-handler #(js/alert (str %))}))
 
 (defn validate-payment-request-form [data]
@@ -145,7 +167,7 @@
                                                  (do (create-payment-request @data)
                                                      (u/close-modal "payment-request-form")
                                                      (reset! data {})
-                                                     (refresh-table)
+                                                     (get-payment-requests)
                                                      (reset! validation-message nil))
                                                  )} "Guardar"]]]]])))
 
@@ -186,7 +208,7 @@
                                           :on-click #(if (validate-payment-request-form @edit-form-data)
                                                        (do (update-payment-request (:_id data) @edit-form-data)
                                                            (u/close-modal (str "payment-request-form" (:_id data)))
-                                                           (refresh-table)
+                                                           (get-payment-requests)
                                                            (reset! validation-message nil))
                                                        )} "Guardar"]]]]])))
 
@@ -231,15 +253,17 @@
     [:div
      [:legend "Payment Requests"]
      [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
-      [:th "Botón de pago"]
-      (if (or (= "admin" (session/get-in [:user :role]))
-              (= "finance" (session/get-in [:user :role]))) [:th "Lawyer" ])
-      [:th "Client"]
-      [:th "Service"]
-      [:th "Amount"]
-      [:th "Client type"]
-      [:th "Last action"]
-      [:th "Actions"]
+      [:thead
+       [:tr
+        [:th "Botón de pago"]
+        (if (or (= "admin" (session/get-in [:user :role]))
+                (= "finance" (session/get-in [:user :role]))) [:th "Lawyer" ])
+        [:th "Client"]
+        [:th "Service"]
+        [:th "Amount"]
+        [:th "Client type"]
+        [:th "Last action"]
+        [:th "Actions"]]]
       [:tbody
        (doall
         (for [row @table-data]
@@ -274,13 +298,21 @@
     [:h4 "You have no payment-requests"])))
 
 (defn payments []
-  (let [payment-requests (GET (str js/context "/payment-requests")
-                      {:handler (fn [data] (reset! table-data (get data "payment-requests"))
-                                  nil)
-                       :error-handler #(u/get-session!)})]
+  (let [payment-requests (get-payment-requests)
+        filters (r/cursor session/state [:filters :payment-requests])
+        options (r/atom nil)
+        util (r/atom nil)]
     (fn []
       [:div.container
        [:h1 "PagoLegal"]
+       (el/form "" [filters options util]
+                ["Filters"
+                 (el/input-text "Clients name" [:name])
+                 (el/input-email "Clients email" [:email])
+;                 (el/input-datepicker "From date" [:from-date])
+;                 (el/input-datepicker "To date" [:to-date])
+                 (el/input-checkbox "Own client" [:own-client])])
+       [:button.btn.btn-primary {:on-click #(get-payment-requests)} "Apply filters"]
        (if (#{"admin" "finance" "lawyer"} (session/get-in [:user :role])) [:button.btn {:type :button
                                                                        :on-click (fn [] (do
                                                                                          (u/show-modal "payment-request-form")

@@ -69,7 +69,6 @@
      [:label "Lawyer email " [:input {:type :text :value (session/get-in [:filters :lead :lawyer_email])
                                       :on-change #(session/assoc-in! [:filters :lead :lawyer_email] (-> % .-target .-value))}]]
      [:button.btn.btn-primary {:on-click #(get-leads)} "Apply filters"]
-     (str @session/state)
      (if-not (empty? @table-data)
        [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
         [:th "ID"]
