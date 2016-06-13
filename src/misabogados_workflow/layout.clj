@@ -17,7 +17,17 @@
 (parser/add-tag! :csrf-field (fn [_ _] (anti-forgery-field)))
 (parser/add-tag! :recaptcha-field (fn [_ _]
                                     ;; (c/render "6Lc92P4SAAAAAOBC3sqUSW0glBwwaueafC4zPxKj")
-                                    (c/render "6Lco-wsTAAAAAKJL86ESJT8W7s4Fb2aOnrZxwJdu")))
+                                    (c/render "6Lco-wsTAAAAAKJL86ESJT8W7s4Fb2aOnrZxwJdu \"")))
+
+(parser/add-tag! :stars (fn [[score] context]
+                          (if-let [stars-string (get-in context                              
+                                                        (map keyword (clojure.string/split (str score) #"\.")))]
+                            (let [stars (read-string stars-string)]
+                                 (str
+                                  (reduce str (repeat stars "<img src=\"/img/lawyer-profile/star-gold.png\" alt=\"Estrella\" />")) 
+                                  (reduce str (repeat (- 5 stars) "<img src=\"/img/lawyer-profile/star-white.png\" alt=\"Estrella\" />"))))
+                            ""
+                            )))
 (filters/add-filter! :markdown (fn [content] [:safe (md-to-html-string content)]))
 
 (defn render

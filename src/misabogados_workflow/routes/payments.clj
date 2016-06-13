@@ -101,8 +101,7 @@
                                                                                 :description (:service payment-request)
                                                                                 :buyerEmail (:client_email payment-request)
                                                                                 }))}))
-      {:status 404
-       })))
+      {:status 404})))
 
 (defmulti get-payment-request-by-payment-code (fn [request] (settings/fetch :payment_system)))
 

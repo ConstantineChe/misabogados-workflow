@@ -27,6 +27,7 @@
                                                        500 (js/alert "Internal server error")
                                                        (js/alert (str %)))}))
 
+
 (defn create-lead [form-data actions]
   (POST (str js/context "/lead") {:params {:lead form-data
                                            :actions (keys (filter #(val %) actions))}
@@ -68,6 +69,8 @@
     (GET (str js/context "/leads/options") {:handler (fetch options)})
     (GET (str js/context "lead/" id) {:handler (fetch lead-data)})
     (GET (str js/context "/lead/" id "/actions") {:handler #(let [response (keywordize-keys %)]
+
+
                                                               (reset! step-actions (:actions response)))})
     (fn []
       [:div.container-fluid

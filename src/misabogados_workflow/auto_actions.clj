@@ -14,8 +14,8 @@
 (f/unparse date-time-formatter (l/local-now))
 
 (defn change-lawyer [lead]
-          (let [id (:_id lead)]
-            (prn (mc/update @db "leads" {:_id id} {$unset {:matches ""}}))))
+  (let [id (:_id lead)]
+    (prn (mc/update @db "leads" {:_id id} {$unset {:matches ""}}))))
 
 (defn schedule-meeting [lead]
   (let [meeting (get-in lead [:matches 0 :meetings 0])
@@ -30,3 +30,8 @@
                                  :data {:name (:name client)
                                         :time meeting-time-formatted
                                         :lawyer (:name lawyer)}})))
+
+;;TODO if person, next action — refer, if enterprise, refer-enterprise or smth
+
+(defn person-enterprise-switch [lead]
+  :refer)

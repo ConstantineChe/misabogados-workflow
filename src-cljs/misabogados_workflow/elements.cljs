@@ -578,6 +578,7 @@
   (reset! atom (apply merge (map get-struct schema)))
   atom)
 
+
 (defn create-form
   "Create form from schema."
   ([legend schema atoms]
