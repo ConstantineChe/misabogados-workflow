@@ -185,7 +185,8 @@
                (field :typeahead :lawyer_id "Lawyer")
                (embeds-many :meetings "Meetings"
                             (text-field :type "Type")
-                            (field :date-time :time ["Date" "Time"]))))
+                            (field :date-time :time ["Date" "Time"])
+                            (field :date :date "date"))))
 
 ;; This is what entity definitions should be expanded to. This data structures holds all information abount entity and it's fields in format easily digestable programmatically.
 
