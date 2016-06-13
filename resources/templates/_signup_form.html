@@ -7,20 +7,20 @@
   </div>
   {% endfor %}
   <div class="form-group">
-    <label class="control-label" for="lawyer_name">Nombre:</label>
-    <input class="form-control" type="text" name="lawyer_name" placeholder="Nombre" required value="{{lawyer_name}}"/>
+    <label class="control-label" for="name">Nombre:</label>
+    <input class="form-control" type="text" name="name" placeholder="Nombre" required value="{{lawyer_name}}"/>
   </div>
   <div class="form-group">
-    <label class="control-label" for="lawyer_email">Email:</label>
-    <input class="form-control" type="email" name="lawyer_email" placeholder="Email" required value="{{lawyer_email}}"/>
+    <label class="control-label" for="email">Email:</label>
+    <input class="form-control" type="email" name="email" placeholder="Email" required value="{{lawyer_email}}"/>
   </div>
   <div class="form-group">
-    <label class="control-label" for="lawyer-password">Contraseña:</label>
-    <input class="form-control" type="password" name="lawyer-password" placeholder="Contraseña">
+    <label class="control-label" for="password">Contraseña:</label>
+    <input class="form-control" type="password" name="password" placeholder="Contraseña">
   </div>
   <div class="form-group">
-    <label class="control-label" for="lawyer-password-confirm">Confirmar Contraseña:</label>
-    <input class="form-control" type="password" name="lawyer-password-confirm" placeholder="Confirmar Contraseña">
+    <label class="control-label" for="confirm-password">Confirmar Contraseña:</label>
+    <input class="form-control" type="password" name="confirm-password" placeholder="Confirmar Contraseña">
   </div>
   <div class="form-group {% if lawyers_only %}hidden{% endif %}">
     <input type="checkbox" {% if lawyers_only %}checked{% endif %} name="lawyer" id="lawyer">
