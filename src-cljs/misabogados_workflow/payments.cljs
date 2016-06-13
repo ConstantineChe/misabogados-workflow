@@ -185,19 +185,20 @@
                 [:button.close {:type :button :data-dismiss :modal :aria-label "Close"}
                  [:span {:aria-hidden true :dangerouslySetInnerHTML {:__html "&times;"}}]]
                 [:h3.modal-title "Edit Payment Request"]]
-               (el/form "" [edit-form-data options utils] (into (if (= "lawyer" (session/get-in [:user :role]))
-                                                        ["Payment Request"]
-                                                        ["Payment Request"
-                                                         (el/input-typeahead "Lawyer" [:lawyer])])
-                                                      [(el/input-text "Nombre del cliente*" [:client])
-                                                       (el/input-email "Email del cliente*" [:client_email])
-                                                       (el/input-text "Teléfono del cliente*" [:client_tel])
-                                                       (el/input-text "Servicio*" [:service])
-                                                       (el/input-textarea "Descripción del servicio*" [:service_description])
-                                                       (el/input-number "Amount*" [:amount])
-                                                       (el/input-dropdown "Cliente tipo*" [:own_client])
-                                                       ;; (el/input-checkbox "Acepto los Términos y condiciones Transacciones" [:terms])
-                                                       ]))
+               (el/form "" [edit-form-data options utils] 
+                        (into (if (= "lawyer" (session/get-in [:user :role]))
+                                ["Payment Request"]
+                                ["Payment Request"
+                                 (el/input-typeahead "Lawyer" [:lawyer])])
+                              [(el/input-text "Nombre del cliente*" [:client])
+                               (el/input-email "Email del cliente*" [:client_email])
+                               (el/input-text "Teléfono del cliente*" [:client_tel])
+                               (el/input-text "Servicio*" [:service])
+                               (el/input-textarea "Descripción del servicio*" [:service_description])
+                               (el/input-number "Amount*" [:amount])
+                               (el/input-dropdown "Cliente tipo*" [:own_client])
+                               ;; (el/input-checkbox "Acepto los Términos y condiciones Transacciones" [:terms])
+                               ]))
                               [:div.modal-footer
                 (doall (for [message (first @validation-message)]
                          [:p {:key (key message)} (str (first (val message)))]))
@@ -246,10 +247,54 @@
          [:div.modal-footer
           [:button.btn.btn-default {:type :button
                                     :on-click #(u/close-modal "lawyer-data-modal")} "Cerrar"]]]]])))
+(defn payments-table-render []
+  (fn []  
+    [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
+     [:th "Botón de pago"]
+     (if (or (= "admin" (session/get-in [:user :role]))
+             (= "finance" (session/get-in [:user :role]))) [:th "Lawyer" ])
+     [:th "Client"]
+     [:th "Service"]
+     [:th "Amount"]
+     [:th "Client type"]
+     [:th "Last action"]
+     [:th "Actions"]
+     [:tbody
+      (doall
+       (for [row @table-data]
+         (let [row-key (key row)
+               values (apply merge (doall (map (fn [field]
+                                                 {(keyword (key field)) (val field)})
+                                               (get @table-data row-key))))]
+           
+           [:tr {:key row-key}
+            [:td [:a {:href (str "/payments/pay/" (get values :code))
+                      :data-toggle "tooltip"
+                      :title "Este enlace fue enviado al cliente"
+                      } "Pagar"]]
+            (if (or (= "admin" (session/get-in [:user :role]))
+                    (= "finance" (session/get-in [:user :role])))
+              [:td {:on-click #(do (session/assoc-in! [:payments :lawyer] (first (get values :lawyer_data)))
+                                   (u/show-modal "lawyer-data-modal"))}
+               (get (first (get values :lawyer_data)) "name")])
+            [:td (get values :client) ]
+            [:td (get values :service)]
+            [:td (get values :amount)]
+            [:td [:span.balloon-tooltip {:data-toggle "tooltip" :data-placement "bottom" :title "Tooltip"
+                                         } (if (= "true" (get values :own_client)) "Own" "MisAbogados")]]
+            [:td {:on-click #(do (session/assoc-in! [:payments :payment-log] (get values :payment_log))
+                                 (u/show-modal "payment-data-modal"))}
+             (get (last (get values :payment_log)) "action")]
+            [:td
+             (if-not (get values :payment_log)
+               [:div.btn-group [:button.btn.btn-primary {:on-click #(do
+                                                                      (u/show-modal (str "payment-request-form" row-key)))} "Edit"]
+                [:button.btn {:on-click #(remove-payment-request row-key)} "Delete"]])]
+            ])))]]))
 
 (defn table []
   (fn []
-  (if-not (empty? @table-data)
+(if-not (empty? @table-data)
     [:div
      [:legend "Payment Requests"]
      [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
@@ -295,7 +340,8 @@
                                             (u/show-modal (str "payment-request-form" row-key)))} "Edit"]
                  [:button.btn {:on-click #(remove-payment-request row-key)} "Delete"]])]
              ])))]]]
-    [:h4 "You have no payment-requests"])))
+    [:h4 "You have no payment-requests"])
+    ))
 
 (defn payments []
   (let [payment-requests (get-payment-requests)
@@ -314,17 +360,17 @@
                  (el/input-checkbox "Own client" [:own-client])])
        [:button.btn.btn-primary {:on-click #(get-payment-requests)} "Apply filters"]
        (if (#{"admin" "finance" "lawyer"} (session/get-in [:user :role])) [:button.btn {:type :button
-                                                                       :on-click (fn [] (do
-                                                                                         (u/show-modal "payment-request-form")
-                                                                                         (reset! form-data {})))} "Create payment request"])
+                                                                                        :on-click (fn [] (do
+                                                                                                           (u/show-modal "payment-request-form")
+                                                                                                           (reset! form-data {})))} "Create payment request"])
        [table]
        [create-payment-request-form]
        [lawyer-data-modal]
        [payment-data-modal]
        (doall (for [row @table-data]
-           (let [row-key (key row)
-                 values (apply merge (map (fn [field]
-                                            {(keyword (key field)) (val field)})
-                                          (get @table-data row-key)))]
-             [:div {:key row-key} [(edit-payment-request-form (into {:_id row-key} values))]]
-             )))])))
+                (let [row-key (key row)
+                      values (apply merge (map (fn [field]
+                                                 {(keyword (key field)) (val field)})
+                                               (get @table-data row-key)))]
+                  [:div {:key row-key} [(edit-payment-request-form (into {:_id row-key} values))]]
+                  )))])))
