@@ -63,7 +63,6 @@
                                         :on-click #(delete-lawyer (:_id lawyer) (:name lawyer))}
                                        "delete"]))])]))
 
-
 (defn edit-lawyer
   "Edit lawyer page component."
   []

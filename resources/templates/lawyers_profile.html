@@ -116,7 +116,7 @@
               </p>
             </div>
             <div class="users-say-rating">
-              <img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-white.png" alt="" /><img src="/img/lawyer-profile/star-white.png" alt="" />
+              {% stars lawyer.feedback_score_knowledge %}
             </div>
           </div>
           <div class="users-say-ratings">
@@ -129,7 +129,7 @@
               </p>
             </div>
             <div class="users-say-rating">
-              <img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-white.png" alt="" /><img src="/img/lawyer-profile/star-white.png" alt="" /><img src="/img/lawyer-profile/star-white.png" alt="" />
+              {% stars lawyer.feedback_score_response_time %}
             </div>
           </div>
           <div class="users-say-ratings">
@@ -142,7 +142,7 @@
               </p>
             </div>
             <div class="users-say-rating">
-              <img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-white.png" alt="" />
+              {% stars lawyer.feedback_score_price_accessibility %}
             </div>
           </div>
           <div class="users-say-ratings">
@@ -155,7 +155,7 @@
               </p>
             </div>
             <div class="users-say-rating">
-              <img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-white.png" alt="" />
+              {% stars lawyer.feedback_score_quality %}
             </div>
           </div>
         </div>
@@ -176,7 +176,7 @@
         <h4>{{feedback.client_name}}</h4>
         <small>11 de april de 2015</small>
         <p>{{feedback.text}}</p>
-        <img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-gold.png" alt="Estrella" /><img src="/img/lawyer-profile/star-white.png" alt="" /><img src="/img/lawyer-profile/star-white.png" alt="" />
+        {% stars feedback.score %}
       </li>
       {% endfor %}
     </ul>

@@ -1,5 +1,6 @@
 $(document).ready(function() {
     var input = $('#categories-filter');
+    var button = $('#category-search');
 
     $.ajax({
         url: "/categories_json",
@@ -29,6 +30,10 @@ $(document).ready(function() {
         if (ev.keyCode === 13) {
             window.location = "categoria/" + input.typeahead("getActive").id;
         }
+    });
+
+    button[0].addEventListener("click", function(ev) {
+        window.location = "categoria/" + input.typeahead("getActive").id;
     });
 
 

@@ -107,7 +107,7 @@
   (text-field :address "Dirección")
   (text-field :years_of_experience "Years of experience")
   (text-field :slug "Slug")
-  (field :number :rating "X% de los usuarios dice que sí")
+  (field :number :rating "Rating")
   (field :date-time :join_date ["miembro desde" "."])
   (field :image :profile_picture "Profile picture" "admin/lawyers/file")
   (checkbox-field :certified "Certified lawyer")
@@ -126,6 +126,7 @@
   (embeds-many :feedback "Feedback"
                (text-field :client_name "Clients name")
                (field :date-time :timestamp "Timestamp")
+               (field :number :score "Score")
                (field :textarea :text "Text"))
 
   (checkbox-field :language_spanish "Idioma: Español")
@@ -184,7 +185,8 @@
                (field :typeahead :lawyer_id "Lawyer")
                (embeds-many :meetings "Meetings"
                             (text-field :type "Type")
-                            (field :date-time :time ["Date" "Time"]))))
+                            (field :date-time :time ["Date" "Time"])
+                            (field :date :date "date"))))
 
 ;; This is what entity definitions should be expanded to. This data structures holds all information abount entity and it's fields in format easily digestable programmatically.
 

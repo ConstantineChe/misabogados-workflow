@@ -90,8 +90,13 @@
 
 (defn get-leads [request]
   (let [role (-> request :session :role)
-        identity (:identity request)]
-    (response {:status "ok" :leads (doall (db/get-leads role identity))})))
+        identity (:identity request)
+        {:keys [sort-field sort-dir per-page page filters]} (:params request)]
+    (response {:status "ok" :leads (doall (db/get-leads role identity
+                                                        (Integer. per-page)
+                                                        (Integer. page)
+                                                        {sort-field (Integer. sort-dir)}
+                                                        filters))})))
 
 (defn get-options []
   (response
@@ -104,9 +109,10 @@
 
 (defn get-lead-actions [id request]
   (let [lead (db/get-lead id)
-        step (if (:step lead) (keyword (:step lead)) :check)
+        step (if (:step lead) (keyword (:step lead)) :pitch)
         actions (filter #((:roles %) (-> request :session :role)) (:actions (step steps)))]
     (response {:id id :actions actions})))
+
 
 
 (defroutes leads-routes
