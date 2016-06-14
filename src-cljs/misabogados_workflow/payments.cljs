@@ -60,8 +60,6 @@
 
 (def validation-message (r/atom nil))
 
-(def truthy? #{true})
-
 (defn get-filters []
   (filter #(not (empty? %))
           (concat
@@ -69,8 +67,8 @@
                   [{"$match" {:client {"$regex" name "$options" "i"}}}])
                 (if-let [email (session/get-in [:filters :payment-requests :email])]
                   [{"$match" {:client_email {"$regex" email "$options" "i"}}}])
-                (let [own-client (truthy? (session/get-in [:filters :payment-requests :own-client]))
-                      misabogados-client (truthy? (session/get-in [:filters :payment-requests :misabogados-client]))]
+                (let [own-client (true? (session/get-in [:filters :payment-requests :own-client]))
+                      misabogados-client (true? (session/get-in [:filters :payment-requests :misabogados-client]))]
                   (if (not (and own-client misabogados-client))
                     [{"$match" {:own_client own-client}}
                      {"$match" {:own_client (not misabogados-client)}}]))           
