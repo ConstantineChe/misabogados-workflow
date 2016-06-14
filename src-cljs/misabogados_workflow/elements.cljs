@@ -206,8 +206,8 @@
 (defn input [type label cursor & attrs]
   (fn [[form]]
     (let [[name cursor] (prepare-input cursor form)
-          {:keys [readonly]} (first attrs)]
-      [:div.form-group.col-xs-6 {:key name}
+          {:keys [readonly div-class]} (first attrs)]
+      [:div {:key name :class (str "form-group " (or div-class "col-xs-6"))}
        [:label.control-label {:for name} label]
        [:input.form-control {:type type
                              :read-only readonly
@@ -219,8 +219,8 @@
 (defn input-checkbox [label cursor & attrs]
   (fn [[form]]
     (let [[name cursor] (prepare-input cursor form)
-          {:keys [readonly]} (first attrs)]
-      [:div.form-group.col-xs-6 {:key name}
+          {:keys [readonly div-class]} (first attrs)]
+      [:div {:key name :class (str "form-group " (or div-class "col-xs-6"))}
        [:label.control-label {:for name} label]
        [:input.form-control (merge {:type :checkbox
                                     :read-only readonly
@@ -232,7 +232,7 @@
   (fn [[form options]]
     (let [options (get-in @options (->> cursor (filter keyword?) vec))
           [name cursor] (prepare-input cursor form)
-          {:keys [readonly]} (first attrs)]
+          {:keys [readonly div-class]} (first attrs)]
       (when (nil? @cursor) (reset! cursor (second (first options))))
       (if readonly
         [:div.form-group.col-xs-6 {:key name}
@@ -250,14 +250,14 @@
                (map (fn [[label value]] [:option {:key value :value value} label]) options))]))))
 
 (defn input-typeahead [label cursor & attrs]
-  (let [{:keys [readonly]} (first attrs)]
+  (let [{:keys [readonly div-class]} (first attrs)]
     (fn [[form options util]]
             (typeahead form options util label cursor readonly 0))))
 
 (defn input-datepicker [label path & attrs]
   (fn [[form _ util]]
     (let [[name cursor] (prepare-input path form)
-          {:keys [readonly]} attrs]
+          {:keys [readonly div-class]} attrs]
       [:div.form-group.col-xs-6 {:key name}
        [:label.control-label label]
        [:input.form-control {:id name
@@ -284,7 +284,7 @@
           [hour minute] (if @cursor (let [time (second (s/split @cursor #"T"))]
                               (s/split time #":")))
           expanded? (r/cursor util (into [:date-extended?] r-key))
-          {:keys [readonly]} (first attrs)]
+          {:keys [readonly div-class]} (first attrs)]
       (when (and (not @time) @cursor) (reset! time (str hour ":" minute)))
       [:div {:key r-key}
        [:div.datepicker-wrapper.col-xs-3
@@ -324,7 +324,7 @@
 (defn input-textarea [label cursor & attrs]
   (fn [[form]]
     (let [[name cursor] (prepare-input cursor form)
-          {:keys [readonly]} (first attrs)]
+          {:keys [readonly div-class]} (first attrs)]
       [:div.form-group.col-xs-12 {:key name}
        [:label.control-label {:for name} label]
        [:textarea.form-control {:type type
@@ -372,7 +372,7 @@
   (fn [[form _ util]]
     (let [preview (r/cursor util (into [:preview] path))
           [name cursor] (prepare-input path form)
-          {:keys [readonly]} (first attrs)]
+          {:keys [readonly div-class]} (first attrs)]
       (when (and @cursor (not @preview)) (reset! preview (md->html @cursor)))
       [:div.col-xs-12 {:key name}
        [:div.form-group.col-xs-6

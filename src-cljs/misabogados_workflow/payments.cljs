@@ -353,7 +353,7 @@
        [:div.col-md-4
         [:h1 "PagoLegal"]
         (if (#{"admin" "finance" "lawyer"} (session/get-in [:user :role])) 
-          [:button.btn {:type :button
+          [:button.btn.btn-danger {:type :button
                         :on-click (fn [] (do
                                            (u/show-modal "payment-request-form")
                                            (reset! form-data {})))} "Cobra online aqui >"])]
@@ -362,8 +362,10 @@
          [:div
           (map #(% [filters options util]) [(el/input-text "Clients name" [:name])
                                             (el/input-email "Clients email" [:email])
-                                            (el/input-checkbox "Own client" [:own-client])])
-          [:button.btn.btn-secondary {:on-click #(get-payment-requests)} "Filtrar >"]]]]
+                                            (el/input-checkbox "Own client" [:own-client] {:div-class "col-xs-3"})
+                                            ])
+          [:div.form-group.col-xs-12
+           [:button.btn.btn-secondary {:on-click #(get-payment-requests)} "Filtrar >"]]]]]
        [table]
        [create-payment-request-form]
        [lawyer-data-modal]
