@@ -362,7 +362,12 @@
          [:div
           (map #(% [filters options util]) [(el/input-text "Clients name" [:name])
                                             (el/input-email "Clients email" [:email])
-                                            (el/input-checkbox "Own client" [:own-client] {:div-class "col-xs-3"})
+                                            (el/input-checkbox "Pendiente" [:status-pending] {:div-class "col-xs-3"})
+                                            (el/input-checkbox "En proceso de pagar" [:status-in-process] {:div-class "col-xs-3"})
+                                            (el/input-checkbox "Pagado" [:status-paid] {:div-class "col-xs-3"})
+                                            (el/input-checkbox "Fallado" [:status-failed] {:div-class "col-xs-3"})
+                                            (el/input-checkbox "Cliente propio" [:own-client] {:div-class "col-xs-3"})
+                                            (el/input-checkbox "Cliente MisAbogados" [:misbogados-client] {:div-class "col-xs-3"})
                                             ])
           [:div.form-group.col-xs-12
            [:button.btn.btn-secondary {:on-click #(get-payment-requests)} "Filtrar >"]]]]]
