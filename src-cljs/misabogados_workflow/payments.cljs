@@ -350,19 +350,20 @@
         util (r/atom nil)]
     (fn []
       [:div.container
-       [:h1 "PagoLegal"]
-       (el/form "" [filters options util]
-                ["Filters"
-                 (el/input-text "Clients name" [:name])
-                 (el/input-email "Clients email" [:email])
-;                 (el/input-datepicker "From date" [:from-date])
-;                 (el/input-datepicker "To date" [:to-date])
-                 (el/input-checkbox "Own client" [:own-client])])
-       [:button.btn.btn-primary {:on-click #(get-payment-requests)} "Apply filters"]
-       (if (#{"admin" "finance" "lawyer"} (session/get-in [:user :role])) [:button.btn {:type :button
-                                                                                        :on-click (fn [] (do
-                                                                                                           (u/show-modal "payment-request-form")
-                                                                                                           (reset! form-data {})))} "Create payment request"])
+       [:div.col-md-4
+        [:h1 "PagoLegal"]
+        (if (#{"admin" "finance" "lawyer"} (session/get-in [:user :role])) 
+          [:button.btn {:type :button
+                        :on-click (fn [] (do
+                                           (u/show-modal "payment-request-form")
+                                           (reset! form-data {})))} "Cobra online aqui >"])]
+       [:div.col-md-8
+        [:div.form-horizontal
+         [:div
+          (map #(% [filters options util]) [(el/input-text "Clients name" [:name])
+                                            (el/input-email "Clients email" [:email])
+                                            (el/input-checkbox "Own client" [:own-client])])
+          [:button.btn.btn-secondary {:on-click #(get-payment-requests)} "Filtrar >"]]]]
        [table]
        [create-payment-request-form]
        [lawyer-data-modal]
@@ -373,4 +374,5 @@
                                                  {(keyword (key field)) (val field)})
                                                (get @table-data row-key)))]
                   [:div {:key row-key} [(edit-payment-request-form (into {:_id row-key} values))]]
-                  )))])))
+                  )))])
+    ))
