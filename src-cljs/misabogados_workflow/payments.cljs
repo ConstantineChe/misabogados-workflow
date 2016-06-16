@@ -346,51 +346,62 @@
   (let [payment-requests (get-payment-requests)
         filters (r/cursor session/state [:filters :payment-requests])
         options (r/atom nil)
-        util (r/atom nil)
-        reqs-count (session/get-in [:payment-requests :count])
-        total-pages (inc (/ (- reqs-count (mod reqs-count 10)) 10) )]
+        util (r/atom nil)]
     (fn []
-      [:div.container
-       [:div.col-md-4
-        [:h1 "PagoLegal"]
-        (if (#{"admin" "finance" "lawyer"} (session/get-in [:user :role]))
-          [:button.btn.btn-danger {:type :button
-                        :on-click (fn [] (do
-                                           (u/show-modal "payment-request-form")
-                                           (reset! form-data {})))} "Cobra online aqui >"])]
-       [:div.col-md-8
-        [:div.form-horizontal
-         (doall (map #(% [filters options util]) [(el/input-text "Clients name" [:name])
-                                             (el/input-email "Clients email" [:email])
-                                             (el/input-checkbox "Pendiente" [:status-pending] {:div-class "col-xs-3"})
-                                             (el/input-checkbox "En proceso de pagar" [:status-in-process] {:div-class "col-xs-3"})
-                                             (el/input-checkbox "Pagado" [:status-paid] {:div-class "col-xs-3"})
-                                             (el/input-checkbox "Fallado" [:status-failed] {:div-class "col-xs-3"})
-                                             (el/input-checkbox "Cliente propio" [:own-client] {:div-class "col-xs-3"})
-                                             (el/input-checkbox "Cliente MisAbogados" [:misabogados-client] {:div-class "col-xs-3"})]))
-         [:div.form-group.col-xs-12
-          [:button.btn.btn-secondary {:on-click #(get-payment-requests)} "Filtrar >"]]]]
-       [table]
-       [create-payment-request-form]
-       [lawyer-data-modal]
-       [payment-data-modal]
-       (prn @table-data)
-       (doall (for [row @table-data]
-                (let [row-key (key row)
-                      values (apply merge (map (fn [field]
-                                                 {(keyword (key field)) (val field)})
-                                               (get @table-data row-key)))]
-                  [:div {:key row-key} [(edit-payment-request-form (into {:_id row-key} values))]]
-                  )))
-       [:ul.pagination
-        [:li [:a {:on-click #(session/update-in! [:payment-requests :page] (fn [x] (when (> x 1)
-                                                                                    (dec x)
-                                                                                    (get-payment-requests))))} "«"]]
-        (doall (for [page (range 1 (inc total-pages))]
-                 [:li {:key page} [:a {:on-click #(do (session/assoc-in! [:payment-requests :page] page)
-                                                      (get-payment-requests))
-                                       :class (if (= page (session/get-in [:payment-requests :page])) "active" "")} page]]))
-        [:li [:a {:on-click #(session/update-in! [:payment-requests :page] (fn [x] (prn x " " total-pages) (when (< x total-pages)
-                                                                                       (inc x)
-                                                                                       (get-payment-requests))))} "»"]]]])
+      (let [reqs-count (session/get-in [:payment-requests :count])
+            total-pages (inc (/ (- reqs-count (mod reqs-count 10)) 10) )]
+        (when-not (session/get-in [:payment-requests :page])
+          (session/assoc-in! [:payment-requests :page] 1))
+
+        [:div.container
+         [:div.col-md-4
+          [:h1 "PagoLegal"]
+          (if (#{"admin" "finance" "lawyer"} (session/get-in [:user :role]))
+            [:button.btn.btn-danger {:type :button
+                                     :on-click (fn [] (do
+                                                       (u/show-modal "payment-request-form")
+                                                       (reset! form-data {})))} "Cobra online aqui >"])]
+         [:div.col-md-8
+          [:div.form-horizontal
+           (doall (map #(% [filters options util]) [(el/input-text "Clients name" [:name])
+                                                    (el/input-email "Clients email" [:email])
+                                                    (el/input-checkbox "Pendiente" [:status-pending] {:div-class "col-xs-3"})
+                                                    (el/input-checkbox "En proceso de pagar" [:status-in-process] {:div-class "col-xs-3"})
+                                                    (el/input-checkbox "Pagado" [:status-paid] {:div-class "col-xs-3"})
+                                                    (el/input-checkbox "Fallado" [:status-failed] {:div-class "col-xs-3"})
+                                                    (el/input-checkbox "Cliente propio" [:own-client] {:div-class "col-xs-3"})
+                                                    (el/input-checkbox "Cliente MisAbogados" [:misabogados-client] {:div-class "col-xs-3"})]))
+           [:div.form-group.col-xs-12
+            [:button.btn.btn-secondary {:on-click #(get-payment-requests)} "Filtrar >"]]]]
+         [table]
+         [create-payment-request-form]
+         [lawyer-data-modal]
+         [payment-data-modal]
+         (doall (for [row @table-data]
+                  (let [row-key (key row)
+                        values (apply merge (map (fn [field]
+                                                   {(keyword (key field)) (val field)})
+                                                 (get @table-data row-key)))]
+                    [:div {:key row-key} [(edit-payment-request-form (into {:_id row-key} values))]]
+                    )))
+         [:ul.pagination
+          [:li [:a {:on-click #(do (session/update-in! [:payment-requests :page]
+                                                     (fn [x]
+                                                       (if (> x 1)
+                                                         (dec x)
+                                                         x)))
+                                   (get-payment-requests))}
+                "«"]]
+          (doall (for [page (range 1 (inc total-pages))]
+                   [:li {:key page :class (if (= page (session/get-in [:payment-requests :page])) "active" "")}
+                    [:a {:on-click #(do (session/assoc-in! [:payment-requests :page] page)
+                                                        (get-payment-requests))}
+                                     page]]))
+          [:li [:a {:on-click #(do (session/update-in! [:payment-requests :page]
+                                                       (fn [x]
+                                                         (if (< x total-pages)
+                                                           (inc x)
+                                                           x)))
+                                   (get-payment-requests))}
+                "»"]]]]))
     ))

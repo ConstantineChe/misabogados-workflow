@@ -92,7 +92,7 @@
 (defn get-payment-requests
   ([]
    (mc/find-maps @db "payment_requests"))
-  ([lawyer filters page per-page offeset sort-dir sort-field]
+  ([lawyer filters page per-page offset sort-dir sort-field]
    (mc/aggregate @db "payment_requests" (vec (concat
                                               [{"$match" {:lawyer lawyer}}]
                                               (doall (map second filters))

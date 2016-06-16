@@ -59,7 +59,7 @@
                           {(str (:_id payment-request)) (dissoc payment-request :_id)})
                                            (cond (= :lawyer (-> request :session :role))
                                                  (dbcore/get-payment-requests (get-lawyer-profile-id request)
-                                                                              filters page per-page offset sort-field sort-dir)
+                                                                              filters page per-page offset sort-dir  sort-field)
                                                  (or (= :admin (-> request :session :role))
                                                      (= :finance (-> request :session :role)))
                                                  (let [reqs (mc/aggregate @db "payment_requests"
@@ -122,7 +122,7 @@
                                                                 :code (util/generate-hash (:params request)))})
           (let [current-user (get-lawyer-profile request)
                 payment-request (mc/find-one-as-map @db "payment_requests" {:_id id})]
-            (println (str "-----" payment-request))
+            ntln (str "-----" payment-request)
             (future (email/payment-request-email (:client_email payment-request) {:lawyer-name (:name current-user)
                                                                                   :payment-request payment-request
                                                                                   :base-url (get (:headers request) "host")})))

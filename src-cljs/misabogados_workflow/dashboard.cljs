@@ -71,20 +71,22 @@
      [:button.btn.btn-primary {:on-click #(get-leads)} "Apply filters"]
      (if-not (empty? @table-data)
        [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
-        [:th "ID"]
-        [:th "Pedning action"]
-        [:th "Tipo"]
-        [:th "Nombre de usuario"]
-        [:th "Email de usuario"]
-        [:th "Categoría"]
-        [:th "Telefono"]
-        [:th "Problema"]
-        [:th "Region"]
-        [:th "Ciudad"]
-        [:th "Fuente"]
-        [:th "Abogado"]
-        [:th "Enlaces"]
-        [:th ""]
+        [:thead
+         [:tr
+          [:th "ID"]
+          [:th "Pedning action"]
+          [:th "Tipo"]
+          [:th "Nombre de usuario"]
+          [:th "Email de usuario"]
+          [:th "Categoría"]
+          [:th "Telefono"]
+          [:th "Problema"]
+          [:th "Region"]
+          [:th "Ciudad"]
+          [:th "Fuente"]
+          [:th "Abogado"]
+          [:th "Enlaces"]
+          [:th ""]]]
         [:tbody
          (doall (for [lead @table-data
                       :let [id (get lead "_id")
