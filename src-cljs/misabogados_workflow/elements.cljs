@@ -189,19 +189,19 @@
 (defn edit-entity [url root-key label-fn]
   (fn [data options id]
     (PUT (str js/context url) {:params {:id id
-                                                    :data (dissoc (root-key data) :_id)}
-                                           :handler #(let [entity (keywordize-keys %)]
-                                                       (swap! options
-                                                              (fn [x]
-                                                                (for [[label id] x]
-                                                                  (if (= id (:_id entity))
-                                                                    [(label-fn entity) id]
-                                                                    [label id])))))
-                                           :error-handler #(case (:status %)
-                                                             403 (js/alert "Access denied")
-                                                             500 (js/alert "Internal server error")
-                                                             404 (js/alert "Client not found")
-                                                             (js/alert (str %)))})))
+                                        :data (dissoc (root-key data) :_id)}
+                               :handler #(let [entity (keywordize-keys %)]
+                                           (swap! options
+                                                  (fn [x]
+                                                    (for [[label id] x]
+                                                      (if (= id (:_id entity))
+                                                        [(label-fn entity) id]
+                                                        [label id])))))
+                               :error-handler #(case (:status %)
+                                                 403 (js/alert "Access denied")
+                                                 500 (js/alert "Internal server error")
+                                                 404 (js/alert "Client not found")
+                                                 (js/alert (str %)))})))
 
 (defn input [type label cursor & attrs]
   (fn [[form]]
