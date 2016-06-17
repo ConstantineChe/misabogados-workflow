@@ -49,7 +49,8 @@
                                                                                   :join_date (java.util.Date.)})]
                        (mc/update @db/db "users" {:email (:email params)} {$set {:lawyer_profile (:_id lawyer-profile)}})))
                    (-> (redirect "/")
-                       (assoc :session (assoc session :identity (-> request :params :email keyword)
+                       (assoc :session (assoc session 
+                                              :identity (-> request :params :email keyword)
                                               :role role))))))
 
            (catch com.mongodb.DuplicateKeyException e

@@ -85,7 +85,6 @@
                   (.click))} title]))
 
 (defn navbar []
-
   (fn []
     [:nav.navbar.navbar-default
      [:div.container-fluid

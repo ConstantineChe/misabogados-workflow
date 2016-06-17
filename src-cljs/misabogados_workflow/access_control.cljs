@@ -22,7 +22,11 @@
 
      "lawyer" (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
                                                                   ["#payments" "Pagos" :payments]])
-                                  :nav-links-right [["#logout" "Logout"]]})
+                                  :nav-links-right (let [logout ["#logout" "Logout"]]
+                                                         (if-let [own-profile (:own-profile (session/get :user))] 
+                                                           [[(str "/" own-profile) "Tu perfil"] logout]
+                                                           [logout]) 
+                                                         )})
 
      "operator" (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
                                                                     ["#payments" "Pagos" :payments]])
@@ -36,6 +40,5 @@
                                                                  ["#payments" "Pagos" :payments]
                                                                  ["#admin" "Admin" :admin]])
                                  :nav-links-right [["#logout" "Logout"]]})
-
      (reset! components {:nav-links-right (into no-role-links [["#login" "Login" :login]
                                                          ["#signup" "Signup" :signup]])})))

@@ -162,7 +162,8 @@
           (restrict (fn [request] (remove-payment-request id request))
                     {:handler {:or [ac/admin-access ac/lawyer-access ac/finance-access]}
                      :on-error access-error-handler}))
-  (GET "/payment-requests/js/options" [] (restrict (fn [request] (response {:lawyer (map #((juxt (fn [x] (str (:name x) " (" (:email x) ")")) :_id) %) (mc/find-maps @db "lawyers"))
-                                                                           :own_client [["" :empty] ["Cliente propio" true] ["Cliente MisAbogados" false]]}))
-                                    {:handler {:or [ac/admin-access ac/lawyer-access ac/finance-access]}
-                                     :on-error access-error-handler})))
+  (GET "/payment-requests/js/options" [] 
+       (restrict (fn [request] (response {:lawyer (map #((juxt (fn [x] (str (:name x) " (" (:email x) ")")) :_id) %) (mc/find-maps @db "lawyers"))
+                                          :own_client [["" :empty] ["Cliente propio" true] ["Cliente MisAbogados" false]]}))
+                 {:handler {:or [ac/admin-access ac/lawyer-access ac/finance-access]}
+                  :on-error access-error-handler})))

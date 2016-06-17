@@ -27,7 +27,8 @@
         session (:session request)]
     (let [success? (check password (:password user))
           updated-session (into session {:identity (keyword (:email user))
-                                         :role (keyword (:role user))})]
+                                         :role (keyword (:role user))
+                                         })]
       (if (= "application/transit+json; charset=UTF-8" (:content-type request))
         (if success?
           (-> (content-type (ok {:identity (keyword (:email user))
