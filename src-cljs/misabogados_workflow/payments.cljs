@@ -71,7 +71,13 @@
                       misabogados-client (true? (session/get-in [:filters :payment-requests :misabogados-client]))]
                   (if (not (and own-client misabogados-client))
                     [{"$match" {:own_client own-client}}
-                     {"$match" {:own_client (not misabogados-client)}}]))           
+                     {"$match" {:own_client (not misabogados-client)}}]))
+                (let [status-pending (true? (session/get-in [:filters :payment-requests :status-pending]))
+                      status-in-process (true? (session/get-in [:filters :payment-requests :status-in-process]))
+                      status-paid (true? (session/get-in [:filters :payment-requests :status-paid]))
+                      status-failed (true? (session/get-in [:filters :payment-requests :status-failed]))]
+                  [ ;;(if-not status-pending {"$match" {:koko nil}})
+                   ])
                 (if-let [from-date (session/get-in [:filters :payment-requests :from-date])]
                   [{"$match" {:date_created {"$gte" from-date}}}])
                 (if-let [to-date (session/get-in [:filters :payment-requests :to-date])]
