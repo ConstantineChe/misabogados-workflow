@@ -92,8 +92,13 @@
 (defn get-payment-requests
   ([]
    (mc/find-maps @db "payment_requests"))
-  ([lawyer]
-   (mc/find-maps @db "payment_requests" {:lawyer lawyer})))
+  ([lawyer filters page per-page offset sort-dir sort-field]
+   (mc/aggregate @db "payment_requests" (vec (concat
+                                              [{"$match" {:lawyer lawyer}}]
+                                              (doall (map second filters))
+                                              [{"$skip" offset}
+                                               {"$limit" per-page}
+                                               {"$sort" {sort-field (Integer. sort-dir)}}])))))
 
 (defn get-payment-request-by-code [code]
   (mc/find-one-as-map @db "payment_requests" {:code code}))

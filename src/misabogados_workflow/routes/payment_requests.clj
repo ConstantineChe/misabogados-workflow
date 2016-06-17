@@ -52,33 +52,41 @@
     {:message "Not allowed"}))
 
 (defn get-payment-requests [request]
-  (prn (:params request))
   (let [{:keys [page per-page filters sort-field sort-dir]} (:params request)
         per-page (Integer. per-page)
         offset (* per-page (dec (Integer. page)))
         payment-requests (apply merge (map (fn [payment-request]
                           {(str (:_id payment-request)) (dissoc payment-request :_id)})
                                            (cond (= :lawyer (-> request :session :role))
-                                                 (dbcore/get-payment-requests (get-lawyer-profile-id request))
+                                                 (dbcore/get-payment-requests (get-lawyer-profile-id request)
+                                                                              filters page per-page offset sort-dir  sort-field)
                                                  (or (= :admin (-> request :session :role))
                                                      (= :finance (-> request :session :role)))
-                                                 (map #(update-in % [:lawyer_data 0]
-                                                                  (fn [c] (into {} (filter
+                                                 (let [reqs (mc/aggregate @db "payment_requests"
+                                                                               (vec (concat
+                                                                                     [{"$lookup" {:from "lawyers"
+                                                                                                  :localField :lawyer
+                                                                                                  :foreignField :_id
+                                                                                                  :as :lawyer_data}}]
+                                                                                     (doall (map second filters))
+                                                                                     [{"$skip" offset}
+                                                                                      {"$limit" per-page}
+                                                                                      {"$sort" {sort-field (Integer. sort-dir)}}]
+                                                                                     )))]
+                                                   (map #(update-in % [:lawyer_data 0]
+                                                                    (fn [c] (into {} (filter
                                                                                      (fn [f] (not (contains? #{:_id :password :verification-code}
                                                                                                             (key f))))
                                                                                      c))))
-                                                      (mc/aggregate @db "payment_requests"
-                                                                    (vec (concat
-                                                                          [{"$lookup" {:from "lawyers"
-                                                                                       :localField :lawyer
-                                                                                       :foreignField :_id
-                                                                                       :as :lawyer_data}}]
-                                                                          (doall (map second filters))
-                                                                          [{"$skip" offset}
-                                                                           {"$limit" per-page}
-                                                                           {"$sort" {sort-field (Integer. sort-dir)}}]
-                                                                           )))))))]
-    (response {:payment-requests payment-requests :status "ok" :role (-> request :session :role)})))
+                                                        reqs)))))
+        reqs-count (mc/aggregate @db "payment_requests"
+                                 (vec (concat
+                                       (if-not (= (-> request :session :role) :admin)
+                                         [{"$match" {:lawyer_id (get-lawyer-profile-id request)}}])
+                                       (doall (map second filters))
+                                       [{"$group" {:_id nil :count {"$sum" 1}}}]
+                                       )))]
+    (response {:payment-requests payment-requests :count reqs-count :status "ok" :role (-> request :session :role)})))
 
 
 
@@ -114,7 +122,7 @@
                                                                 :code (util/generate-hash (:params request)))})
           (let [current-user (get-lawyer-profile request)
                 payment-request (mc/find-one-as-map @db "payment_requests" {:_id id})]
-            (println (str "-----" payment-request))
+            ntln (str "-----" payment-request)
             (future (email/payment-request-email (:client_email payment-request) {:lawyer-name (:name current-user)
                                                                                   :payment-request payment-request
                                                                                   :base-url (get (:headers request) "host")})))
@@ -156,6 +164,6 @@
                     {:handler {:or [ac/admin-access ac/lawyer-access ac/finance-access]}
                      :on-error access-error-handler}))
   (GET "/payment-requests/js/options" [] (restrict (fn [request] (response {:lawyer (map #((juxt (fn [x] (str (:name x) " (" (:email x) ")")) :_id) %) (mc/find-maps @db "lawyers"))
-                                                                   :own_client [["" :empty] ["Cliente propio" true] ["Cliente MisAbogados" false]]}))
+                                                                           :own_client [["" :empty] ["Cliente propio" true] ["Cliente MisAbogados" false]]}))
                                     {:handler {:or [ac/admin-access ac/lawyer-access ac/finance-access]}
                                      :on-error access-error-handler})))
