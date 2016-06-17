@@ -122,7 +122,6 @@
                                                                 :code (util/generate-hash (:params request)))})
           (let [current-user (get-lawyer-profile request)
                 payment-request (mc/find-one-as-map @db "payment_requests" {:_id id})]
-            ntln (str "-----" payment-request)
             (future (email/payment-request-email (:client_email payment-request) {:lawyer-name (:name current-user)
                                                                                   :payment-request payment-request
                                                                                   :base-url (get (:headers request) "host")})))
