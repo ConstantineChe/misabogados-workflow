@@ -76,8 +76,8 @@
                       status-in-process (true? (session/get-in [:filters :payment-requests :status-in-process]))
                       status-paid (true? (session/get-in [:filters :payment-requests :status-paid]))
                       status-failed (true? (session/get-in [:filters :payment-requests :status-failed]))]
-                  [ ;;(if-not status-pending {"$match" {:koko nil}})
-                   ])
+                  (concat []
+                          (if-not status-pending [{"$match" {"last_payment" {"$ne" "pending"}}}])))
                 (if-let [from-date (session/get-in [:filters :payment-requests :from-date])]
                   [{"$match" {:date_created {"$gte" from-date}}}])
                 (if-let [to-date (session/get-in [:filters :payment-requests :to-date])]
@@ -87,6 +87,7 @@
 ;;todo server request
 (defn get-payment-requests []
   (let [filters (get-filters)]
+    (prn filters)
     (GET (str js/context "/payment-requests")
                {:params {:per-page 10
                          :page (if-let [page (session/get-in [:payment-requests :page])] page 1)

@@ -62,17 +62,22 @@
                                                                               filters page per-page offset sort-dir  sort-field)
                                                  (or (= :admin (-> request :session :role))
                                                      (= :finance (-> request :session :role)))
-                                                 (let [reqs (mc/aggregate @db "payment_requests"
-                                                                               (vec (concat
-                                                                                     [{"$lookup" {:from "lawyers"
-                                                                                                  :localField :lawyer
-                                                                                                  :foreignField :_id
-                                                                                                  :as :lawyer_data}}]
-                                                                                     (doall (map second filters))
-                                                                                     [{"$skip" offset}
-                                                                                      {"$limit" per-page}
-                                                                                      {"$sort" {sort-field (Integer. sort-dir)}}]
-                                                                                     )))]
+                                                 (let [project-fields {"amount" 1 "service" 1 "lawyer" 1 "service_descrition" 1 "client" 1 "client_tel" 1 "client_email" 1 "code" 1 "date_created" 1 "own_client" 1}
+                                                       query (vec (concat
+                                                                   [{"$lookup" {:from "lawyers"
+                                                                                :localField :lawyer
+                                                                                :foreignField :_id
+                                                                                :as :lawyer_data}}]
+                                                                   [{"$project" (assoc project-fields
+                                                                                       "last_payment" {"$slice" ["$payment_log", -1]})}
+                                                                    {"$project" (assoc project-fields
+                                                                                       "last_payment" {"$ifNull" ["$last_payment", "pending"]})}]
+                                                                   (doall (map second filters))
+                                                                   [{"$skip" offset}
+                                                                    {"$limit" per-page}
+                                                                    {"$sort" {sort-field (Integer. sort-dir)}}]))
+                                                       reqs (mc/aggregate @db "payment_requests" query)]
+                                                   (prn "--------QUERY: " query)
                                                    (map #(update-in % [:lawyer_data 0]
                                                                     (fn [c] (into {} (filter
                                                                                      (fn [f] (not (contains? #{:_id :password :verification-code}

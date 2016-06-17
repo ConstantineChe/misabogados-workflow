@@ -9,7 +9,7 @@
                     ])
 
 (def components (r/atom {:nav-links-right (into no-role-links [["#login" "Login" :login]
-                                                         ["#signup" "Signup" :signup]])}))
+                                                               ["#signup" "Signup" :signup]])}))
 
 (defn get-access [] @components)
 
