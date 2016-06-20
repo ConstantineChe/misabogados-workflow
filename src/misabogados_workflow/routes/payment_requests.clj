@@ -57,9 +57,10 @@
         offset (* per-page (dec (Integer. page)))
         filters-parsed (clojure.edn/read-string filters)
         filter-query (doall (concat
-                             []
                              (if-let [client (:client filters-parsed)]
-                               [{"$match" {"$or" [{:client client} {:client_email client}]}}])
+                               (if-not (empty? client) [{"$match" {"$or" [{:client (re-pattern client)} {:client_email (re-pattern client)}]}}]))
+                             (if-let [lawyer (:lawyer filters-parsed)]
+                               (if-not (empty? lawyer) [{"$match" {"$or" [{:lawyer_data.name (re-pattern lawyer)} {:lawyer_data.email (re-pattern lawyer)}]}}]))
                              
                              (let [status-pending (true? (:status-pending filters-parsed))
                                    status-in-process (true? (:status-in-process filters-parsed))
@@ -81,7 +82,7 @@
                                                                               filter-query page per-page offset sort-dir sort-field)
                                                  (or (= :admin (-> request :session :role))
                                                      (= :finance (-> request :session :role)))
-                                                 (let [project-fields {"amount" 1 "service" 1 "lawyer" 1 "service_descrition" 1 "client" 1 "client_tel" 1 "client_email" 1 "code" 1 "date_created" 1 "own_client" 1}
+                                                 (let [project-fields {"amount" 1 "service" 1 "lawyer" 1 "service_descrition" 1 "client" 1 "client_tel" 1 "client_email" 1 "code" 1 "date_created" 1 "own_client" 1 "lawyer_data" 1}
                                                        query (vec (concat
                                                                    [{"$lookup" {:from "lawyers"
                                                                                 :localField :lawyer
