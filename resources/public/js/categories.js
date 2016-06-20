@@ -16,6 +16,7 @@ $(document).ready(function() {
         if (current) {
             // Some item from your model is active!
             if (current.name == input.val()) {
+                window.location = "categoria/" + input.typeahead("getActive").id;
                 // This means the exact match is found. Use toLowerCase() if you want case insensitive match.
             } else {
                 // This means it is only a partial match, you can either add a new item
