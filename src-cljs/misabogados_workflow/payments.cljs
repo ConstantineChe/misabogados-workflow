@@ -77,7 +77,10 @@
                       status-paid (true? (session/get-in [:filters :payment-requests :status-paid]))
                       status-failed (true? (session/get-in [:filters :payment-requests :status-failed]))]
                   (concat []
-                          (if-not status-pending [{"$match" {"last_payment" {"$ne" "pending"}}}])))
+                          (if-not status-pending [{"$match" {"last_payment" {"$ne" "pending"}}}])
+                          (if-not status-in-process [{"$match" {"last_payment.action" {"$ne" "start_payment_attempt"}}}])
+                          (if-not status-paid [{"$match" {"last_payment.action" {"$ne" "payment_attempt_succeded"}}}])
+                          (if-not status-failed [{"$match" {"last_payment.action" {"$ne" "payment_attempt_failed"}}}])))
                 (if-let [from-date (session/get-in [:filters :payment-requests :from-date])]
                   [{"$match" {:date_created {"$gte" from-date}}}])
                 (if-let [to-date (session/get-in [:filters :payment-requests :to-date])]
