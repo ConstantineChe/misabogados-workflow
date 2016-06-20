@@ -469,6 +469,43 @@
          :on-click #(swap! cursor drop-nth index)}
         label]))))
 
+(defn pagination [page-path get-fn total-count per-page]
+  (let [total-pages (inc (/ (- total-count (mod total-count per-page)) per-page) )
+        pages (if (< 10 total-pages)
+                    (range (max 1 (- (session/get-in page-path) 5))
+                           (min (+ 5 (session/get-in page-path)) (inc total-pages)))
+                    (range 1 (inc total-pages)))]
+    [:ul.pagination
+     [:li [:a {:on-click #(do (session/update-in! page-path
+                                                  (fn [x]
+                                                    (if (> x 1)
+                                                      (dec x)
+                                                      x)))
+                              (get-leads))}
+           "«"]]
+     (when (and (> (session/get-in page-path) 6) (> total-pages 10))
+       [:li [:a {:on-click #(do (session/assoc-in! page-path 1)
+                                (get-fn))} 1]])
+     (when (and (> (session/get-in page-path) 7) (> total-pages 10))
+       [:li [:a "..."]])
+     (doall (for [page pages]
+              [:li {:key page :class (if (= page (session/get-in page-path)) "active" "")}
+               [:a {:on-click #(do (session/assoc-in! page-path page)
+                                   (get-fn))}
+                page]]))
+     (when (and (> (- total-pages (session/get-in page-path)) 7) (> total-pages 10))
+       [:li [:a "..."]])
+     (when (and (> (- total-pages (session/get-in page-path)) 6) (> total-pages 10))
+       [:li [:a {:on-click #(do (session/assoc-in! page-path total-pages)
+                                (get-fn))} total-pages]])
+     [:li [:a {:on-click #(do (session/update-in! page-path
+                                                  (fn [x]
+                                                    (if (< x total-pages)
+                                                      (inc x)
+                                                      x)))
+                              (get-fn))}
+           "»"]]]))
+
 (def input-text (partial input :text))
 
 (def input-password (partial input :password))
