@@ -2,5 +2,6 @@
 <p>Hola {{payment-request.client }}, el abogado {{lawyer-name}} te ha solicitado el pago de {{settings.currency}} {{payment-request.amount}} por
   el servicio a través de MisAbogados.com:</p>
 <p> Servicio: {{payment-request.service }} </p>
+<p> {{payment-request.service_description}} </p>
 
 <a href="http://{{base-url}}/payments/pay/{{payment-request.code}}">Para pagar haz click acá</a>
