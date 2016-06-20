@@ -55,11 +55,30 @@
   (let [{:keys [page per-page filters sort-field sort-dir]} (:params request)
         per-page (Integer. per-page)
         offset (* per-page (dec (Integer. page)))
+        filters-parsed (clojure.edn/read-string filters)
+        filter-query (doall (concat
+                             []
+                             (if-let [client (:client filters-parsed)]
+                               [{"$match" {"$or" [{:client client} {:client_email client}]}}])
+                             
+                             (let [status-pending (true? (:status-pending filters-parsed))
+                                   status-in-process (true? (:status-in-process filters-parsed))
+                                   status-paid (true? (:status-paid filters-parsed))
+                                   status-failed (true? (:status-failed filters-parsed))]
+                               (concat []
+                                       (if-not status-pending [{"$match" {"last_payment" {"$ne" "pending"}}}])
+                                       (if-not status-in-process [{"$match" {"last_payment.action" {"$ne" "start_payment_attempt"}}}])
+                                       (if-not status-paid [{"$match" {"last_payment.action" {"$ne" "payment_attempt_succeded"}}}])
+                                       (if-not status-failed [{"$match" {"last_payment.action" {"$ne" "payment_attempt_failed"}}}])))
+                             (if-let [from-date (:from-date filters-parsed)]
+                               [{"$match" {:date_created {"$gte" from-date}}}])
+                             (if-let [to-date (:to-date filters-parsed)]
+                               [{"$match" {:date_created {"$lte" to-date}}}])))
         payment-requests (apply merge (map (fn [payment-request]
-                          {(str (:_id payment-request)) (dissoc payment-request :_id)})
+                                             {(str (:_id payment-request)) (dissoc payment-request :_id)})
                                            (cond (= :lawyer (-> request :session :role))
                                                  (dbcore/get-payment-requests (get-lawyer-profile-id request)
-                                                                              filters page per-page offset sort-dir  sort-field)
+                                                                              filter-query page per-page offset sort-dir sort-field)
                                                  (or (= :admin (-> request :session :role))
                                                      (= :finance (-> request :session :role)))
                                                  (let [project-fields {"amount" 1 "service" 1 "lawyer" 1 "service_descrition" 1 "client" 1 "client_tel" 1 "client_email" 1 "code" 1 "date_created" 1 "own_client" 1}
@@ -72,26 +91,23 @@
                                                                                        "last_payment" {"$slice" ["$payment_log", -1]})}
                                                                     {"$project" (assoc project-fields
                                                                                        "last_payment" {"$ifNull" ["$last_payment", "pending"]})}]
-                                                                   (doall (map second filters))
+                                                                   ;; (doall (map second filters))
+                                                                   
+                                                                   filter-query
                                                                    [{"$skip" offset}
                                                                     {"$limit" per-page}
                                                                     {"$sort" {sort-field (Integer. sort-dir)}}]))
                                                        reqs (mc/aggregate @db "payment_requests" query)]
                                                    (prn "--------QUERY: " query)
-                                                   (map #(update-in % [:lawyer_data 0]
-                                                                    (fn [c] (into {} (filter
-                                                                                     (fn [f] (not (contains? #{:_id :password :verification-code}
-                                                                                                            (key f))))
-                                                                                     c))))
-                                                        reqs)))))
-        reqs-count (mc/aggregate @db "payment_requests"
-                                 (vec (concat
-                                       (if-not (= (-> request :session :role) :admin)
-                                         [{"$match" {:lawyer_id (get-lawyer-profile-id request)}}])
-                                       (doall (map second filters))
-                                       [{"$group" {:_id nil :count {"$sum" 1}}}]
-                                       )))]
-    (response {:payment-requests payment-requests :count reqs-count :status "ok" :role (-> request :session :role)})))
+                                                   ;; (clojure.pprint/pprint reqs)
+                                                   ;; (map #(update-in % [:lawyer_data 0]
+                                                   ;;                  (fn [c] (into {} (filter-query
+                                                   ;;                                   (fn [f] (not (contains? #{:_id :password :verification-code}
+                                                   ;;                                                          (key f))))
+                                                   ;;                                   c))))
+                                                   ;;      reqs)
+                                                   reqs))))]
+    (response {:payment-requests payment-requests :count (count payment-requests) :status "ok" :role (-> request :session :role)})))
 
 
 
@@ -145,8 +161,6 @@
       {:status 403
        :header {}
        :body {:error (:message allowed?)}})))
-
-
 
 (defroutes payment-requests-routes
   (GET "/payment-requests" [] (restrict get-payment-requests

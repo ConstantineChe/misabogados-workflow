@@ -61,31 +61,7 @@
 (def validation-message (r/atom nil))
 
 (defn get-filters []
-  (filter #(not (empty? %))
-          (concat
-                (if-let [name (session/get-in [:filters :payment-requests :name])]
-                  [{"$match" {:client {"$regex" name "$options" "i"}}}])
-                (if-let [email (session/get-in [:filters :payment-requests :email])]
-                  [{"$match" {:client_email {"$regex" email "$options" "i"}}}])
-                (let [own-client (true? (session/get-in [:filters :payment-requests :own-client]))
-                      misabogados-client (true? (session/get-in [:filters :payment-requests :misabogados-client]))]
-                  (if (not (and own-client misabogados-client))
-                    [{"$match" {:own_client own-client}}
-                     {"$match" {:own_client (not misabogados-client)}}]))
-                (let [status-pending (true? (session/get-in [:filters :payment-requests :status-pending]))
-                      status-in-process (true? (session/get-in [:filters :payment-requests :status-in-process]))
-                      status-paid (true? (session/get-in [:filters :payment-requests :status-paid]))
-                      status-failed (true? (session/get-in [:filters :payment-requests :status-failed]))]
-                  (concat []
-                          (if-not status-pending [{"$match" {"last_payment" {"$ne" "pending"}}}])
-                          (if-not status-in-process [{"$match" {"last_payment.action" {"$ne" "start_payment_attempt"}}}])
-                          (if-not status-paid [{"$match" {"last_payment.action" {"$ne" "payment_attempt_succeded"}}}])
-                          (if-not status-failed [{"$match" {"last_payment.action" {"$ne" "payment_attempt_failed"}}}])))
-                (if-let [from-date (session/get-in [:filters :payment-requests :from-date])]
-                  [{"$match" {:date_created {"$gte" from-date}}}])
-                (if-let [to-date (session/get-in [:filters :payment-requests :to-date])]
-                  [{"$match" {:date_created {"$lte" to-date}}}]))
-           ))
+  (into (sorted-map) (session/get-in [:filters :payment-requests])))
 
 ;;todo server request
 (defn get-payment-requests []
@@ -95,7 +71,7 @@
                {:params {:per-page 10
                          :page (if-let [page (session/get-in [:payment-requests :page])] page 1)
                          :sort-field :_id
-                         :filters filters
+                         :filters (pr-str filters)
                          :sort-dir -1
                          }
                 :handler #(do (reset! table-data (get % "payment-requests"))
@@ -374,8 +350,8 @@
          [:div.col-md-8
           ;; [:p (str (session/get :filters))]
           [:div.form-horizontal
-           (doall (map #(% [filters options util]) [(el/input-text "Clients name" [:name])
-                                                    (el/input-email "Clients email" [:email])
+           (doall (map #(% [filters options util]) [(el/input-text "Email o nombre del abogado" [:lawyer])
+                                                    (el/input-text "Email o nombre del cliente" [:client])
                                                     (el/input-checkbox "Pendiente" [:status-pending] {:div-class "col-xs-3"})
                                                     (el/input-checkbox "En proceso de pagar" [:status-in-process] {:div-class "col-xs-3"})
                                                     (el/input-checkbox "Pagado" [:status-paid] {:div-class "col-xs-3"})
