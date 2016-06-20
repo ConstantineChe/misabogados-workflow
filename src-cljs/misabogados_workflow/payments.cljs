@@ -372,6 +372,7 @@
                                                        (u/show-modal "payment-request-form")
                                                        (reset! form-data {})))} "Cobra online aqui >"])]
          [:div.col-md-8
+          ;; [:p (str (session/get :filters))]
           [:div.form-horizontal
            (doall (map #(% [filters options util]) [(el/input-text "Clients name" [:name])
                                                     (el/input-email "Clients email" [:email])
