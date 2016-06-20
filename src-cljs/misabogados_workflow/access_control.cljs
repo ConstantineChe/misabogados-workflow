@@ -23,7 +23,7 @@
      "lawyer" (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
                                                                   ["#payments" "Pagos" :payments]])
                                   :nav-links-right (let [logout ["#logout" "Logout"]]
-                                                         (if-let [own-profile (:own-profile (session/get :user))] 
+                                                         (if-let [own-profile (session/get :own-profile)] 
                                                            [[(str "/" own-profile) "Tu perfil"] logout]
                                                            [logout]) 
                                                          )})

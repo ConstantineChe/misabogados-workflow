@@ -29,7 +29,12 @@
              {$set data}))
 
 (defn get-user [email]
-  (mc/find-one-as-map @db "users" {:email email}))
+  (first (mc/aggregate @db "users" 
+                       [{"$lookup" {:from "lawyers"
+                                    :localField :lawyer_profile
+                                    :foreignField :_id
+                                    :as :lawyer}}
+                        {"$match" {:email email}}])))
 
 (defn get-users []
   (mc/find-maps @db "users"))

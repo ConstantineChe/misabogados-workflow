@@ -30,6 +30,7 @@
                       (if-not @logged-in?
                         (session/put! :user {:identity (get response "identity" )
                                              :role (get response "role")}))
+                      (session/put! :own-profile (get response "own-profile"))
                       (session/put! :filters {:payment-requests {:own-client true
                                                                  :misabogados-client true
                                                                  :status-pending true

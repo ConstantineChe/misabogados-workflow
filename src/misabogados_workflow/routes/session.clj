@@ -26,9 +26,10 @@
         password (:password (:params request))
         session (:session request)]
     (let [success? (check password (:password user))
-          updated-session (into session {:identity (keyword (:email user))
-                                         :role (keyword (:role user))
-                                         })]
+          updated-session (into session 
+                                {:identity (keyword (:email user))
+                                 :role (keyword (:role user))
+                                 :own-profile (:slug (:lawyer user))} )]
       (if (= "application/transit+json; charset=UTF-8" (:content-type request))
         (if success?
           (-> (content-type (ok {:identity (keyword (:email user))
@@ -58,4 +59,6 @@
   (GET "/logout" [] logout)
   (GET "/csrf-token" [] (content-type (ok {:token *anti-forgery-token*}) "application/json"))
   (GET "/request" request (str request))
-  (GET "/session" request (content-type (ok {:identity (:identity request) :role (-> request :session :role)}) "application/json")))
+  (GET "/session" request (content-type (ok {:identity (:identity request) 
+                                             :role (-> request :session :role)
+                                             :own-profile (-> request :session :own-profile)}) "application/json")))

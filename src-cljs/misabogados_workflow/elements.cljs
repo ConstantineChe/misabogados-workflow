@@ -481,7 +481,8 @@
                                                     (if (> x 1)
                                                       (dec x)
                                                       x)))
-                              (get-leads))}
+                              (get-leads)
+                              )}
            "«"]]
      (when (and (> (session/get-in page-path) 6) (> total-pages 10))
        [:li [:a {:on-click #(do (session/assoc-in! page-path 1)
