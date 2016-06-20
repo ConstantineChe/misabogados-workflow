@@ -371,6 +371,8 @@
           [:div.form-horizontal
            (doall (map #(% [filters options util]) [(el/input-text "Clients name" [:name])
                                                     (el/input-email "Clients email" [:email])
+                                                    (el/input-datepicker "From" [:from-date])
+                                                    (el/input-datepicker "To" [:to-date])
                                                     (el/input-checkbox "Pendiente" [:status-pending] {:div-class "col-xs-3"})
                                                     (el/input-checkbox "En proceso de pagar" [:status-in-process] {:div-class "col-xs-3"})
                                                     (el/input-checkbox "Pagado" [:status-paid] {:div-class "col-xs-3"})
@@ -378,7 +380,9 @@
                                                     (el/input-checkbox "Cliente propio" [:own-client] {:div-class "col-xs-3"})
                                                     (el/input-checkbox "Cliente MisAbogados" [:misabogados-client] {:div-class "col-xs-3"})]))
            [:div.form-group.col-xs-12
-            [:button.btn.btn-secondary {:on-click #(get-payment-requests)} "Filtrar >"]]]]
+            [:button.btn.btn-secondary {:on-click #(do (get-payment-requests)
+                                                       (session/assoc-in! [:payment-requests :page] 1))}
+             "Filtrar >"]]]]
          [table]
          [create-payment-request-form]
          [lawyer-data-modal]

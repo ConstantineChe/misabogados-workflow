@@ -59,7 +59,8 @@
                           {(str (:_id payment-request)) (dissoc payment-request :_id)})
                                            (cond (= :lawyer (-> request :session :role))
                                                  (dbcore/get-payment-requests (get-lawyer-profile-id request)
-                                                                              filters page per-page offset sort-dir  sort-field)
+                                                                              (util/wrap-datetime filters)
+                                                                              page per-page offset sort-dir sort-field)
                                                  (or (= :admin (-> request :session :role))
                                                      (= :finance (-> request :session :role)))
                                                  (let [reqs (mc/aggregate @db "payment_requests"
@@ -68,7 +69,8 @@
                                                                                                   :localField :lawyer
                                                                                                   :foreignField :_id
                                                                                                   :as :lawyer_data}}]
-                                                                                     (doall (map second filters))
+                                                                                     (doall (map second
+                                                                                                 (util/wrap-datetime filters)))
                                                                                      [{"$skip" offset}
                                                                                       {"$limit" per-page}
                                                                                       {"$sort" {sort-field (Integer. sort-dir)}}]

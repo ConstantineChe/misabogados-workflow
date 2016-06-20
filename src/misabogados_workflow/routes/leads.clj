@@ -18,7 +18,8 @@
             [misabogados-workflow.schema :as s]
             [misabogados-workflow.settings :refer [settings]]
             [misabogados-workflow.flow :as flow]
-            [misabogados-workflow.flow-definition :refer [steps]])
+            [misabogados-workflow.flow-definition :refer [steps]]
+            [misabogados-workflow.util :refer [wrap-datetime]])
   (:import org.bson.types.ObjectId))
 
 (defn get-step [action]
@@ -43,14 +44,6 @@
   (reduce #(let [key  (if (sequential? %2) %2 [%2])
                  value (get-in %1 key)]
              (if value (assoc-in %1 key (ObjectId. value)) %1)) lead (id-fields lead)))
-
-(defn wrap-datetime [params]
-  (walk/postwalk
-   #(if (and (string? %)
-             (re-matches #"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}).+" %))
-      (try (l/to-local-date-time %)
-           (catch Exception e  %)) %)
-   params))
 
 (defn create-lead-ajax [request]
   (clojure.pprint/pprint request)

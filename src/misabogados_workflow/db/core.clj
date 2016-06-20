@@ -95,7 +95,7 @@
   ([lawyer filters page per-page offset sort-dir sort-field]
    (mc/aggregate @db "payment_requests" (vec (concat
                                               [{"$match" {:lawyer lawyer}}]
-                                              (doall (map second filters))
+                                              filters
                                               [{"$skip" offset}
                                                {"$limit" per-page}
                                                {"$sort" {sort-field (Integer. sort-dir)}}])))))

@@ -257,17 +257,28 @@
 (defn input-datepicker [label path & attrs]
   (fn [[form _ util]]
     (let [[name cursor] (prepare-input path form)
-          {:keys [readonly div-class]} attrs]
+          {:keys [readonly div-class]} attrs
+          text (r/cursor util (into [:t-date] path))
+          to-date-string (fn [date]
+                           (let [date (js/Date. date)]
+                             (str (.getFullYear date) "-"
+                                  (if (> 10  (inc (.getMonth date))) (str 0 (inc (.getMonth date)))
+                                      (inc (.getMonth date))) "-"
+                                      (if (> 10 (.getDate date)) (str 0 (.getDate date)) (.getDate date)))))]
       [:div.form-group.col-xs-6 {:key name}
        [:label.control-label label]
        [:input.form-control {:id name
                              :type :date
                              :readonly readonly
-                             :value (let [date (if @cursor @cursor (js/Date.))]
-                                      (.log js/console date)
-                                      (str (.getFullYear date) "-" (if (> 10  (.getMonth date)) (str 0 (.getMonth date))
-                                                                       (.getMonth date)) "-" (.getDate date)))
-                             :on-change #(reset! cursor (new js/Date (-> % .-target .-value)))}]])))
+                             :value (let [date (if @cursor @cursor
+                                                   (if (and @text(re-matches #"^\d{4}-(0[0-9])|(1[0-2])-([0-2][0-9])|(3[0-1])$"
+                                                                             @text))
+                                                     @text))]
+                                      (if date (to-date-string date)))
+                             :on-change #(let [val (-> % .-target .-value)]
+                                           (if (re-matches #"^\d{4}-[0-1][0-9]-[0-3][0-9]$" val)
+                                             (reset! cursor (.toISOString (new js/Date val)))
+                                             (reset! text val)))}]])))
 
 
 (defn input-datetimepicker [label cursor & attrs]
