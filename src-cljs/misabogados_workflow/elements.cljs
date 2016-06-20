@@ -481,7 +481,7 @@
                                                     (if (> x 1)
                                                       (dec x)
                                                       x)))
-                              (get-leads)
+                              (get-fn)
                               )}
            "«"]]
      (when (and (> (session/get-in page-path) 6) (> total-pages 10))
