@@ -1,6 +1,8 @@
 (ns misabogados-workflow.util
   (:require [clojure.string :as str]
-            [clj-recaptcha.client-v2 :as c]))
+            [clj-recaptcha.client-v2 :as c]
+            [clojure.walk :as walk]
+            [clj-time.local :as l]))
 
 (defn remove-kebab [str]
   "removes kebab and makes string human-eatable"
@@ -32,3 +34,11 @@
 
 (defn full-path [request rel-path]
   (str (base-path request) rel-path))
+
+(defn wrap-datetime [params]
+  (walk/postwalk
+   #(if (and (string? %)
+             (re-matches #"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}).+" %))
+      (try (l/to-local-date-time %)
+           (catch Exception e  %)) %)
+   params))

@@ -257,17 +257,28 @@
 (defn input-datepicker [label path & attrs]
   (fn [[form _ util]]
     (let [[name cursor] (prepare-input path form)
-          {:keys [readonly div-class]} attrs]
+          {:keys [readonly div-class]} attrs
+          text (r/cursor util (into [:t-date] path))
+          to-date-string (fn [date]
+                           (let [date (js/Date. date)]
+                             (str (.getFullYear date) "-"
+                                  (if (> 10  (inc (.getMonth date))) (str 0 (inc (.getMonth date)))
+                                      (inc (.getMonth date))) "-"
+                                      (if (> 10 (.getDate date)) (str 0 (.getDate date)) (.getDate date)))))]
       [:div.form-group.col-xs-6 {:key name}
        [:label.control-label label]
        [:input.form-control {:id name
                              :type :date
                              :readonly readonly
-                             :value (let [date (if @cursor @cursor (js/Date.))]
-                                      (.log js/console date)
-                                      (str (.getFullYear date) "-" (if (> 10  (.getMonth date)) (str 0 (.getMonth date))
-                                                                       (.getMonth date)) "-" (.getDate date)))
-                             :on-change #(reset! cursor (new js/Date (-> % .-target .-value)))}]])))
+                             :value (let [date (if @cursor @cursor
+                                                   (if (and @text(re-matches #"^\d{4}-(0[0-9])|(1[0-2])-([0-2][0-9])|(3[0-1])$"
+                                                                             @text))
+                                                     @text))]
+                                      (if date (to-date-string date)))
+                             :on-change #(let [val (-> % .-target .-value)]
+                                           (if (re-matches #"^\d{4}-[0-1][0-9]-[0-3][0-9]$" val)
+                                             (reset! cursor (.toISOString (new js/Date val)))
+                                             (reset! text val)))}]])))
 
 
 (defn input-datetimepicker [label cursor & attrs]
@@ -457,6 +468,43 @@
         {:key (str label index)
          :on-click #(swap! cursor drop-nth index)}
         label]))))
+
+(defn pagination [page-path get-fn total-count per-page]
+  (let [total-pages (inc (/ (- total-count (mod total-count per-page)) per-page) )
+        pages (if (< 10 total-pages)
+                    (range (max 1 (- (session/get-in page-path) 5))
+                           (min (+ 5 (session/get-in page-path)) (inc total-pages)))
+                    (range 1 (inc total-pages)))]
+    [:ul.pagination
+     [:li [:a {:on-click #(do (session/update-in! page-path
+                                                  (fn [x]
+                                                    (if (> x 1)
+                                                      (dec x)
+                                                      x)))
+                              (get-leads))}
+           "«"]]
+     (when (and (> (session/get-in page-path) 6) (> total-pages 10))
+       [:li [:a {:on-click #(do (session/assoc-in! page-path 1)
+                                (get-fn))} 1]])
+     (when (and (> (session/get-in page-path) 7) (> total-pages 10))
+       [:li [:a "..."]])
+     (doall (for [page pages]
+              [:li {:key page :class (if (= page (session/get-in page-path)) "active" "")}
+               [:a {:on-click #(do (session/assoc-in! page-path page)
+                                   (get-fn))}
+                page]]))
+     (when (and (> (- total-pages (session/get-in page-path)) 7) (> total-pages 10))
+       [:li [:a "..."]])
+     (when (and (> (- total-pages (session/get-in page-path)) 6) (> total-pages 10))
+       [:li [:a {:on-click #(do (session/assoc-in! page-path total-pages)
+                                (get-fn))} total-pages]])
+     [:li [:a {:on-click #(do (session/update-in! page-path
+                                                  (fn [x]
+                                                    (if (< x total-pages)
+                                                      (inc x)
+                                                      x)))
+                              (get-fn))}
+           "»"]]]))
 
 (def input-text (partial input :text))
 

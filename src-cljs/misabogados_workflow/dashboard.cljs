@@ -3,6 +3,7 @@
             [misabogados-workflow.ajax :refer [GET PUT]]
             [reagent.session :as session]
             [misabogados-workflow.utils :as util]
+            [misabogados-workflow.elements :as el]
             [misabogados-workflow.flow-definition :refer [steps]]))
 
 
@@ -38,12 +39,13 @@
 
 (defn get-leads []
   (GET (str js/context "/leads") {:params {:per-page 20
-                                                       :page 1
-                                                       :sort-field :_id
-                                                       :sort-dir -1
-                                                       :filters (get-filters)}
-                                              :handler #(reset! table-data (get % "leads"))
-                                              :error-handler #(js/alert (str %))}))
+                                           :page (if-let [pg (session/get-in [:leads :page])] pg 1)
+                                           :sort-field :_id
+                                           :sort-dir -1
+                                           :filters (get-filters)}
+                                  :handler #(do (reset! table-data (get % "leads"))
+                                                (session/assoc-in! [:leads :count] (get % "leads-count")))
+                                  :error-handler #(js/alert (str %))}))
 
 (defn get-actions [lead]
   (let [step (if (get lead "step") (get lead "step") "pitch")]
@@ -116,11 +118,15 @@
 (defn dashboard []
   (let [leads (get-leads)]
     (fn []
-      [:div.container-fluid
-       [:h3 "Dashboard"]
-       (when-let [notification (session/get :notification)]
-       (js/setTimeout #(session/put! :notification nil) 15000)
-                  notification)
-       [:a {:class "btn btn-primary"
-            :href "#lead"} "New Lead"]
-       [table]])))
+      (let [leads-count (session/get-in [:leads :count])]
+        (when-not (session/get-in [:leads :page])
+          (session/assoc-in! [:leads :page] 1))
+        [:div.container-fluid
+         [:h3 "Dashboard"]
+         (when-let [notification (session/get :notification)]
+           (js/setTimeout #(session/put! :notification nil) 15000)
+           notification)
+         [:a {:class "btn btn-primary"
+              :href "#lead"} "New Lead"]
+         [table]
+         (el/pagination [:leads :page] get-leads leads-count 20)]))))

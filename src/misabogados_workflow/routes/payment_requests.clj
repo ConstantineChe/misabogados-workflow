@@ -55,7 +55,7 @@
   (let [{:keys [page per-page filters sort-field sort-dir]} (:params request)
         per-page (Integer. per-page)
         offset (* per-page (dec (Integer. page)))
-        filters-parsed (clojure.edn/read-string filters)
+        filters-parsed (util/wrap-datetime (clojure.edn/read-string filters))
         filter-query (doall (concat
                              (if-let [client (:client filters-parsed)]
                                (if-not (empty? client) [{"$match" {"$or" [{:client (re-pattern client)} {:client_email (re-pattern client)}]}}]))
@@ -109,8 +109,6 @@
                                                    ;;      reqs)
                                                    reqs))))]
     (response {:payment-requests payment-requests :count (count payment-requests) :status "ok" :role (-> request :session :role)})))
-
-
 
 (defn get-payment-request [id request]
   (response {:payment-request (mc/find-one-as-map @db "payment-requests" {:_id (oid id)})
