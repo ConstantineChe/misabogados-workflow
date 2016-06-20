@@ -38,12 +38,13 @@
 
 (defn get-leads []
   (GET (str js/context "/leads") {:params {:per-page 20
-                                                       :page 1
-                                                       :sort-field :_id
-                                                       :sort-dir -1
-                                                       :filters (get-filters)}
-                                              :handler #(reset! table-data (get % "leads"))
-                                              :error-handler #(js/alert (str %))}))
+                                           :page (if-let [pg (session/get-in [:leads :page])] pg 1)
+                                           :sort-field :_id
+                                           :sort-dir -1
+                                           :filters (get-filters)}
+                                  :handler #(do (reset! table-data (get % "leads"))
+                                                (session/assoc-in! [:leads :count] (get % "leads-count")))
+                                  :error-handler #(js/alert (str %))}))
 
 (defn get-actions [lead]
   (let [step (if (get lead "step") (get lead "step") "pitch")]
@@ -116,11 +117,49 @@
 (defn dashboard []
   (let [leads (get-leads)]
     (fn []
-      [:div.container-fluid
-       [:h3 "Dashboard"]
-       (when-let [notification (session/get :notification)]
-       (js/setTimeout #(session/put! :notification nil) 15000)
-                  notification)
-       [:a {:class "btn btn-primary"
-            :href "#lead"} "New Lead"]
-       [table]])))
+      (let [leads-count (session/get-in [:leads :count])
+            total-pages (inc (/ (- leads-count (mod leads-count 10)) 10) )
+            pages (if (< 10 total-pages)
+                    (range (max 1 (- (session/get-in [:leads :page]) 5))
+                           (min (+ 5 (session/get-in [:leads :page])) (inc total-pages)))
+                    (range 1 (inc total-pages)))]
+        (when-not (session/get-in [:leads :page])
+          (session/assoc-in! [:leads :page] 1))
+        [:div.container-fluid
+         [:h3 "Dashboard"]
+         (when-let [notification (session/get :notification)]
+           (js/setTimeout #(session/put! :notification nil) 15000)
+           notification)
+         [:a {:class "btn btn-primary"
+              :href "#lead"} "New Lead"]
+         [table]
+         [:ul.pagination
+          [:li [:a {:on-click #(do (session/update-in! [:leads :page]
+                                                       (fn [x]
+                                                         (if (> x 1)
+                                                                 (dec x)
+                                                                 x)))
+                                   (get-leads))}
+                "«"]]
+          (when (and (> (session/get-in [:leads :page]) 6) (> total-pages 10))
+            [:li [:a {:on-click #(do (session/assoc-in! [:leads :page] 1)
+                                              (get-leads))} 1]])
+          (when (and (> (session/get-in [:leads :page]) 7) (> total-pages 10))
+            [:li [:a "..."]])
+          (doall (for [page pages]
+                   [:li {:key page :class (if (= page (session/get-in [:leads :page])) "active" "")}
+                    [:a {:on-click #(do (session/assoc-in! [:leads :page] page)
+                                        (get-leads))}
+                     page]]))
+          (when (and (> (- total-pages (session/get-in [:leads :page])) 7) (> total-pages 10))
+            [:li [:a "..."]])
+          (when (and (> (- total-pages (session/get-in [:leads :page])) 6) (> total-pages 10))
+            [:li [:a {:on-click #(do (session/assoc-in! [:leads :page] total-pages)
+                                              (get-leads))} total-pages]])
+          [:li [:a {:on-click #(do (session/update-in! [:leads :page]
+                                                       (fn [x]
+                                                         (if (< x total-pages)
+                                                           (inc x)
+                                                           x)))
+                                   (get-leads))}
+                "»"]]]]))))
