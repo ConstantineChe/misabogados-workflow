@@ -17,7 +17,7 @@
             ))
 
 (defn home-page [request]
-  (render "home_page.html" (merge {:title "Recomendamos Abogados Confiables"
+  (render "home_page.html" (merge {:title (if (= "co" (settings/fetch :country)) "Te Conectamos con Abogados Confiables" "Recomendamos Abogados Confiables")
                                    :logged-in? (authenticated? request)
                                    :user (db/get-user (:identity request))}
                                   (if-let [messages (-> request :flash :messages)]
