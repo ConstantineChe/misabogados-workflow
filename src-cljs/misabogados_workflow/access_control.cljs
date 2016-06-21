@@ -17,10 +17,10 @@
 
 (defn reset-access! []
   (case (:role (session/get :user))
-    "client" (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]])
+    "client" (reset! components {:nav-links (into no-role-links [])
                                  :nav-links-right [["#logout" "Logout"]]})
 
-     "lawyer" (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
+     "lawyer" (reset! components {:nav-links (into no-role-links [
                                                                   ["#payments" "Pagos" :payments]])
                                   :nav-links-right (let [logout ["#logout" "Logout"]]
                                                          (if-let [own-profile (session/get :own-profile)] 
@@ -29,7 +29,7 @@
                                                          )})
 
      "operator" (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
-                                                                    ["#payments" "Pagos" :payments]])
+                                                                    ])
                                     :nav-links-right [["#logout" "Logout"]]})
 
      "finance" (reset! components {:nav-links (into no-role-links [["#dashboard" "Dashboard" :dashboard]
