@@ -110,11 +110,13 @@
                                              ;;      reqs)
                                              reqs)))
         payment-requests-summary (reduce (fn [acc elem] 
-                                           (case (-> elem :_id :status) 
-                                             nil (assoc acc "pending" (:count elem)) 
-                                             ["start_payment_attempt"] (assoc acc "start_payment_attempt" (:count elem)) 
-                                             ["payment_attempt_failed"] (assoc acc "payment_attempt_failed" (:count elem))
-                                             ["payment_attempt_succeded"] (assoc acc "payment_attempt_succeded" (:count elem)))) 
+                                           (let [amount (reduce #(+ %1 (Long. (:amount %2))) 0 (:amounts elem))]
+                                             (case (-> elem :_id :status) 
+                                               nil (assoc acc "pending" amount) 
+                                               ["start_payment_attempt"] (assoc acc "start_payment_attempt" 
+                                                                                amount) 
+                                               ["payment_attempt_failed"] (assoc acc "payment_attempt_failed" amount)
+                                               ["payment_attempt_succeded"] (assoc acc "payment_attempt_succeded" amount)))) 
                                          {}
                                          (mc/aggregate @db "payment_requests" 
                                                        (vec (concat
@@ -122,7 +124,7 @@
                                                                [{"$match" {:lawyer (get-lawyer-profile-id request)}}])
                                                              [{"$project" (assoc project-fields
                                                                                  "last_payment" {"$slice" ["$payment_log", -1]})}]
-                                                             [{"$group" {:_id {:status "$last_payment.action"} :count {"$sum" "$amount"}}}]))))]
+                                                             [{"$group" {:_id {:status "$last_payment.action"} :amounts {"$push" {:amount "$amount"}}}}]))))]
     ;; (prn "PRS~~~" payment-requests-summary)
     (response {:payment-requests payment-requests 
                :count (count payment-requests) 
