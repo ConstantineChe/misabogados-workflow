@@ -29,7 +29,7 @@
           updated-session (into session 
                                 {:identity (keyword (:email user))
                                  :role (keyword (:role user))
-                                 :own-profile (:slug (:lawyer user))} )]
+                                 :own-profile (:slug (:lawyer user))})]
       (if (= "application/transit+json; charset=UTF-8" (:content-type request))
         (if success?
           (-> (content-type (ok {:identity (keyword (:email user))

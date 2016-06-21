@@ -54,8 +54,10 @@
 ;;                ))
 ;;     ))
 
-(def table-data (r/atom {}
-                 ))
+(def table-data (r/atom {}))
+
+(def summary-data (r/atom {}))
+
 (def form-data (r/atom {}))
 
 (def validation-message (r/atom nil))
@@ -75,6 +77,7 @@
                          :sort-dir -1
                          }
                 :handler #(do (reset! table-data (get % "payment-requests"))
+                              (reset! summary-data (get % "payment-requests-summary"))
                               (session/assoc-in! [:payment-requests :count] (get-in % ["count" 0 "count"])))})))
 
 (defn create-payment-request [form-data]
@@ -340,6 +343,18 @@
         [:div.container
          [:div.col-md-4
           [:h1 "PagoLegal"]
+          ;; [:p (str @summary-data)]
+          [:table.table.table-bordered
+           [:thead [:tr 
+                    [:th "Pendiente"]
+                    [:th "En proceso de pagar"]
+                    [:th "Pagado"]
+                    [:th "Fallado"]]]
+           [:tbody [:tr 
+                    [:td (str (get @summary-data "pending"))]
+                    [:td (str (get @summary-data "start_payment_attempt"))]
+                    [:td (str (get @summary-data "payment_attempt_succeded"))]
+                    [:td (str (get @summary-data "payment_attempt_failed"))]]]]
           (if (#{"admin" "finance" "lawyer"} (session/get-in [:user :role]))
             [:button.btn.btn-danger {:type :button
                                      :on-click (fn [] (do
