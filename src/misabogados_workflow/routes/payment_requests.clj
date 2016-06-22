@@ -76,6 +76,12 @@
                                        (if-not status-in-process [{"$match" {"last_payment.action" {"$ne" "start_payment_attempt"}}}])
                                        (if-not status-paid [{"$match" {"last_payment.action" {"$ne" "payment_attempt_succeded"}}}])
                                        (if-not status-failed [{"$match" {"last_payment.action" {"$ne" "payment_attempt_failed"}}}])))
+                             (if-not (and (:own-client filters-parsed)
+                                          (:misabogados-client filters-parsed))
+                               (concat (if-let [own-client (:own-client filters-parsed)]
+                                         [{"$match" {:own_client "true"}}])
+                                       (if-let [misabogados-client (:misabogados-client filters-parsed)]
+                                         [{"$match" {:own_client "false"}}])))
                              (if-let [from-date (:from-date filters-parsed)]
                                [{"$match" {:date_created {"$gte" from-date}}}])
                              (if-let [to-date (:to-date filters-parsed)]
