@@ -244,15 +244,17 @@
 (defn payments-table-render []
   (fn []
     [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
-     [:th "Botón de pago"]
-     (if (or (= "admin" (session/get-in [:user :role]))
-             (= "finance" (session/get-in [:user :role]))) [:th "Lawyer" ])
-     [:th "Client"]
-     [:th "Service"]
-     [:th "Amount"]
-     [:th "Client type"]
-     [:th "Last action"]
-     [:th "Actions"]
+     [:thead 
+      [:tr 
+       [:th "Botón de pago"]
+       (if (or (= "admin" (session/get-in [:user :role]))
+               (= "finance" (session/get-in [:user :role]))) [:th "Lawyer" ])
+       [:th "Nombre del cliente"]
+       [:th "Servicio"]
+       [:th "A cobrar"]
+       [:th "Tipo del cliente"]
+       [:th "Estado"]
+       [:th "Acciónes"]]]
      [:tbody
       (doall
        (for [row @table-data]
@@ -277,7 +279,12 @@
                                          } (if (= "true" (get values :own_client)) "Own" "MisAbogados")]]
             [:td {:on-click #(do (session/assoc-in! [:payments :payment-log] (get values :payment_log))
                                  (u/show-modal "payment-data-modal"))}
-             (get (last (get values :payment_log)) "action")]
+             (let [last-action (get (first (get values :last_payment)) "action")]
+               (case last-action
+                     "start_payment_attempt" "En proceso de pagar"
+                     "payment_attempt_succeded" "Pagado"
+                     "payment_attempt_failed" "Fallado"
+                     "Pendiente"))]
             [:td
              (if-not (get values :payment_log)
                [:div.btn-group [:button.btn.btn-primary {:on-click #(do
@@ -290,49 +297,7 @@
     (if-not (empty? @table-data)
       [:div
        [:legend "Payment Requests"]
-       [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
-        [:thead
-         [:tr
-          [:th "Botón de pago"]
-          (if (or (= "admin" (session/get-in [:user :role]))
-                  (= "finance" (session/get-in [:user :role]))) [:th "Lawyer" ])
-          [:th "Client"]
-          [:th "Service"]
-          [:th "Amount"]
-          [:th "Client type"]
-          [:th "Last action"]
-          [:th "Actions"]]]
-        [:tbody
-         (doall
-          (for [row @table-data]
-            (let [row-key (key row)
-                values (apply merge (doall (map (fn [field]
-                                                  {(keyword (key field)) (val field)})
-                                                (get @table-data row-key))))]
-
-              [:tr {:key row-key}
-               [:td [:a {:href (str "/payments/pay/" (get values :code))
-                         :data-toggle "tooltip"
-                         :title "Este enlace fue enviado al cliente"
-                         } "Pagar"]]
-               (if (or (= "admin" (session/get-in [:user :role]))
-                       (= "finance" (session/get-in [:user :role])))
-                 [:td {:on-click #(do (session/assoc-in! [:payments :lawyer] (first (get values :lawyer_data)))
-                                      (u/show-modal "lawyer-data-modal"))}
-                  (get (first (get values :lawyer_data)) "name")])
-               [:td (get values :client) ]
-               [:td (get values :service)]
-               [:td (get values :amount)]
-               [:td (if (= "true" (get values :own_client)) "Own" "MisAbogados")]
-               [:td {:on-click #(do (session/assoc-in! [:payments :payment-log] (get values :payment_log))
-                                    (u/show-modal "payment-data-modal"))}
-                (get (last (get values :payment_log)) "action")]
-               [:td
-                (if-not (get values :payment_log)
-                  [:div.btn-group [:button.btn.btn-primary {:on-click #(do
-                                                                         (u/show-modal (str "payment-request-form" row-key)))} "Edit"]
-                   [:button.btn {:on-click #(remove-payment-request row-key)} "Delete"]])]
-               ])))]]]
+       [payments-table-render]]
       [:h4 "You have no payment-requests"])))
 
 (defn payments []
