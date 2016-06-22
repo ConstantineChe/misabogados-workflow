@@ -29,7 +29,7 @@
              {$set data}))
 
 (defn get-user [email]
-  (first (mc/aggregate @db "users" 
+  (first (mc/aggregate @db "users"
                        [{"$lookup" {:from "lawyers"
                                     :localField :lawyer_profile
                                     :foreignField :_id
@@ -44,8 +44,6 @@
 
 (defn get-leads [role identity per-page page sort filters]
   (let [offset (* per-page (dec page))]
-    (prn filters)
-    (prn (vec (map second filters)))
     (cond (= :admin role)
           (mc/aggregate @db "leads"
                         (vec (concat
@@ -78,6 +76,38 @@
           {}
           (= :client role)
           {})))
+
+(defn get-leads-count [role identity filters]
+  (cond (= :admin role)
+        (-> (mc/aggregate @db "leads"
+                        (vec (concat
+                              [{"$unwind" {:path "$matches", :preserveNullAndEmptyArrays true}}
+                               {"$lookup" {:from "categories"
+                                           :localField :category_id
+                                           :foreignField :_id
+                                           :as :category}}
+                               {"$lookup" {:from "lead_types"
+                                           :localField :lead_type_code
+                                           :foreignField :code
+                                           :as :lead_type}}
+                               {"$lookup" {:from "lawyers"
+                                           :localField :matches.lawyer_id
+                                           :foreignField :_id
+                                           :as :lawyer}}
+                               {"$lookup" {:from "clients"
+                                           :localField :client_id
+                                           :foreignField :_id
+                                           :as :client}}]
+                              (doall (map second filters))
+                              [{"$group" {:_id nil :count {"$sum" 1}}}]
+                              )))
+            first :count)
+        (= :operator role)
+        (mc/find-maps @db "leads" {:step {$nin ["archive"]}})
+        (= :lawyer role)
+        {}
+        (= :client role)
+        {}))
 
 
 

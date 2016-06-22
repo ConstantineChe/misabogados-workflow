@@ -59,7 +59,7 @@
         project-fields {"amount" 1 "service" 1 "lawyer" 1 "service_descrition" 1 "client" 1
                         "client_tel" 1 "client_email" 1 "code" 1 "date_created" 1 "own_client" 1 "lawyer_data" 1}
 
-        filter-query (doall (concat
+        filter-query (vec (concat
                              (if-let [client (:client filters-parsed)]
                                (if-not (empty? client) [{"$match" {"$or" [{:client {"$regex" client "$options" "-i"}}
                                                                           {:client_email {"$regex" client "$options" "-i"}}]}}]))
@@ -86,26 +86,29 @@
                                [{"$match" {:date_created {"$gte" from-date}}}])
                              (if-let [to-date (:to-date filters-parsed)]
                                [{"$match" {:date_created {"$lte" to-date}}}])))
+        _ (prn filters)
+        query (vec (concat
+                    (if (= :lawyer (-> request :session :role))
+                      [{"$match" {:lawyer (get-lawyer-profile-id request)}}])
+                    [{"$lookup" {:from "lawyers"
+                                 :localField :lawyer
+                                 :foreignField :_id
+                                 :as :lawyer_data}}]
+                    [{"$project" (assoc project-fields
+                                        "last_payment" {"$slice" ["$payment_log", -1]})}
+                     {"$project" (assoc project-fields
+                                        "last_payment" {"$ifNull" ["$last_payment", "pending"]})}]
+                    ;; (doall (map second filters))
+
+                    filter-query
+                    ))
+        pagination [{"$skip" offset}
+                     {"$limit" per-page}
+                     {"$sort" {sort-field (Integer. sort-dir)}}]
         payment-requests (apply merge (map (fn [payment-request]
                                              {(str (:_id payment-request)) (dissoc payment-request :_id)})
 
-                                           (let [query (vec (concat
-                                                             (if (= :lawyer (-> request :session :role))
-                                                               [{"$match" {:lawyer (get-lawyer-profile-id request)}}])
-                                                             [{"$lookup" {:from "lawyers"
-                                                                          :localField :lawyer
-                                                                          :foreignField :_id
-                                                                          :as :lawyer_data}}]
-                                                             [{"$project" (assoc project-fields
-                                                                                 "last_payment" {"$slice" ["$payment_log", -1]})}
-                                                              {"$project" (assoc project-fields
-                                                                                 "last_payment" {"$ifNull" ["$last_payment", "pending"]})}]
-                                                             ;; (doall (map second filters))
-
-                                                             filter-query
-                                                             [{"$skip" offset}
-                                                              {"$limit" per-page}
-                                                              {"$sort" {sort-field (Integer. sort-dir)}}]))
+                                           (let [query (vec (concat query pagination))
                                                  reqs (mc/aggregate @db "payment_requests" query)
                                                  ]
                                              (prn "--------QUERY: " query)
@@ -132,10 +135,14 @@
                                                                [{"$match" {:lawyer (get-lawyer-profile-id request)}}])
                                                              [{"$project" (assoc project-fields
                                                                                  "last_payment" {"$slice" ["$payment_log", -1]})}]
-                                                             [{"$group" {:_id {:status "$last_payment.action"} :amounts {"$push" {:amount "$amount"}}}}]))))]
+                                                             [{"$group" {:_id {:status "$last_payment.action"}
+                                                                         :amounts {"$push" {:amount "$amount"}}}}]))))
+        payment-requests-count (mc/aggregate @db "payment_requests"
+                                             (vec (concat query
+                                                          [{"$group" {:_id nil :count {"$sum" 1}}}])))]
     ;; (prn "PRS~~~" payment-requests-summary)
     (response {:payment-requests payment-requests
-               :count (count payment-requests)
+               :count (-> payment-requests-count first :count)
                :payment-requests-summary payment-requests-summary
                :status "ok" :role (-> request :session :role)})))
 

@@ -63,12 +63,16 @@
 (def validation-message (r/atom nil))
 
 (defn get-filters []
+  (when-not (session/get-in [:filters :payment-requests])
+    (doall (map (fn [checkbox]  (if (nil? (session/get-in checkbox))
+                                 (session/assoc-in! checkbox true)))
+                (map #(conj [:filters :payment-requests] %)
+                     [:status-paid :status-failed :status-in-process :status-pending]))))
   (into (sorted-map) (session/get-in [:filters :payment-requests])))
 
 ;;todo server request
 (defn get-payment-requests []
   (let [filters (get-filters)]
-    (prn filters)
     (GET (str js/context "/payment-requests")
                {:params {:per-page 10
                          :page (if-let [page (session/get-in [:payment-requests :page])] page 1)
@@ -78,7 +82,7 @@
                          }
                 :handler #(do (reset! table-data (get % "payment-requests"))
                               (reset! summary-data (get % "payment-requests-summary"))
-                              (session/assoc-in! [:payment-requests :count] (get-in % ["count" 0 "count"])))})))
+                              (session/assoc-in! [:payment-requests :count] (get % "count")))})))
 
 (defn create-payment-request [form-data]
   (POST (str js/context "/payment-requests") {:params form-data
@@ -345,12 +349,12 @@
           [:h1 "PagoLegal"]
           ;; [:p (str @summary-data)]
           [:table.table.table-bordered
-           [:thead [:tr 
+           [:thead [:tr
                     [:th "Pendiente"]
                     [:th "En proceso de pagar"]
                     [:th "Pagado"]
                     [:th "Fallado"]]]
-           [:tbody [:tr 
+           [:tbody [:tr
                     [:td (str (get @summary-data "pending"))]
                     [:td (str (get @summary-data "start_payment_attempt"))]
                     [:td (str (get @summary-data "payment_attempt_succeded"))]

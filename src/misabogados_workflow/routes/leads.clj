@@ -90,7 +90,7 @@
                             (Integer. page)
                             {sort-field (Integer. sort-dir)}
                             filters)]
-    (response {:status "ok" :leads-count (count leads) :leads leads})))
+    (response {:status "ok" :leads-count (db/get-leads-count role identity filters) :leads leads})))
 
 (defn get-options []
   (response
