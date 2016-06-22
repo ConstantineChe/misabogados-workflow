@@ -244,8 +244,8 @@
 (defn payments-table-render []
   (fn []
     [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
-     [:thead 
-      [:tr 
+     [:thead
+      [:tr
        [:th "Botón de pago"]
        (if (or (= "admin" (session/get-in [:user :role]))
                (= "finance" (session/get-in [:user :role]))) [:th "Lawyer" ])
@@ -332,16 +332,19 @@
          [:div.col-md-8
           ;; [:p (str (session/get :filters))]
           [:div.form-horizontal
-           (doall (map #(% [filters options util]) [(el/input-text "Email o nombre del abogado" [:lawyer])
-                                                    (el/input-text "Email o nombre del cliente" [:client])
-                                                    (el/input-datepicker "From" [:from-date])
-                                                    (el/input-datepicker "To" [:to-date])
-                                                    (el/input-checkbox "Pendiente" [:status-pending] {:div-class "col-xs-3"})
-                                                    (el/input-checkbox "En proceso de pagar" [:status-in-process] {:div-class "col-xs-3"})
-                                                    (el/input-checkbox "Pagado" [:status-paid] {:div-class "col-xs-3"})
-                                                    (el/input-checkbox "Fallado" [:status-failed] {:div-class "col-xs-3"})
-                                                    (el/input-checkbox "Cliente propio" [:own-client] {:div-class "col-xs-3"})
-                                                    (el/input-checkbox "Cliente MisAbogados" [:misabogados-client] {:div-class "col-xs-3"})]))
+           (doall (map #(% [filters options util])
+                       (filter #(not (nil? %))
+                              [(el/input-text "Email o nombre del abogado" [:lawyer])
+                               (if (#{"admin" "finance"} (session/get-in [:user :role]))
+                                 (el/input-text "Email o nombre del cliente" [:client]))
+                               (el/input-datepicker "From" [:from-date])
+                               (el/input-datepicker "To" [:to-date])
+                               (el/input-checkbox "Pendiente" [:status-pending] {:div-class "col-xs-3"})
+                               (el/input-checkbox "En proceso de pagar" [:status-in-process] {:div-class "col-xs-3"})
+                               (el/input-checkbox "Pagado" [:status-paid] {:div-class "col-xs-3"})
+                               (el/input-checkbox "Fallado" [:status-failed] {:div-class "col-xs-3"})
+                               (el/input-checkbox "Cliente propio" [:own-client] {:div-class "col-xs-3"})
+                               (el/input-checkbox "Cliente MisAbogados" [:misabogados-client] {:div-class "col-xs-3"})])))
            [:div.form-group.col-xs-12
             [:button.btn.btn-secondary {:on-click #(do (get-payment-requests)
                                                        (session/assoc-in! [:payment-requests :page] 1))}
