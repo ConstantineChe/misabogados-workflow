@@ -74,7 +74,7 @@
 (defn check-sessions []
   (doseq [channel @channels]
     (let [session ((keyword (:session channel)) @sessions)
-          timeout (:timeout session)]
+          timeout (if-let [timeout (:timeout session)] timeout (+ (* 30 60) (current-time)))]
       (if (> (current-time) timeout)
         (async/send! (:chan channel) (write-transit {:code :timeout
                                                      :message "session timed out"}))))))

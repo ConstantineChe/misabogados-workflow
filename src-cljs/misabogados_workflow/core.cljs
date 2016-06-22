@@ -277,7 +277,7 @@
 
 (defn process-messages [{:keys [message code] :as msg}]
   (case code
-    :timeout (when-not (empty? (session/get :user))
+    :timeout (when (logged-in?)
                (u/show-modal "session-timeout")
                (session/put! :user {})
                (ac/reset-access!))
