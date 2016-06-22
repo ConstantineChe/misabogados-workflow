@@ -56,15 +56,17 @@
         per-page (Integer. per-page)
         offset (* per-page (dec (Integer. page)))
         filters-parsed (util/wrap-datetime (clojure.edn/read-string filters))
-        project-fields {"amount" 1 "service" 1 "lawyer" 1 "service_descrition" 1 "client" 1 
+        project-fields {"amount" 1 "service" 1 "lawyer" 1 "service_descrition" 1 "client" 1
                         "client_tel" 1 "client_email" 1 "code" 1 "date_created" 1 "own_client" 1 "lawyer_data" 1}
 
-        filter-query (doall (concat
+        filter-query (vec (concat
                              (if-let [client (:client filters-parsed)]
-                               (if-not (empty? client) [{"$match" {"$or" [{:client (re-pattern client)} {:client_email (re-pattern client)}]}}]))
+                               (if-not (empty? client) [{"$match" {"$or" [{:client {"$regex" client "$options" "-i"}}
+                                                                          {:client_email {"$regex" client "$options" "-i"}}]}}]))
                              (if-let [lawyer (:lawyer filters-parsed)]
-                               (if-not (empty? lawyer) [{"$match" {"$or" [{:lawyer_data.name (re-pattern lawyer)} {:lawyer_data.email (re-pattern lawyer)}]}}]))
-                             
+                               (if-not (empty? lawyer) [{"$match" {"$or" [{:lawyer_data.name {"$regex" lawyer "$options" "-i"}}
+                                                                          {:lawyer_data.email {"$regex" lawyer "$options" "-i"}}]}}]))
+
                              (let [status-pending (true? (:status-pending filters-parsed))
                                    status-in-process (true? (:status-in-process filters-parsed))
                                    status-paid (true? (:status-paid filters-parsed))
@@ -74,30 +76,39 @@
                                        (if-not status-in-process [{"$match" {"last_payment.action" {"$ne" "start_payment_attempt"}}}])
                                        (if-not status-paid [{"$match" {"last_payment.action" {"$ne" "payment_attempt_succeded"}}}])
                                        (if-not status-failed [{"$match" {"last_payment.action" {"$ne" "payment_attempt_failed"}}}])))
+                             (if-not (and (:own-client filters-parsed)
+                                          (:misabogados-client filters-parsed))
+                               (concat (if-let [own-client (:own-client filters-parsed)]
+                                         [{"$match" {:own_client "true"}}])
+                                       (if-let [misabogados-client (:misabogados-client filters-parsed)]
+                                         [{"$match" {:own_client "false"}}])))
                              (if-let [from-date (:from-date filters-parsed)]
                                [{"$match" {:date_created {"$gte" from-date}}}])
                              (if-let [to-date (:to-date filters-parsed)]
                                [{"$match" {:date_created {"$lte" to-date}}}])))
+        _ (prn filters)
+        query (vec (concat
+                    (if (= :lawyer (-> request :session :role))
+                      [{"$match" {:lawyer (get-lawyer-profile-id request)}}])
+                    [{"$lookup" {:from "lawyers"
+                                 :localField :lawyer
+                                 :foreignField :_id
+                                 :as :lawyer_data}}]
+                    [{"$project" (assoc project-fields
+                                        "last_payment" {"$slice" ["$payment_log", -1]})}
+                     {"$project" (assoc project-fields
+                                        "last_payment" {"$ifNull" ["$last_payment", "pending"]})}]
+                    ;; (doall (map second filters))
+
+                    filter-query
+                    ))
+        pagination [{"$skip" offset}
+                     {"$limit" per-page}
+                     {"$sort" {sort-field (Integer. sort-dir)}}]
         payment-requests (apply merge (map (fn [payment-request]
                                              {(str (:_id payment-request)) (dissoc payment-request :_id)})
 
-                                           (let [query (vec (concat
-                                                             (if (= :lawyer (-> request :session :role)) 
-                                                               [{"$match" {:lawyer (get-lawyer-profile-id request)}}])
-                                                             [{"$lookup" {:from "lawyers"
-                                                                          :localField :lawyer
-                                                                          :foreignField :_id
-                                                                          :as :lawyer_data}}]
-                                                             [{"$project" (assoc project-fields
-                                                                                 "last_payment" {"$slice" ["$payment_log", -1]})}
-                                                              {"$project" (assoc project-fields
-                                                                                 "last_payment" {"$ifNull" ["$last_payment", "pending"]})}]
-                                                             ;; (doall (map second filters))
-                                                             
-                                                             filter-query
-                                                             [{"$skip" offset}
-                                                              {"$limit" per-page}
-                                                              {"$sort" {sort-field (Integer. sort-dir)}}]))
+                                           (let [query (vec (concat query pagination))
                                                  reqs (mc/aggregate @db "payment_requests" query)
                                                  ]
                                              (prn "--------QUERY: " query)
@@ -109,25 +120,29 @@
                                              ;;                                   c))))
                                              ;;      reqs)
                                              reqs)))
-        payment-requests-summary (reduce (fn [acc elem] 
+        payment-requests-summary (reduce (fn [acc elem]
                                            (let [amount (reduce #(+ %1 (Long. (:amount %2))) 0 (:amounts elem))]
-                                             (case (-> elem :_id :status) 
-                                               nil (assoc acc "pending" amount) 
-                                               ["start_payment_attempt"] (assoc acc "start_payment_attempt" 
-                                                                                amount) 
+                                             (case (-> elem :_id :status)
+                                               nil (assoc acc "pending" amount)
+                                               ["start_payment_attempt"] (assoc acc "start_payment_attempt"
+                                                                                amount)
                                                ["payment_attempt_failed"] (assoc acc "payment_attempt_failed" amount)
-                                               ["payment_attempt_succeded"] (assoc acc "payment_attempt_succeded" amount)))) 
+                                               ["payment_attempt_succeded"] (assoc acc "payment_attempt_succeded" amount))))
                                          {}
-                                         (mc/aggregate @db "payment_requests" 
+                                         (mc/aggregate @db "payment_requests"
                                                        (vec (concat
-                                                             (if (= :lawyer (-> request :session :role)) 
+                                                             (if (= :lawyer (-> request :session :role))
                                                                [{"$match" {:lawyer (get-lawyer-profile-id request)}}])
                                                              [{"$project" (assoc project-fields
                                                                                  "last_payment" {"$slice" ["$payment_log", -1]})}]
-                                                             [{"$group" {:_id {:status "$last_payment.action"} :amounts {"$push" {:amount "$amount"}}}}]))))]
+                                                             [{"$group" {:_id {:status "$last_payment.action"}
+                                                                         :amounts {"$push" {:amount "$amount"}}}}]))))
+        payment-requests-count (mc/aggregate @db "payment_requests"
+                                             (vec (concat query
+                                                          [{"$group" {:_id nil :count {"$sum" 1}}}])))]
     ;; (prn "PRS~~~" payment-requests-summary)
-    (response {:payment-requests payment-requests 
-               :count (count payment-requests) 
+    (response {:payment-requests payment-requests
+               :count (-> payment-requests-count first :count)
                :payment-requests-summary payment-requests-summary
                :status "ok" :role (-> request :session :role)})))
 
@@ -184,8 +199,8 @@
 
 (defroutes payment-requests-routes
   (GET "/payment-requests" [] (restrict get-payment-requests
-                                {:handler {:or [ac/admin-access 
-                                                ;; ac/operator-access 
+                                {:handler {:or [ac/admin-access
+                                                ;; ac/operator-access
                                                 ac/lawyer-access ac/finance-access]}
                                  :on-error access-error-handler}))
   (GET "/payment-requests/:id" [id :as request]
@@ -203,7 +218,7 @@
           (restrict (fn [request] (remove-payment-request id request))
                     {:handler {:or [ac/admin-access ac/lawyer-access ac/finance-access]}
                      :on-error access-error-handler}))
-  (GET "/payment-requests/js/options" [] 
+  (GET "/payment-requests/js/options" []
        (restrict (fn [request] (response {:lawyer (map #((juxt (fn [x] (str (:name x) " (" (:email x) ")")) :_id) %) (mc/find-maps @db "lawyers"))
                                           :own_client [["" :empty] ["Cliente propio" true] ["Cliente MisAbogados" false]]}))
                  {:handler {:or [ac/admin-access ac/lawyer-access ac/finance-access]}
