@@ -24,7 +24,7 @@
 (defn https? []
   (= "https:" (.-protocol js/location)))
 
-(defonce logged-in? (r/atom nil))
+(defn logged-in? [] (empty? (session/get :user)))
 
 (defonce messages (r/atom []))
 
@@ -52,8 +52,7 @@
                                                 (if (= (get response "status") "ok")
                                                   (do (get-session!
                                                        (fn [response]
-                                                         (reset! logged-in? (nil? (get response "identity")))
-                                                         (if-not @logged-in?
+                                                         (if-not (logged-in?)
                                                            (session/put! :user {:identity (get response "identity" )
                                                                                 :role (get response "role")}))
                                                          (session/put! :own-profile (get response "own-profile"))
@@ -77,7 +76,8 @@
                                                       nil)} ))))
 
 (defn logout! []
-  (GET (str js/context "/logout") {:handler (fn [response] (session/put! :user {})
+  (GET (str js/context "/logout") {:handler (fn [response]
+                                              (session/put! :user {})
                                               (ac/reset-access!)
                                               (update-csrf-token!)
                                               (u/redirect "#login")
@@ -100,7 +100,7 @@
             :on-click #(->
                         (js/jQuery "#navbar-hamburger:visible")
                         (.click))}
-          (if-not (clojure.string/starts-with? uri "#") {:target "_blank"})) 
+          (if-not (clojure.string/starts-with? uri "#") {:target "_blank"}))
     title]))
 
 (defn navbar []
@@ -190,7 +190,7 @@
         warnings (r/atom nil)
         _ (update-csrf-token!)]
     (fn []
-      (if @logged-in? (aset js/window "location" "#dashboard"))
+      (if (logged-in?) (aset js/window "location" "#dashboard"))
       (if (not https?) (reset! warnings "Not using ssl"))
       [:div.container
        [:div.form-horizontal
@@ -277,7 +277,7 @@
 
 (defn process-messages [{:keys [message code] :as msg}]
   (case code
-    :timeout (when-not (empty? (session/get :user))
+    :timeout (when (logged-in?)
                (u/show-modal "session-timeout")
                (session/put! :user {})
                (ac/reset-access!))
@@ -304,10 +304,8 @@
   (r/render [#'page] (.getElementById js/document "app")))
 
 (defn init! []
-  (ws/make-websocket! (str (if (https?) "wss://" "ws://") (.-host js/location) "/ws") process-messages)
   (get-session!
    (fn [response]
-     (reset! logged-in? (get response "identity"))
      (session/put! :user {:identity (get response "identity" )
                           :role (get response "role")})
      (session/put! :own-profile (get response "own-profile"))
@@ -323,4 +321,5 @@
        (u/redirect "#login"))
      nil))
   (hook-browser-navigation!)
-  (mount-components))
+  (mount-components)
+  (ws/make-websocket! (str (if (https?) "wss://" "ws://") (.-host js/location) "/ws") process-messages))
