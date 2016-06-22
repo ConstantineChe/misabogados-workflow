@@ -96,10 +96,12 @@
      title]])
   ([uri title]
    [:li>a
-    {:href uri
-      :on-click #(->
-                  (js/jQuery "#navbar-hamburger:visible")
-                  (.click))} title]))
+    (into {:href uri
+            :on-click #(->
+                        (js/jQuery "#navbar-hamburger:visible")
+                        (.click))}
+          (if-not (clojure.string/starts-with? uri "#") {:target "_blank"})) 
+    title]))
 
 (defn navbar []
   (fn []
