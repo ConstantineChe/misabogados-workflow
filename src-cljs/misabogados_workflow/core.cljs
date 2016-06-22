@@ -24,6 +24,8 @@
 (defn https? []
   (= "https:" (.-protocol js/location)))
 
+(defonce logged-in? (r/atom nil))
+
 (defonce messages (r/atom []))
 
 (defn signup! [signup-form]
@@ -48,12 +50,26 @@
                                               :password password}
                                      :handler (fn [response]
                                                 (if (= (get response "status") "ok")
-                                                  (do (get-session!)
-                                                      (ac/reset-access!)
-                                                      (if (= "admin" (session/get-in [:user :role]))
-                                                        (u/redirect "#dashboard")
-                                                        (u/redirect "#payments"))
-                                                      (update-csrf-token!))
+                                                  (do (get-session!
+                                                       (fn [response]
+                                                         (reset! logged-in? (nil? (get response "identity")))
+                                                         (if-not @logged-in?
+                                                           (session/put! :user {:identity (get response "identity" )
+                                                                                :role (get response "role")}))
+                                                         (session/put! :own-profile (get response "own-profile"))
+                                                         (session/put! :filters {:payment-requests {:own-client true
+                                                                                                    :misabogados-client true
+                                                                                                    :status-pending true
+                                                                                                    :status-in-process true
+                                                                                                    :status-paid true
+                                                                                                    :status-failed true}})
+                                                         (ac/reset-access!)
+                                                         (update-csrf-token!)
+                                                         (case (session/get-in [:user :role])
+                                                           "lawyer" (u/redirect "#payments")
+                                                           nil (u/redirect "#login")
+                                                           (u/redirect "#dashboard"))
+                                                         nil)))
                                                   (reset! error (get response "error")))
                                                 nil)
                                      :error-handler (fn [response]
@@ -67,7 +83,6 @@
                                               (u/redirect "#login")
                                               nil)}))
 
-(defn logged-in? [] (not (empty? (session/get :user))))
 
 (defn nav-link
   ([uri title page]
@@ -173,7 +188,7 @@
         warnings (r/atom nil)
         _ (update-csrf-token!)]
     (fn []
-      (if (logged-in?) (aset js/window "location" "#dashboard"))
+      (if @logged-in? (aset js/window "location" "#dashboard"))
       (if (not https?) (reset! warnings "Not using ssl"))
       [:div.container
        [:div.form-horizontal
@@ -226,9 +241,7 @@
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
-  (if (= "lawyer" (:role (session/get :user)))
-    (u/redirect "#payments")
-    (session/put! :page :home)))
+  (session/put! :page :home))
 
 (secretary/defroute "/about" []
   (session/put! :page :about))
@@ -290,7 +303,22 @@
 
 (defn init! []
   (ws/make-websocket! (str (if (https?) "wss://" "ws://") (.-host js/location) "/ws") process-messages)
-  (get-session!)
-  (update-csrf-token!)
+  (get-session!
+   (fn [response]
+     (reset! logged-in? (get response "identity"))
+     (session/put! :user {:identity (get response "identity" )
+                          :role (get response "role")})
+     (session/put! :own-profile (get response "own-profile"))
+     (session/put! :filters {:payment-requests {:own-client true
+                                                :misabogados-client true
+                                                :status-pending true
+                                                :status-in-process true
+                                                :status-paid true
+                                                :status-failed true}})
+     (ac/reset-access!)
+     (update-csrf-token!)
+     (if-not (get response "role")
+       (u/redirect "#login"))
+     nil))
   (hook-browser-navigation!)
   (mount-components))

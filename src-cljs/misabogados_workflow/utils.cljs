@@ -26,33 +26,10 @@
   (.scrollTo js/window 0 0))
 
 (defn get-session!
-  ([]
-   (let [logged-in? (r/atom nil)]
-     (GET (str js/context "/session")
-          {:handler (fn [response]
-                      (reset! logged-in? (nil? (get response "identity")))
-                      (if-not @logged-in?
-                        (session/put! :user {:identity (get response "identity" )
-                                             :role (get response "role")}))
-                      (session/put! :own-profile (get response "own-profile"))
-                      (session/put! :filters {:payment-requests {:own-client true
-                                                                 :misabogados-client true
-                                                                 :status-pending true
-                                                                 :status-in-process true
-                                                                 :status-paid true
-                                                                 :status-failed true}})
-                      (ac/reset-access!)
-                      (if (= (get response "role") "lawyer") (redirect "#payments"))
-                      nil)})
-     logged-in?))
-  ([done]
-   (let [logged-in? (r/atom nil)]
-     (GET (str js/context "/session")
-          {:handler (fn [response]
-                      (reset! logged-in? (nil? (get response "identity")))
-                      (reset! done true)
-                      nil)})
-     logged-in?)))
+  [cb]
+  (let [logged-in? (r/atom nil)]
+    (GET (str js/context "/session")
+         {:handler cb})))
 
 (defn enable-tooltips []
   (.tooltip (js/jQuery ".balloon-tooltip")))
