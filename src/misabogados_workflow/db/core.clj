@@ -52,7 +52,7 @@
                                         :localField :category_id
                                         :foreignField :_id
                                         :as :category}}
-                            {"$lookup" {:from "lead_types"q
+                            {"$lookup" {:from "lead_types"
                                         :localField :lead_type_code
                                         :foreignField :code
                                         :as :lead_type}}

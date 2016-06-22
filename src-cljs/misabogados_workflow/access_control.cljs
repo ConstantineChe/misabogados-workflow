@@ -24,7 +24,7 @@
                                                                   ["#payments" "Pagos" :payments]])
                                   :nav-links-right (let [logout ["#logout" "Logout"]]
                                                          (if-let [own-profile (session/get :own-profile)] 
-                                                           [[(str "/" own-profile) "Tu perfil"] logout]
+                                                           [[(str "/abogado/" own-profile) "Tu perfil"] logout]
                                                            [logout]) 
                                                          )})
 
