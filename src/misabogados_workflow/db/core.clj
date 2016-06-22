@@ -31,8 +31,8 @@
 (defn get-user [email]
   (first (mc/aggregate @db "users" 
                        [{"$lookup" {:from "lawyers"
-                                    :localField :lawyer_profile
-                                    :foreignField :_id
+                                    :localField :email
+                                    :foreignField :email
                                     :as :lawyer}}
                         {"$match" {:email email}}])))
 
@@ -54,7 +54,7 @@
                                         :localField :category_id
                                         :foreignField :_id
                                         :as :category}}
-                            {"$lookup" {:from "lead_types"
+                            {"$lookup" {:from "lead_types"q
                                         :localField :lead_type_code
                                         :foreignField :code
                                         :as :lead_type}}
