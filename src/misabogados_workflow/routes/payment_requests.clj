@@ -78,10 +78,9 @@
                                        (if-not status-failed [{"$match" {"last_payment.action" {"$ne" "payment_attempt_failed"}}}])))
                              (if-not (and (:own-client filters-parsed)
                                           (:misabogados-client filters-parsed))
-                               (concat (if-let [own-client (:own-client filters-parsed)]
-                                         [{"$match" {:own_client "true"}}])
-                                       (if-let [misabogados-client (:misabogados-client filters-parsed)]
-                                         [{"$match" {:own_client "false"}}])))
+                               (concat (if-not (:own-client filters-parsed) [{"$match" {"$or" [{:own_client false}
+                                                                                               {:own_client "false"}]}}])
+                                       (if-not (:misabogados-client filters-parsed) [{"$match" {:own_client "true"}}])))
                              (if-let [from-date (:from-date filters-parsed)]
                                [{"$match" {:date_created {"$gte" from-date}}}])
                              (if-let [to-date (:to-date filters-parsed)]
@@ -220,6 +219,6 @@
                      :on-error access-error-handler}))
   (GET "/payment-requests/js/options" []
        (restrict (fn [request] (response {:lawyer (map #((juxt (fn [x] (str (:name x) " (" (:email x) ")")) :_id) %) (mc/find-maps @db "lawyers"))
-                                          :own_client [["" :empty] ["Cliente propio" true] ["Cliente MisAbogados" false]]}))
+                                          :own_client [["Cliente MisAbogados" false] ["Cliente propio" true]]}))
                  {:handler {:or [ac/admin-access ac/lawyer-access ac/finance-access]}
                   :on-error access-error-handler})))
