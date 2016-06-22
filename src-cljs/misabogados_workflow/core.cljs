@@ -226,7 +226,9 @@
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
-  (session/put! :page :home))
+  (if (= "lawyer" (:role (session/get :user)))
+    (u/redirect "#payments")
+    (session/put! :page :home)))
 
 (secretary/defroute "/about" []
   (session/put! :page :about))

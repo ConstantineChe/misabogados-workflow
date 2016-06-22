@@ -21,6 +21,10 @@
    (js/jQuery (str "#" id))
    (.modal "hide")))
 
+(defn redirect [url]
+  (aset js/window "location" url)
+  (.scrollTo js/window 0 0))
+
 (defn get-session!
   ([]
    (let [logged-in? (r/atom nil)]
@@ -38,6 +42,7 @@
                                                                  :status-paid true
                                                                  :status-failed true}})
                       (ac/reset-access!)
+                      (if (= (get response "role") "lawyer") (redirect "#payments"))
                       nil)})
      logged-in?))
   ([done]
@@ -48,10 +53,6 @@
                       (reset! done true)
                       nil)})
      logged-in?)))
-
-(defn redirect [url]
-  (aset js/window "location" url)
-  (.scrollTo js/window 0 0))
 
 (defn enable-tooltips []
   (.tooltip (js/jQuery ".balloon-tooltip")))
