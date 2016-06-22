@@ -84,12 +84,13 @@
 (defn get-leads [request]
   (let [role (-> request :session :role)
         identity (:identity request)
-        {:keys [sort-field sort-dir per-page page filters]} (:params request)]
-    (response {:status "ok" :leads-count (mc/count @db/db "leads") :leads (doall (db/get-leads role identity
-                                                                        (Integer. per-page)
-                                                                        (Integer. page)
-                                                                        {sort-field (Integer. sort-dir)}
-                                                                        filters))})))
+        {:keys [sort-field sort-dir per-page page filters]} (:params request)
+        leads (db/get-leads role identity
+                            (Integer. per-page)
+                            (Integer. page)
+                            {sort-field (Integer. sort-dir)}
+                            filters)]
+    (response {:status "ok" :leads-count (count leads) :leads leads})))
 
 (defn get-options []
   (response
