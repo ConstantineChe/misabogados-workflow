@@ -56,7 +56,7 @@
         per-page (Integer. per-page)
         offset (* per-page (dec (Integer. page)))
         filters-parsed (util/wrap-datetime (clojure.edn/read-string filters))
-        project-fields {"amount" 1 "service" 1 "lawyer" 1 "service_descrition" 1 "client" 1
+        project-fields {"amount" 1 "service" 1 "lawyer" 1 "service_description" 1 "client" 1
                         "client_tel" 1 "client_email" 1 "code" 1 "date_created" 1 "own_client" 1 "lawyer_data" 1}
 
         filter-query (vec (concat
