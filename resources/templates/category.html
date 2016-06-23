@@ -2,31 +2,358 @@
 
 {% block metadata %}
 <meta name="description" content="" />
+
+<style> <!--JUST FOR DEBUG; WILL BE DELETED-->
+.categoria-page .container
+{
+	width:960px!important;
+	padding-left:47px;
+	padding-right:0;
+	text-align:left!important;
+	font-family:"Open Sans";
+}
+
+div.servicios img
+{
+	width:241px;
+	height:151px;
+	border-radius:6px;
+}
+
+.categoria-section h2
+{
+	margin-top:0;
+}
+
+.section
+{
+	margin-top:20px!important;
+	margin-bottom:20px!important;
+	padding-top:0!important;
+	padding-bottom:0!important;
+}
+
+.categoria-page h4
+{
+	color:#FFF;
+	text-align:center;
+	font-size:36px;
+}
+
+.categoria-page h1,.categoria-page h2,.categoria-page h3,.categoria-page h4
+{
+	font-family:"Open Sans", serif!important;
+	font-weight:300!important;
+}
+
+.categoria-page h1
+{
+	font-size:20px!important;
+	text-transform:none;
+}
+
+.categoria-page h3
+{
+	font-size:30px!important;
+}
+
+.categoria-page p
+{
+	font-size:16px;
+}
+
+.categoria-heading
+{
+	background-image:url(http://storage.googleapis.com/instapage-user-media/f793ec6f/4386527-0-shutterstock-3403672.jpg);
+	max-height:430px;
+	background-position:50% 50% 50% 50%;
+	background-repeat:no-repeat, no-repeat;
+	text-align:left!important;
+}
+
+.dark-bg
+{
+	max-height:430px;
+	height:100%;
+}
+
+.blue-pattern .blue-bg
+{
+	padding-top:20px!important;
+}
+
+.white-bg
+{
+	padding-top:0;
+	background-color:#FFF!important;
+	color:#333;
+	border:0 solid #FFF;
+}
+
+.regtitle
+{
+	line-height:48px!important;
+	font-size:30px!important;
+	text-transform:none!important;
+}
+
+.categoria-heading .registro
+{
+	max-width:473px!important;
+}
+
+.blue-pattern
+{
+	color:#FFF;
+	background-image:url(http://storage.googleapis.com/instapage-user-media/f793ec6f/4372107-0-Asech-background.png);
+	text-align:left;
+}
+
+ul
+{
+	list-style:none;
+	padding-left:0;
+	color:#1e90bf;
+	font-size:18px;
+	line-height:25px;
+}
+
+ul li
+{
+	margin-top:10px;
+	margin-bottom:15px;
+}
+
+ul li span
+{
+	font-size:150%;
+}
+
+.registro h1
+{
+	margin-top:90px;
+	margin-bottom:15px;
+}
+
+.registro hr
+{
+	margin:0;
+}
+
+.section button
+{
+	margin-bottom:10px;
+}
+
+.panel-contactar
+{
+	text-align:center;
+}
+
+.servicios p
+{
+	text-align:center;
+	width:241px;
+}
+
+.servicios button
+{
+	width:241px;
+}
+
+.blue
+{
+	background-color:#1e90bf;
+}
+
+.bluediv
+{
+	margin-top:40px;
+	margin-bottom:40px;
+	text-align:center;
+}
+
+.bluediv button
+{
+	margin-left:20px;
+	margin-right:20px;
+}
+
+.categoria-page button,.section p
+{
+	font-size:18px;
+}
+</style>
 {% endblock %}
 
 {% block page %}
 
 <!-- Main CTA -->
-<div class="jumbotron  categoria-heading" {% if category.image %} style="background: url({{category.image}});
+<div class="jumbotron  categoria-heading categoria-page" {% if category.image %} style="background: url({{category.image}});
                                                                          background-repeat: no-repeat;
                                                                          background-position: center 55%;
                                                                          background-size: cover;"{% endif %}>
-  <div class="dark-bg">
-    <div class="container">
-      <h1>{{category.name}}</h1>
-      <p>"{{category.quote}}"</p>
-      <p><button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#contactForm">Comienza ahora <span class="glyphicon  glyphicon-menu-right"></span></button></p>
-    </div>
+	<div class="dark-bg">
+		<div class="container">
+			<div class="row">
+				<div class="col-md-6 registro">
+					<h1>Registro de Marca</h1>  
+					<hr>
+				  <h3 class="regtitle"><!--{{category.name}}--> Protege lo que te ha costado tanto trabajo conseguir</h1>
+				  <p><!--"{{category.quote}}"-->Un registro de marca le da mayor protección legal a tu negocio</p>
+				  <p><button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#contactForm">Registra tu marca<span class="glyphicon  glyphicon-menu-right"></span></button></p>
+				</div>
+			<div class="col-md-6"></div>
+			</div>
+		  </div>
+	</div>
+</div>
+<!-- Categoria Content -->
+
+<div class="section white-bg categoria-page">
+  <div class="container categoria-section">
+    <div class="row">
+		 <div class="col-lg-8  col-md-8  col-sm-12  col-xs-12">
+		 <div style="max-width:480px;">
+			<h2>Registrar tu marca</h2>
+			
+				<p>Registrar tu marca es lo mejor que te podría pasar en la vida. Te juntas con un abogado y te dice si se puede (o no) registrar lo que tu piensas.</p>
+
+				<p>El hecho de registrar tu marca te da protección a la hora de hacer valer los derechos que tiene un nombre comercial. De igual manera, puedes usar tu propia marca para que otras personas o empresas la usen con tu permiso.</p> 
+
+				<p>Registrar tu marca es bacán. Sino, pregúntale a todos los hueones que hemos ayudado con esto!</p>					
+		  </div>
+		</div>
+				
+		 <div class="col-lg-4  col-md-4  col-sm-12  col-xs-12">
+			<div class="panel white-bg panel-default  contact-panel">
+				<div class="panel-heading">
+					<p>Categorías relacionadas
+					<ul >
+						<li><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Patente comercial</li>
+						<li><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Constitución de sociedad</li>
+						<li><span class="glyphicon glyphicon-ok-sign" aria-hidden="true"></span> Modificación de sociedad</li>
+					</ul>
+					</p>
+				</div>
+			</div>
+		
+		</div>
   </div>
+ </div>
+</div>
+
+<div class="section blue-pattern categoria-page">
+<div class="blue-bg">
+  <div class="container categoria-section">
+    <div class="row">
+		 <div class="col-lg-8  col-md-8  col-sm-12  col-xs-12">
+		 <div style="max-width:480px;">
+			<h2>Precios</h2>
+			
+				<p>Las marcas se registran por clases. Una misma marca, puede deber ser registrada en más de una clase.</p>
+
+				<p>Así, una clase promedio cuesta aproximadamente $150.000 más su impuesto de 3UTM por cada clase, igualmente.</p> 
+<hr />
+				<p>¿Quieres saber cuánto te podría costar?<br>
+					<small>*Recibe distintas cotizaciones de abogados</small></p>		
+				<p><button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#contactForm">
+				Cotiza gratis en nuestra red<span class="glyphicon  glyphicon-menu-right"></span></button></p>
+					
+		  </div>
+		</div>
+				
+		
+  </div>
+ </div>
+ </div>
 </div>
 
 
-<!-- Categoria Content -->
+<div class="section white-bg categoria-page">
+  <div class="container categoria-section">
+    <div class="row">
+		 <div class="col-lg-8  col-md-8  col-sm-12  col-xs-12">
+		 <div style="max-width:480px;">
+			<h2>Registrar tu marca</h2>
+				<p>¿Qué es el registro de marca?</p>
+				<p>Es una red de abogados pre seleccionados por un proceso estandarizado de entrevistas, para asegurar la buena experiencia de quienes contraten los servicios legales. Rechazamos el 80% de los abogados que conocemos en este proceso.</p>
+				<p>¿Qué es evaluar la factibilidad de una marca?</p>
+				<p>Manejamos una extensa red de abogados, y conocemos hace años el mercado legal de nuestro país. Estas dos características nos permite encontrar un abogado ajustado a lo que buscas en precio, experiencia y ubicación. Déjanos tu mensaje para que lo consigamos por ti.</p>
+				<p>			¿Es necesario contratar un abogado para registrarla?</p>
+				<p>Una vez que conseguimos el precio que se ajusta a lo que estás buscando, puedes pagar según las facilidades que cada abogado entrega. Puedes pagar con transferencias, depósitos, tarjeta de crédito, débito e incluso online. 
+				Lo anterior es muy importante de conversar a la hora de contratar cualquiera de los abogados disponibles<br />				
+				<a href="http://staging-app.misabogados.com/categoria/registro-de-marcas">Ve todas las preguntas frecuentes para Registro de Marca ></a></p>					
+		  </div>
+		</div>
+				
+		 <div class="col-lg-4  col-md-4  col-sm-12  col-xs-12">
+			<div class="panel white-bg  panel-default  contact-panel panel-contactar">
+				<div class="white-bg panel-heading">
+					<h3>¿Tienes dudas?</h3>
+					<img src="/img/categoria/nohemi.jpg" class="img-circle  img-responsive  team-photo" alt="Nohemi">
+					<p>	Nohemí Díaz<br />
+						Especialista en clientes<br />
+						Llámanos<br />
+						(55) 5350-8745
+					</p>
+					<p><button type="button"  class="btn  btn-success  btn-lg  contact-panel-form-btn" data-toggle="modal" data-target="#contactForm">
+					Contactar<span class="glyphicon  glyphicon-menu-right"></span></button></p>
+
+				</div>
+			</div>
+		
+		</div>
+  </div>
+ </div>
+</div>
+
+<div   class="section white-bg categoria-page">
+	<div class="container categoria-section">
+		  
+			<h2 style="margin-bottom: 10px;">Servicios populares</h2>
+			<p>
+			Revisa si alguno se acomoda a ti
+			</p>
+		  <div class="row">
+
+			<div class="servicios">
+			   <div class="col-lg-4  col-md-4  col-sm-6  col-xs-12"> 
+				   <img src="http://storage.googleapis.com/instapage-user-media/f793ec6f/3931154-0-shutterstock-1435686.jpg"><br>
+				   <p>Evaluación de factibilidad de marca (presencial)</p>
+				   <button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#contactForm">Cotiza este servicio</button>
+			   </div>
+			   <div  class="col-lg-4  col-md-4  col-sm-6  col-xs-12">
+				   <img src="http://storage.googleapis.com/instapage-user-media/f793ec6f/3949686-0-shutterstock-2352869.jpg"><br>
+				   <p>Registro de marca en 2 clases</p>
+				   <button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#contactForm">Cotiza este servicio</button>
+			   </div>
+			   <div  class="col-lg-4  col-md-4  col-sm-6  col-xs-12">
+					<img src="http://storage.googleapis.com/instapage-user-media/f793ec6f/3723826-0-shutterstock-1833135.jpg">	<br>
+					<p>Evaluación de factibilidad de marca (telefónica)</p>
+				   <button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#contactForm">Cotiza este servicio</button>
+			   </div>	
+			</div>
+			<div class="clear"><br/ ></div>
+				<div class="clear"></div>
+		</div>
+	</div>
+</div>
+
+<div   class="section blue categoria-page">
+	<div class="container categoria-section">
+	<div class="bluediv"><h4>¿No encontraste lo que buscabas?</h4>
+	<button class="btn  btn-success  btn-lg  contact-panel-form-btn">Cuéntanos qué necesitas</button> <button class="btn  btn-success  btn-lg  contact-panel-form-btn">Busca más información</button></div>
+	</div>
+</div>
+
+
+<!--
 <div class="section">
   <div class="container">
     <div class="row">
       <!-- FAQ -->
-{% comment %}      {{ category.intro }}
+<!--		{% comment %}      {{ category.intro }}
       {{ category.pricing }} {% endcomment %}
       <div class="col-lg-8  col-md-8  col-sm-12  col-xs-12">
         <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
@@ -57,10 +384,10 @@
           </div>
         </div>
 
-      </div>
+      </div>-->
 
       <!-- Contact Form -->
-      <div class="col-lg-4  col-md-4  col-sm-12  col-xs-12">
+   <!--   <div class="col-lg-4  col-md-4  col-sm-12  col-xs-12">
         <div class="panel  panel-default  contact-panel">
           <div class="panel-heading">
             <h3>Estamos para ayudarte</h3>
@@ -83,7 +410,7 @@
     </div>
   </div>
 </div>
-
+-->
 {% endblock %}
 
 {% block page-scripts %}

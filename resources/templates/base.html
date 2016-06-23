@@ -76,8 +76,64 @@ mixpanel.init("5af227e8cc057ef708a44d5ad7556bf3");</script> -->
 
     {% script "https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" %}
 
+{% ifequal settings.country "co" %}
+      <script>
+        (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+        (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+        m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+        })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+        ga('create', 'UA-47301857-4', 'auto');
+        ga('send', 'pageview');
+
+      </script>
+      <!-- Google Tag Manager -->
+      <!--<noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-KCL4TL"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+      <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-KCL4TL');</script>-->
+      <!-- End Google Tag Manager -->
+      <script>
+        (function (w,i,d,g,e,t,s) {w[d] = w[d]||[];t= i.createElement(g);
+          t.async=1;t.src=e;s=i.getElementsByTagName(g)[0];s.parentNode.insertBefore(t, s);
+        })(window, document, '_gscq','script','//widgets.getsitecontrol.com/39011/script.js');
+      </script>
+      <!-- Optimizely -->
+      <script src="https://cdn.optimizely.com/js/5593400874.js"></script>
+      <!-- End Optimizely -->
+      <!--Start of Zopim Live Chat Script-->
+      <script type="text/javascript">
+      window.$zopim||(function(d,s){var z=$zopim=function(c){z._.push(c)},$=z.s=
+      d.createElement(s),e=d.getElementsByTagName(s)[0];z.set=function(o){z.set.
+      _.push(o)};z._=[];z.set._=[];$.async=!0;$.setAttribute("charset","utf-8");
+      $.src="//v2.zopim.com/?3nj0EBnFwwo0qkDCm1YEcbdnqRiKUSkd";z.t=+new Date;$.
+      type="text/javascript";e.parentNode.insertBefore($,e)})(document,"script");
+      </script>
+      <!--End of Zopim Live Chat Script-->      
+    {% endifequal %}
+    {% ifequal settings.country "mx" %}
+      <!-- Google Tag Manager -->
+        <!-- Pending -->
+      <!-- End Google Tag Manager -->
+    {% endifequal %}
+    {% ifequal settings.country "cl" %}
+      <!-- Google Tag Manager -->
+      <noscript><iframe src="//www.googletagmanager.com/ns.html?id=GTM-WW9WDQ"
+      height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+      <script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+      new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+      j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+      '//www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+      })(window,document,'script','dataLayer','GTM-WW9WDQ');</script>
+      <!-- End Google Tag Manager -->
+    {% endifequal %}
+
 
     {% block page-scripts %}
     {% endblock %}
+
   </body>
 </html>

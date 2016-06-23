@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+
+{% block metadata %}
+<meta name="description" content="" />
+{% endblock %}
+
+{% block page %}
+
+<!-- Main CTA -->
+<div class="jumbotron  categoria-heading" {% if category.image %} style="background: url({{category.image}});
+                                                                         background-repeat: no-repeat;
+                                                                         background-position: center 55%;
+                                                                         background-size: cover;"{% endif %}>
+  <div class="dark-bg">
+    <div class="container">
+      <h1>{{category.name}}</h1>
+      <p>"{{category.quote}}"</p>
+      <p><button type="button" class="btn  btn-success  btn-lg" data-toggle="modal" data-target="#contactForm">Comienza ahora <span class="glyphicon  glyphicon-menu-right"></span></button></p>
+    </div>
+  </div>
+</div>
+
+
+<!-- Categoria Content -->
+<div class="section">
+  <div class="container">
+    <div class="row">
+      <!-- FAQ -->
+{% comment %}      {{ category.intro }}
+      {{ category.pricing }} {% endcomment %}
+      <div class="col-lg-8  col-md-8  col-sm-12  col-xs-12">
+        <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+          {% for faq_item in category.faq_items %}
+          <div class="panel  panel-default  faq">
+            <div class="panel-heading  faq-heading" role="tab">
+              <a id="faq_{{faq_item.id}}" class="faq-anchor"></a>
+              <h4 class="panel-title  faq-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#faq_{{faq_item.id}}_collapse" aria-expanded="false" aria-controls="faq_{{faq_item.id}}_collapse">
+                  {{faq_item.name}}
+                </a>
+              </h4>
+              <a href="#faq_{{faq_item.id}}" class="faq-anchor-link">
+                <span class="glyphicon  glyphicon-link  anchor-icon"></span>
+              </a>
+            </div>
+            <div id="faq_{{faq_item.id}}_collapse" class="panel-collapse  collapse" role="tabpanel" aria-labelledby="headingOne">
+              <div class="panel-body">{{faq_item.text|linebreaks|safe}}</div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="panel panel-default accordion-cta">
+          <div class="panel-heading">
+            <h4 class="panel-title">¿No encontraste lo que buscabas?</h4>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#contactForm">Contáctanos para conectarte con un abogado</button>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Contact Form -->
+      <div class="col-lg-4  col-md-4  col-sm-12  col-xs-12">
+        <div class="panel  panel-default  contact-panel">
+          <div class="panel-heading">
+            <h3>Estamos para ayudarte</h3>
+            <img src="/img/categoria/nohemi.jpg" class="img-circle  img-responsive  team-photo" alt="Nohemi" />
+            <blockquote class="blockquote-reverse  team-quote">
+              <p>"Nadie debiese tener una duda o problema legal sin resolver"</p>
+              <b>Nohemí Díaz</b>
+            </blockquote>
+
+            <form>
+              <div class="form-group  contact-panel-form">
+                <textarea id="sidebar_problem" class="form-control" rows="8" id="message" placeholder="¿Qué estás buscando? ¿Qué necesitas? Descríbenos tu problema aquí."></textarea>
+              </div>
+              <button id="sidebar_start_button" type="button" class="btn  btn-success  btn-lg  contact-panel-form-btn" data-toggle="modal" data-target="#contactForm">Comienza ahora <span class="glyphicon  glyphicon-menu-right"></span></button>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block page-scripts %}
+<script type="text/javascript">
+  $(document).ready(function () {
+  if(location.hash != null && location.hash != ""){
+  $('html, body').animate({
+  scrollTop: $(location.hash).offset().top
+  }, 500);
+  $('.collapse').removeClass('in');
+  $(location.hash + '_collapse').collapse('show');
+  }
+  
+  $('#sidebar_start_button').click(function () {
+  $('#contact_form [name="problem"]').val($('#sidebar_problem').val());
+  });
+  });
+</script>
+{% endblock %}
