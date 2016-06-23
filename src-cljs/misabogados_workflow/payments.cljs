@@ -67,7 +67,8 @@
     (doall (map (fn [checkbox]  (if (nil? (session/get-in checkbox))
                                  (session/assoc-in! checkbox true)))
                 (map #(conj [:filters :payment-requests] %)
-                     [:status-paid :status-failed :status-in-process :status-pending]))))
+                     [:status-paid :status-failed :status-in-process :status-pending
+                      :own-client :misabogados-client]))))
   (into (sorted-map) (session/get-in [:filters :payment-requests])))
 
 ;;todo server request
