@@ -140,6 +140,7 @@
                                              (vec (concat query
                                                           [{"$group" {:_id nil :count {"$sum" 1}}}])))]
     ;; (prn "PRS~~~" payment-requests-summary)
+;    (clojure.pprint/pprint payment-requests)
     (response {:payment-requests payment-requests
                :count (-> payment-requests-count first :count)
                :payment-requests-summary payment-requests-summary

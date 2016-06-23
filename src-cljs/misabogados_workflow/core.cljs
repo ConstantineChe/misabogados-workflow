@@ -24,7 +24,7 @@
 (defn https? []
   (= "https:" (.-protocol js/location)))
 
-(defn logged-in? [] (empty? (session/get :user)))
+(defn logged-in? [] (not (empty? (session/get :user))))
 
 (defonce messages (r/atom []))
 
@@ -33,7 +33,7 @@
                                     :handler #(do (session/put! :user {:identity (get % "identity")
                                                                        :role (get % "role")})
                                                   (ac/reset-access!)
-                                                  (aset js/window "location" "#dashboard")
+                                                  (u/redirect "#dashboard")
                                                   (update-csrf-token!))
                                     :error-handler #(js/alert (str "error: " %))}))
 
@@ -45,16 +45,16 @@
    (reset! error "Please enter password")
    :else
    (do
-    (reset! error nil)
+     (reset! error nil)
+     (session/assoc-in! [:user :logging] true)
     (POST (str js/context "/login") {:params {:email email
                                               :password password}
                                      :handler (fn [response]
                                                 (if (= (get response "status") "ok")
                                                   (do (get-session!
                                                        (fn [response]
-                                                         (if-not (logged-in?)
-                                                           (session/put! :user {:identity (get response "identity" )
-                                                                                :role (get response "role")}))
+                                                         (session/put! :user {:identity (get response "identity" )
+                                                                              :role (get response "role")})
                                                          (session/put! :own-profile (get response "own-profile"))
                                                          (session/put! :filters {:payment-requests {:own-client true
                                                                                                     :misabogados-client true
@@ -69,9 +69,11 @@
                                                            nil (u/redirect "#login")
                                                            (u/redirect "#dashboard"))
                                                          nil)))
-                                                  (reset! error (get response "error")))
+                                                  (do (reset! error (get response "error"))
+                                                      (session/put! :user {})))
                                                 nil)
                                      :error-handler (fn [response]
+                                                      (session/put! :user {})
                                                       (reset! error "Error")
                                                       nil)} ))))
 
@@ -190,7 +192,7 @@
         warnings (r/atom nil)
         _ (update-csrf-token!)]
     (fn []
-      (if (logged-in?) (aset js/window "location" "#dashboard"))
+      (if (logged-in?) (u/redirect "#dashboard"))
       (if (not https?) (reset! warnings "Not using ssl"))
       [:div.container
        [:div.form-horizontal
@@ -277,10 +279,12 @@
 
 (defn process-messages [{:keys [message code] :as msg}]
   (case code
-    :timeout (when (logged-in?)
-               (u/show-modal "session-timeout")
-               (session/put! :user {})
-               (ac/reset-access!))
+    :timeout (do
+               (prn msg)
+               (when (logged-in?)
+                 (u/show-modal "session-timeout")
+                 (session/put! :user {})
+                 (ac/reset-access!)))
     :count nil
     (prn "unknown code " code "message " msg)))
 

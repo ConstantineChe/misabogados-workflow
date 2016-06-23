@@ -40,10 +40,12 @@
         [:div
          [:legend "Users"]
          [:table.table.table-hover.table-striped.panel-body {:style {:width "100%"}}
-          [:th "name"]
-          [:th "email"]
-          [:th "role"]
-          [:th "verified"]
+          [:thead
+           [:tr
+            [:th "name"]
+            [:th "email"]
+            [:th "role"]
+            [:th "verified"]]]
           [:tbody
            (doall
             (for [user @table-data]
