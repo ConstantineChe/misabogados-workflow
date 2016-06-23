@@ -279,12 +279,10 @@
 
 (defn process-messages [{:keys [message code] :as msg}]
   (case code
-    :timeout (do
-               (prn msg)
-               (when (logged-in?)
-                 (u/show-modal "session-timeout")
-                 (session/put! :user {})
-                 (ac/reset-access!)))
+    :timeout (when (logged-in?)
+               (u/show-modal "session-timeout")
+               (session/put! :user {})
+               (ac/reset-access!))
     :count nil
     (prn "unknown code " code "message " msg)))
 
